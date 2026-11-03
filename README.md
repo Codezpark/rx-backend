@@ -14,6 +14,10 @@ Plain-PHP REST API for the Prescription Rx doctor app. Apache + `mod_rewrite` + 
    mysql -uroot php_rest_api < migrations/sql/005_followup_actions.sql # snoozed / dismissed follow-up items
    mysql -uroot php_rest_api < migrations/sql/006_hours_and_billing.sql # opening hours, holidays, fee, bills (safe to re-run)
    mysql -uroot php_rest_api < migrations/sql/007_clinic_staff.sql      # receptionist accounts (safe to re-run)
+   mysql -uroot php_rest_api < migrations/sql/008_vitals_fbs_ppbs.sql   # blood sugar → FBS + PPBS columns (safe to re-run)
+   mysql -uroot php_rest_api < migrations/sql/009_medicine_form_and_pediatric.sql  # medicine form prefix + pediatric dose reference (safe to re-run)
+   mysql -uroot php_rest_api < migrations/sql/010_radiology_catalog_and_lab.sql    # radiology study catalogue + more lab tests (safe to re-run)
+   mysql -uroot php_rest_api < migrations/sql/011_receptionist_workflow.sql        # intake vitals, fee tiers, queue not_available + call (safe to re-run)
    ```
 2. Make `logs/`, `uploads/` and `storage/` writable by Apache (`chmod -R a+rwX logs uploads storage` for local dev).
 3. Check `config/Config.php` (DB credentials, JWT secret). `ENV = 'local'` for development.

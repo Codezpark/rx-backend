@@ -1,7 +1,9 @@
 """Tiny helpers shared by the API test scripts."""
-import json, random, sys, urllib.request, urllib.error
+import json, os, random, sys, urllib.request, urllib.error
 
-BASE = "http://localhost/prescription-rx/rx-backend"
+# Override with RX_API_BASE when the API is served somewhere other than Apache
+# (e.g. the PHP built-in server: RX_API_BASE=http://127.0.0.1:8900).
+BASE = os.environ.get("RX_API_BASE", "http://localhost/prescription-rx/rx-backend").rstrip("/")
 fails = 0
 
 

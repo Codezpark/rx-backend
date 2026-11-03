@@ -100,25 +100,30 @@ class BillController extends BaseController
         Response::created(['bill' => $this->shape($this->own($id, $d), true)], 'Bill created');
     }
 
-    /** POST bills/{id}/payment {amount, method} */
+    /**
+     * POST bills/{id}/payment
+     *   single:  {amount, method}
+     *   split:   {payments: [{amount, method}, ...]}   (up to 3 rows — e.g. Cash+Card, Cash+UPI)
+     * The sum may be less than the balance (a partial collection); never more.
+     */
     public function pay(array $params): void
     {
         $d = (int) $this->requireClinic()['id'];
         $b = $this->own((int) $params['id'], $d);
         if ($b['status'] === 'cancelled') Response::error('This bill is cancelled.', 409);
-        $err = [];
-        $amt = $this->money($this->request->input('amount', 0), 'amount', $err);
-        $method = (string) $this->request->input('method', 'cash');
-        if (!in_array($method, self::METHODS, true)) $err['method'] = ['Choose cash, UPI, card or other.'];
+        $err  = [];
         $owed = round((float) $b['total'] - (float) $b['paid'], 2);
-        if ($amt <= 0) $err['amount'] = $err['amount'] ?? ['Enter the amount received.'];
-        elseif ($amt > $owed) $err['amount'] = ['That is more than the ' . number_format($owed, 2) . ' still due.'];
+        $rows = $this->paymentRows($err, $owed);
         if ($err) Response::validationError($err);
 
         $this->db->beginTransaction();
         try {
-            $this->db->insert('bill_payments', ['bill_id' => $b['id'], 'doctor_id' => $d, 'amount' => $amt, 'method' => $method, 'paid_at' => gmdate('Y-m-d H:i:s')]);
-            $paid = round((float) $b['paid'] + $amt, 2);
+            $add = 0.0;
+            foreach ($rows as [$amt, $method]) {
+                $this->db->insert('bill_payments', ['bill_id' => $b['id'], 'doctor_id' => $d, 'amount' => $amt, 'method' => $method, 'paid_at' => gmdate('Y-m-d H:i:s')]);
+                $add += $amt;
+            }
+            $paid = round((float) $b['paid'] + $add, 2);
             $this->db->update('bills', ['paid' => $paid, 'status' => self::statusFor((float) $b['total'], $paid)], 'id = :i', [':i' => $b['id']]);
             $this->db->commit();
         } catch (Throwable $e) {
@@ -126,6 +131,68 @@ class BillController extends BaseController
             throw $e;
         }
         Response::success(['bill' => $this->shape($this->own((int) $b['id'], $d), true)], 'Payment recorded');
+    }
+
+    /**
+     * Normalise the pay() body into a list of [amount, method] rows.
+     * @return list<array{0:float,1:string}>
+     */
+    private function paymentRows(array &$err, float $owed): array
+    {
+        $raw  = $this->request->input('payments');
+        $rows = [];
+        if (is_array($raw) && $raw) {
+            if (count($raw) > 3) { $err['payments'] = ['Split a payment at most three ways.']; return []; }
+            foreach (array_values($raw) as $i => $p) {
+                $e   = [];
+                $amt = $this->money(is_array($p) ? ($p['amount'] ?? null) : null, 'amount', $e);
+                $met = is_array($p) ? (string) ($p['method'] ?? 'cash') : 'cash';
+                if ($e || $amt <= 0) { $err["payments.$i"] = ['Enter the amount received.']; continue; }
+                if (!in_array($met, self::METHODS, true)) { $err["payments.$i"] = ['Choose cash, UPI, card or other.']; continue; }
+                $rows[] = [$amt, $met];
+            }
+        } else {
+            $amt = $this->money($this->request->input('amount', 0), 'amount', $err);
+            $met = (string) $this->request->input('method', 'cash');
+            if (!in_array($met, self::METHODS, true)) $err['method'] = ['Choose cash, UPI, card or other.'];
+            if ($amt <= 0) $err['amount'] = $err['amount'] ?? ['Enter the amount received.'];
+            if (!$err) $rows[] = [$amt, $met];
+        }
+        if (!$err && $rows) {
+            $sum = array_sum(array_map(fn ($r) => $r[0], $rows));
+            if ($sum > $owed + 0.001) $err['amount'] = ['That is more than the ' . number_format($owed, 2) . ' still due.'];
+        }
+        return $rows;
+    }
+
+    /**
+     * Create (or skip) the consultation bill for a finalised visit (Module 4.3).
+     * Returns the new bill id, or null when the fee is 0 / already billed.
+     * Runs in its own transaction, so call it outside one.
+     */
+    public static function consultationBill(int $doctorId, int $patientId, ?int $rxId, ?int $apId, float $fee, string $label = 'Consultation'): ?int
+    {
+        $fee = round($fee, 2);
+        if ($fee <= 0 || $fee > self::MAX) return null;
+        $db = Database::getInstance();
+        if ($rxId !== null && $db->getRow("SELECT id FROM bills WHERE doctor_id = :d AND prescription_id = :r AND status <> 'cancelled' LIMIT 1", [':d' => $doctorId, ':r' => $rxId])) {
+            return null; // the doctor already raised a bill for this prescription
+        }
+        $db->beginTransaction();
+        try {
+            $n  = (int) $db->getRow('SELECT COALESCE(MAX(CAST(SUBSTRING(bill_no, 3) AS UNSIGNED)), 0) AS n FROM bills WHERE doctor_id = :d FOR UPDATE', [':d' => $doctorId])['n'] + 1;
+            $id = $db->insert('bills', [
+                'doctor_id' => $doctorId, 'patient_id' => $patientId, 'prescription_id' => $rxId, 'appointment_id' => $apId,
+                'bill_no' => sprintf('R-%04d', $n), 'bill_date' => gmdate('Y-m-d H:i:s'),
+                'subtotal' => $fee, 'discount' => 0, 'total' => $fee, 'paid' => 0, 'status' => 'unpaid',
+            ]);
+            $db->insert('bill_items', ['bill_id' => $id, 'description' => $label, 'amount' => $fee]);
+            $db->commit();
+            return (int) $id;
+        } catch (Throwable $e) {
+            $db->rollback();
+            throw $e;
+        }
     }
 
     /** POST bills/{id}/cancel — its payments stop counting as collection (the doctor refunds by hand) */

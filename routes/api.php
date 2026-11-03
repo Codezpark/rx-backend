@@ -33,6 +33,12 @@ $router->get('auth/me', 'Auth', 'me', ['auth' => true]);
 $router->get('doctor/profile',          'Doctor', 'profile',        ['auth' => true]);
 $router->put('doctor/profile',          'Doctor', 'updateProfile',  ['auth' => true]);
 $router->put('doctor/change-password',  'Doctor', 'changePassword', ['auth' => true, 'rate_limit' => ['max' => 10, 'window' => 900]]);
+$router->post('doctor/signature',       'Doctor', 'uploadSignature', ['auth' => true, 'rate_limit' => ['max' => 30, 'window' => 3600]]);
+$router->get('doctor/signature',        'Doctor', 'signatureFile',   ['auth' => true]);
+$router->delete('doctor/signature',     'Doctor', 'removeSignature',  ['auth' => true]);
+$router->post('doctor/clinic-logo',     'Doctor', 'uploadClinicLogo', ['auth' => true, 'rate_limit' => ['max' => 30, 'window' => 3600]]);
+$router->get('doctor/clinic-logo',      'Doctor', 'clinicLogoFile',   ['auth' => true]);
+$router->delete('doctor/clinic-logo',   'Doctor', 'removeClinicLogo', ['auth' => true]);
 
 // ── Patients (JWT required) ──────────────────────────────────────────────────
 $router->get('catalog/conditions', 'Patient', 'conditions', ['auth' => true]);
@@ -56,6 +62,8 @@ $router->post('catalog/medicines', 'Catalog', 'addMedicine',  ['auth' => true, '
 $router->get('catalog/symptoms',   'Catalog', 'symptoms',     ['auth' => true]);
 $router->get('catalog/advice',     'Catalog', 'advice',       ['auth' => true]);
 $router->get('catalog/diagnoses',  'Catalog', 'diagnoses',    ['auth' => true]);
+$router->get('catalog/pediatric-dose', 'Catalog', 'pediatricDose', ['auth' => true]);
+$router->get('catalog/radiology',      'Catalog', 'radiology',     ['auth' => true]);
 
 // ── Prescriptions (JWT required) ─────────────────────────────────────────────
 $router->post('prescriptions',                 'Prescription', 'create',   ['auth' => true]);
@@ -70,12 +78,16 @@ $router->get('patients/{id}/prescriptions',    'Prescription', 'forPatient', ['a
 // ── Clinic (letterhead) ──────────────────────────────────────────────────────
 $router->get('doctor/clinic', 'Doctor', 'clinic',       ['auth' => true]);
 $router->put('doctor/clinic', 'Doctor', 'updateClinic', ['auth' => true]);
+$router->get('doctor/consult-fee', 'Doctor', 'consultFee', ['auth' => true]);
 
 // ── Appointments / today's queue (JWT required) ──────────────────────────────
 $router->get('appointments',                'Appointment', 'list',      ['auth' => true]);
 $router->post('appointments',               'Appointment', 'create',    ['auth' => true]);
 $router->put('appointments/{id}',           'Appointment', 'update',    ['auth' => true]);
 $router->post('appointments/{id}/status',   'Appointment', 'setStatus', ['auth' => true]);
+$router->post('appointments/{id}/call',      'Appointment', 'call',      ['auth' => true]);
+$router->get('appointments/{id}/intake',     'Appointment', 'getIntake', ['auth' => true]);
+$router->post('appointments/{id}/intake',    'Appointment', 'saveIntake',['auth' => true]);
 $router->get('followups',           'Followup', 'index',   ['auth' => true]);
 $router->post('followups/dismiss',  'Followup', 'dismiss', ['auth' => true]);
 $router->post('reminders',          'Followup', 'remind',  ['auth' => true]);

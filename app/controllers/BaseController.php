@@ -146,6 +146,7 @@ abstract class BaseController
             'specialization'   => $doctor['specialization'],
             'registration_no'  => $doctor['registration_no'],
             'experience_yrs'   => $doctor['experience_yrs'] === null ? null : (int) $doctor['experience_yrs'],
+            'has_signature'    => !empty($doctor['signature_url'] ?? null),
             'plan'             => $doctor['plan'],
             'plan_expires_at'  => $expires,
             'plan_days_left'   => $expires ? (int) max(0, ceil((strtotime($expires) - time()) / 86400)) : null,

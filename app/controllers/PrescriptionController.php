@@ -35,9 +35,11 @@ class PrescriptionController extends BaseController
         'bp_diastolic'     => [20, 200, true],
         'pulse_bpm'        => [20, 250, true],
         'temperature_f'    => [90, 110, false],
-        'spo2_pct'         => [50, 100, true],
-        'rbs_mg_dl'        => [10, 1500, true],
-        'respiratory_rate' => [4, 80, true],
+        'spo2_pct'          => [50, 100, true],
+        'rbs_mg_dl'         => [10, 1500, true],
+        'rbs_fasting_mg_dl' => [10, 1500, true],
+        'rbs_pp_mg_dl'      => [10, 1500, true],
+        'respiratory_rate'  => [4, 80, true],
     ];
 
     // ── POST /prescriptions ──────────────────────────────────────────────────
@@ -75,6 +77,7 @@ class PrescriptionController extends BaseController
             $this->db->rollback();
             throw $e;
         }
+        if ($status === 'final') $this->raiseConsultationBill($id, (int) $doctor['id'], (int) $patient['id']);
 
         Response::created(['prescription' => $this->load($id, (int) $doctor['id'])], $status === 'final' ? 'Prescription saved' : 'Draft saved');
     }
@@ -108,6 +111,7 @@ class PrescriptionController extends BaseController
             $this->db->rollback();
             throw $e;
         }
+        if ($status === 'final') $this->raiseConsultationBill($id, (int) $doctor['id'], (int) $rx['patient_id']);
         Response::success(['prescription' => $this->load($id, (int) $doctor['id'])], $status === 'final' ? 'Prescription saved' : 'Draft saved');
     }
 
@@ -126,7 +130,46 @@ class PrescriptionController extends BaseController
         $this->db->update('prescriptions', ['status' => 'final'], 'id = :id', [':id' => $id]);
         $this->touchPatient((int) $rx['patient_id']);
         $this->completeAppointment($id);
+        $this->raiseConsultationBill($id, (int) $doctor['id'], (int) $rx['patient_id']);
         Response::success(['prescription' => $this->load($id, (int) $doctor['id'])], 'Prescription saved');
+    }
+
+    /**
+     * Raise the consultation bill so the receptionist can collect it (Module 4.3).
+     * An explicit `consultation_fee` from the Rx screen wins; otherwise the clinic
+     * fee tier decides. A 0 / unset fee raises no bill. Also tags the visit's case type.
+     */
+    private function raiseConsultationBill(int $rxId, int $doctorId, int $patientId): void
+    {
+        $ap   = $this->db->getRow('SELECT id, case_type FROM appointments WHERE prescription_id = :r AND doctor_id = :d ORDER BY id DESC LIMIT 1', [':r' => $rxId, ':d' => $doctorId]);
+        $apId = $ap ? (int) $ap['id'] : null;
+        $existingCase = $ap ? ($ap['case_type'] ?? null) : null;   // the receptionist's walk-in tag, if any
+
+        // Auto-raise a consultation bill only for a clinic visit (a prescription
+        // tied to a queue appointment) or when an explicit fee is sent. A plain
+        // prescription save with no visit and no fee is a clinical record /
+        // manually-billed slip and must not auto-bill.
+        $raw = $this->request->input('consultation_fee');
+        $hasExplicitFee = ($raw !== null && $raw !== '');
+        if ($apId === null && !$hasExplicitFee) return;
+
+        if ($hasExplicitFee) {
+            if (!is_numeric($raw) || (float) $raw < 0) return;
+            $fee = round((float) $raw, 2);
+        } else {
+            // No explicit fee: price off the walk-in tag when present, else derive.
+            $fee = FeeHelper::suggest($doctorId, $patientId, $rxId, $existingCase)['fee'];
+        }
+
+        // The receptionist's manual case tag wins: only set case_type when the
+        // appointment has none yet; never overwrite a tag chosen at the front desk.
+        $caseType = $this->request->input('case_type');
+        if ($apId !== null && ($existingCase === null || $existingCase === '') && in_array($caseType, FeeHelper::CASE_TYPES, true)) {
+            $this->db->update('appointments', ['case_type' => $caseType], 'id = :i', [':i' => $apId]);
+        }
+
+        if ($fee === null || $fee <= 0) return;
+        BillController::consultationBill($doctorId, $patientId, $rxId, $apId, (float) $fee);
     }
 
     // ── POST /prescriptions/{id}/cancel ──────────────────────────────────────
@@ -315,11 +358,19 @@ class PrescriptionController extends BaseController
                 $cat = $this->db->getRow('SELECT category_id FROM medicines WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $medId, ':d' => $this->authUser['doctor_id']]);
                 if (!$cat) { $medId = null; } else { $catId = (int) $cat['category_id']; }
             }
+            // An explicit form/category from the type selector (free-text meds, or an override).
+            $inCat = isset($m['category_id']) && (int) $m['category_id'] > 0 ? (int) $m['category_id'] : null;
+            if ($inCat !== null && $this->db->getRow('SELECT id FROM medicine_categories WHERE id = :i AND is_active = 1', [':i' => $inCat])) {
+                $catId = $inCat;
+            }
+            $prefix = self::clean((string) ($m['form_prefix'] ?? ''));
+            $prefix = $prefix === '' ? null : mb_substr(mb_strtoupper($prefix), 0, 12);
 
             $out[] = [
                 'medicine_id'   => $medId,
                 'medicine_name' => $name,
                 'category_id'   => $catId,
+                'form_prefix'   => $prefix,
                 'total_qty'     => $total,
                 'qty_unit'      => mb_substr(self::clean((string) ($m['qty_unit'] ?? 'piece')) ?: 'piece', 0, 20),
                 'duration_days' => $days,
@@ -504,7 +555,14 @@ class PrescriptionController extends BaseController
              FROM prescriptions p JOIN patients pt ON pt.id = p.patient_id WHERE p.id = :i AND p.doctor_id = :d',
             [':i' => $id, ':d' => $doctorId]
         );
-        $meds = $this->db->getRows('SELECT * FROM prescription_medicines WHERE prescription_id = :i AND deleted_at IS NULL ORDER BY sort_order, id', [':i' => $id]);
+        $meds = $this->db->getRows(
+            'SELECT pm.*, m.generic_name, m.manufacturer, m.strength, c.name AS category_name
+             FROM prescription_medicines pm
+             LEFT JOIN medicines m ON m.id = pm.medicine_id
+             LEFT JOIN medicine_categories c ON c.id = pm.category_id
+             WHERE pm.prescription_id = :i AND pm.deleted_at IS NULL ORDER BY pm.sort_order, pm.id',
+            [':i' => $id]
+        );
         $sym  = $this->db->getRows(
             'SELECT ps.*, s.name AS symptom_name FROM prescription_symptoms ps LEFT JOIN symptoms s ON s.id = ps.symptom_id
              WHERE ps.prescription_id = :i AND ps.deleted_at IS NULL ORDER BY ps.id', [':i' => $id]);
@@ -512,6 +570,13 @@ class PrescriptionController extends BaseController
             'SELECT pa.*, t.text AS template_text FROM prescription_advice pa LEFT JOIN advice_templates t ON t.id = pa.template_id
              WHERE pa.prescription_id = :i AND pa.deleted_at IS NULL ORDER BY pa.sort_order, pa.id', [':i' => $id]);
         $clinic = $rx['clinic_id'] ? $this->db->getRow('SELECT * FROM clinics WHERE id = :c', [':c' => $rx['clinic_id']]) : null;
+        $clinicLandline = $clinicMobile = null;
+        if ($clinic) {
+            foreach ($this->db->getRows("SELECT type, number FROM clinic_contacts WHERE clinic_id = :c AND is_active = 1 AND type IN ('landline','mobile') ORDER BY sort_order, id", [':c' => $clinic['id']]) as $ct) {
+                if ($ct['type'] === 'landline' && $clinicLandline === null) $clinicLandline = $ct['number'];
+                if ($ct['type'] === 'mobile' && $clinicMobile === null) $clinicMobile = $ct['number'];
+            }
+        }
 
         $num = fn ($v) => $v === null ? null : $v + 0;
         return [
@@ -525,12 +590,14 @@ class PrescriptionController extends BaseController
             ],
             'clinic' => $clinic ? [
                 'name' => $clinic['name'], 'address' => implode(', ', array_filter([$clinic['address_line1'], $clinic['address_line2'], $clinic['city'], $clinic['state'], $clinic['pincode']])),
-                'phone' => $clinic['phone'], 'timings' => $clinic['timings'],
+                'phone' => $clinic['phone'], 'landline' => $clinicLandline, 'mobile' => $clinicMobile, 'timings' => $clinic['timings'],
+                'has_logo' => !empty($clinic['logo_url']),
             ] : null,
             'vitals' => [
                 'weight_kg' => $num($rx['weight_kg']), 'height_cm' => $num($rx['height_cm']), 'bmi' => $num($rx['bmi']),
                 'bp_systolic' => $num($rx['bp_systolic']), 'bp_diastolic' => $num($rx['bp_diastolic']), 'pulse_bpm' => $num($rx['pulse_bpm']),
                 'temperature_f' => $num($rx['temperature_f']), 'spo2_pct' => $num($rx['spo2_pct']), 'rbs_mg_dl' => $num($rx['rbs_mg_dl']),
+                'rbs_fasting_mg_dl' => $num($rx['rbs_fasting_mg_dl']), 'rbs_pp_mg_dl' => $num($rx['rbs_pp_mg_dl']),
                 'respiratory_rate' => $num($rx['respiratory_rate']),
             ],
             'chief_complaint' => $rx['chief_complaint'],
@@ -544,6 +611,12 @@ class PrescriptionController extends BaseController
                 'id' => (int) $m['id'],
                 'medicine_id' => $m['medicine_id'] === null ? null : (int) $m['medicine_id'],
                 'medicine_name' => $m['medicine_name'],
+                'category_id' => $m['category_id'] === null ? null : (int) $m['category_id'],
+                'category_name' => $m['category_name'],
+                'form_prefix' => $m['form_prefix'],
+                'generic_name' => $m['generic_name'],
+                'manufacturer' => $m['manufacturer'],
+                'strength' => $m['strength'],
                 'qty_unit' => $m['qty_unit'], 'total_qty' => $num($m['total_qty']),
                 'duration_days' => $m['duration_days'] === null ? null : (int) $m['duration_days'],
                 'duration_note' => $m['duration_note'],

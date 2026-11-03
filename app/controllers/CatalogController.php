@@ -27,23 +27,41 @@ class CatalogController extends BaseController
         $doctor = $this->requireDoctor();
         $d      = (int) $doctor['id'];
         $q      = trim((string) $this->request->get('q', ''));
+        $cat    = (int) $this->request->get('category', 0);   // optional form filter (medicine_categories.id)
         $limit  = $this->getLimit(20, 40);
 
         if ($q === '') {
-            $items = $this->frequentlyUsed($d, 12);
-            Response::success(['items' => $items, 'kind' => 'frequent'], 'Medicines fetched');
+            // With a form chosen but no text, browse that form; otherwise the doctor's frequent list.
+            $items = $cat > 0 ? $this->browseCategory($d, $cat, 20) : $this->frequentlyUsed($d, 12);
+            Response::success(['items' => $items, 'kind' => $cat > 0 ? 'browse' : 'frequent'], 'Medicines fetched');
         }
 
-        $like   = '%' . addcslashes($q, '%_\\') . '%';
-        $prefix = addcslashes($q, '%_\\') . '%';
-        $rows   = $this->db->getRows(
-            'SELECT m.id, m.name, m.generic_name, m.strength, m.default_unit, m.category_id, c.name AS category_name
+        $esc    = addcslashes($q, '%_\\');
+        $like   = '%' . $esc . '%';
+        $prefix = $esc . '%';
+        // Search brand name, generic/salt and company; plus "generic + strength" (e.g. "Cefixime 200").
+        $where  = '(m.name LIKE :q1 OR m.generic_name LIKE :q2 OR m.manufacturer LIKE :q3)';
+        $params = [':d' => $d, ':q1' => $like, ':q2' => $like, ':q3' => $like, ':p' => $prefix];
+        $terms  = preg_split('/\s+/', $q);
+        if (count($terms) >= 2 && preg_match('/\d/', (string) end($terms))) {
+            $head = addcslashes(implode(' ', array_slice($terms, 0, -1)), '%_\\');
+            $tail = addcslashes((string) end($terms), '%_\\');
+            $where .= ' OR (m.generic_name LIKE :g AND m.strength LIKE :s)';
+            $params[':g'] = '%' . $head . '%';
+            $params[':s'] = '%' . $tail . '%';
+        }
+        // Narrow the search to the chosen form (Module 1: form-first entry).
+        $catSql = '';
+        if ($cat > 0) { $catSql = ' AND m.category_id = :cat'; $params[':cat'] = $cat; }
+
+        $rows = $this->db->getRows(
+            'SELECT m.id, m.name, m.generic_name, m.manufacturer, m.strength, m.default_unit, m.category_id, c.name AS category_name
              FROM medicines m JOIN medicine_categories c ON c.id = m.category_id
              WHERE m.is_active = 1 AND (m.doctor_id IS NULL OR m.doctor_id = :d)
-               AND (m.name LIKE :q1 OR m.generic_name LIKE :q2)
+               AND (' . $where . ')' . $catSql . '
              ORDER BY (m.doctor_id IS NOT NULL) DESC, (m.name LIKE :p) DESC, m.name
              LIMIT ' . (int) $limit,
-            [':d' => $d, ':q1' => $like, ':q2' => $like, ':p' => $prefix]
+            $params
         );
 
         $last  = $this->lastUsed($d, array_column($rows, 'name'));
@@ -51,6 +69,7 @@ class CatalogController extends BaseController
             'medicine_id'   => (int) $m['id'],
             'name'          => $m['name'],
             'generic_name'  => $m['generic_name'],
+            'manufacturer'  => $m['manufacturer'],
             'strength'      => $m['strength'],
             'unit'          => $m['default_unit'],
             'category_id'   => (int) $m['category_id'],
@@ -68,6 +87,7 @@ class CatalogController extends BaseController
         $this->validate([
             'name'         => 'required|string|min:2|max:200',
             'generic_name' => 'nullable|string|max:200',
+            'manufacturer' => 'nullable|string|max:200',
             'strength'     => 'nullable|string|max:100',
             'category_id'  => 'required|integer',
             'default_unit' => 'nullable|in:' . implode(',', self::UNITS),
@@ -92,6 +112,7 @@ class CatalogController extends BaseController
             'category_id'  => $cat['id'],
             'name'         => $name,
             'generic_name' => $opt('generic_name'),
+            'manufacturer' => $opt('manufacturer'),
             'strength'     => $opt('strength'),
             'default_unit' => $this->request->get('default_unit') ?: $cat['default_unit'],
             'is_system'    => 0,
@@ -100,7 +121,7 @@ class CatalogController extends BaseController
         ]);
 
         Response::created(['medicine' => [
-            'medicine_id' => $id, 'name' => $name, 'generic_name' => $opt('generic_name'), 'strength' => $opt('strength'),
+            'medicine_id' => $id, 'name' => $name, 'generic_name' => $opt('generic_name'), 'manufacturer' => $opt('manufacturer'), 'strength' => $opt('strength'),
             'unit' => $this->request->get('default_unit') ?: $cat['default_unit'], 'category_id' => (int) $cat['id'],
             'category_name' => $cat['name'], 'last_used' => null,
         ]], 'Medicine added');
@@ -153,6 +174,28 @@ class CatalogController extends BaseController
         return ['id' => (int) $r['id'], 'name' => $r['name'], 'short_code' => $r['short_code'], 'category' => $r['category'], 'normal_range' => $r['normal_range'], 'unit' => $r['unit']];
     }
 
+    // ── GET /catalog/radiology ───────────────────────────────────────────────
+    public function radiology(): void
+    {
+        $this->requireDoctor();
+        $q = trim((string) $this->request->get('q', ''));
+        if ($q === '') {
+            $rows = $this->db->getRows('SELECT id, name, modality, body_part FROM radiology_catalog WHERE is_active = 1 ORDER BY name LIMIT 40');
+        } else {
+            $esc  = addcslashes($q, '%_\\');
+            $like = '%' . $esc . '%';
+            $rows = $this->db->getRows(
+                'SELECT id, name, modality, body_part FROM radiology_catalog
+                 WHERE is_active = 1 AND (name LIKE :a OR body_part LIKE :b OR modality LIKE :c)
+                 ORDER BY (name LIKE :p) DESC, name LIMIT 40',
+                [':a' => $like, ':b' => $like, ':c' => $like, ':p' => $esc . '%']
+            );
+        }
+        Response::success(['items' => array_map(fn ($r) => [
+            'id' => (int) $r['id'], 'name' => $r['name'], 'modality' => $r['modality'], 'body_part' => $r['body_part'],
+        ], $rows)], 'Radiology studies fetched');
+    }
+
     // ── GET /catalog/symptoms | advice | diagnoses ───────────────────────────
     public function symptoms(): void
     {
@@ -194,8 +237,103 @@ class CatalogController extends BaseController
         Response::success(['items' => array_column($rows, 'diagnosis')], 'Diagnoses fetched');
     }
 
+    // ── GET /catalog/pediatric-dose ──────────────────────────────────────────
+    /** Weight-based pediatric recommendation (advisory). No patient data stored. */
+    public function pediatricDose(): void
+    {
+        $this->requireDoctor();
+        $generic = trim((string) $this->request->get('generic', ''));
+        $weight  = $this->request->get('weight');
+        if ($generic === '') {
+            Response::validationError(['generic' => ['Medicine generic name is required.']]);
+        }
+        if (!is_numeric($weight) || (float) $weight <= 0 || (float) $weight > 150) {
+            Response::validationError(['weight' => ['Enter the patient weight in kg (0–150).']]);
+        }
+        $w = (float) $weight;
+
+        // Pick the longest reference generic that appears in the medicine's generic name.
+        $refs  = $this->db->getRows('SELECT * FROM pediatric_dose_reference WHERE is_active = 1');
+        $gl    = mb_strtolower($generic);
+        $match = null;
+        foreach ($refs as $r) {
+            if (mb_strpos($gl, mb_strtolower($r['generic_name'])) !== false
+                && ($match === null || mb_strlen($r['generic_name']) > mb_strlen($match['generic_name']))) {
+                $match = $r;
+            }
+        }
+        if (!$match) {
+            Response::success(['found' => false], 'No pediatric reference for this medicine');
+        }
+
+        $div    = max(1, (int) $match['default_divisions']);
+        $dayMin = $w * (float) $match['mg_per_kg_day_min'];
+        $dayMax = $w * (float) $match['mg_per_kg_day_max'];
+        $capped = false;
+        if ($match['max_mg_per_day'] !== null) {
+            $cap = (float) $match['max_mg_per_day'];
+            if ($dayMin > $cap) { $dayMin = $cap; $capped = true; }
+            if ($dayMax > $cap) { $dayMax = $cap; $capped = true; }
+        }
+        $doseMin = $dayMin / $div;
+        $doseMax = $dayMax / $div;
+
+        $strength = $this->request->get('strength_mg_per_5ml');
+        $syrup    = is_numeric($strength) && (float) $strength > 0
+            ? (float) $strength
+            : ($match['common_syrup_mg_per_5ml'] !== null ? (float) $match['common_syrup_mg_per_5ml'] : null);
+        $mlMin = $mlMax = null;
+        if ($syrup) {
+            $mlMin = $doseMin / ($syrup / 5);
+            $mlMax = $doseMax / ($syrup / 5);
+        }
+
+        $r1 = fn ($v) => $v === null ? null : round($v, 1) + 0;
+        Response::success([
+            'found'            => true,
+            'generic'          => $match['generic_name'],
+            'weight_kg'        => $w,
+            'divisions'        => $div,
+            'daily_mg_min'     => $r1($dayMin),
+            'daily_mg_max'     => $r1($dayMax),
+            'per_dose_mg_min'  => $r1($doseMin),
+            'per_dose_mg_max'  => $r1($doseMax),
+            'syrup_mg_per_5ml' => $syrup === null ? null : $r1($syrup),
+            'per_dose_ml_min'  => $r1($mlMin),
+            'per_dose_ml_max'  => $r1($mlMax),
+            'max_mg_per_day'   => $match['max_mg_per_day'] === null ? null : (int) $match['max_mg_per_day'],
+            'capped'           => $capped,
+            'notes'            => $match['notes'],
+            'source'           => $match['source'],
+        ], 'Pediatric dose computed');
+    }
+
     // ── Helpers ──────────────────────────────────────────────────────────────
     /** The doctor's most prescribed medicines, each with how they last prescribed it. */
+    /** Browse the catalogue for one form (medicine_categories.id) when no search text is typed yet. */
+    private function browseCategory(int $doctorId, int $cat, int $limit): array
+    {
+        $rows = $this->db->getRows(
+            'SELECT m.id, m.name, m.generic_name, m.manufacturer, m.strength, m.default_unit, m.category_id, c.name AS category_name
+             FROM medicines m JOIN medicine_categories c ON c.id = m.category_id
+             WHERE m.is_active = 1 AND m.category_id = :cat AND (m.doctor_id IS NULL OR m.doctor_id = :d)
+             ORDER BY (m.doctor_id IS NOT NULL) DESC, m.name LIMIT ' . (int) $limit,
+            [':cat' => $cat, ':d' => $doctorId]
+        );
+        $last = $this->lastUsed($doctorId, array_column($rows, 'name'));
+        return array_map(fn ($m) => [
+            'medicine_id'   => (int) $m['id'],
+            'name'          => $m['name'],
+            'generic_name'  => $m['generic_name'],
+            'manufacturer'  => $m['manufacturer'],
+            'strength'      => $m['strength'],
+            'unit'          => $m['default_unit'],
+            'category_id'   => (int) $m['category_id'],
+            'category_name' => $m['category_name'],
+            'last_used'     => $last[mb_strtolower($m['name'])] ?? null,
+        ], $rows);
+    }
+
     private function frequentlyUsed(int $doctorId, int $limit): array
     {
         $top = $this->db->getRows(
@@ -220,6 +358,7 @@ class CatalogController extends BaseController
                 'medicine_id'   => $m ? (int) $m['id'] : null,
                 'name'          => $lu['medicine_name'],
                 'generic_name'  => $m['generic_name'] ?? null,
+                'manufacturer'  => $m['manufacturer'] ?? null,
                 'strength'      => $m['strength'] ?? null,
                 'unit'          => $lu['qty_unit'] ?: ($m['default_unit'] ?? 'piece'),
                 'category_id'   => $m ? (int) $m['category_id'] : null,

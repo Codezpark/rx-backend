@@ -19,22 +19,32 @@ require_once ROOT_PATH . '/app/controllers/PatientController.php';
  */
 class AppointmentController extends BaseController
 {
-    private const ACTIVE = ['scheduled', 'confirmed', 'arrived'];
+    private const ACTIVE = ['scheduled', 'confirmed', 'arrived', 'not_available'];
 
     /** from-status => allowed next statuses */
     private const FLOW = [
-        'scheduled' => ['confirmed', 'arrived', 'cancelled', 'no_show'],
-        'confirmed' => ['arrived', 'cancelled', 'no_show'],
-        'arrived'   => ['completed', 'cancelled'],
-        'no_show'   => ['arrived'],            // turned up late
-        'completed' => [],
-        'cancelled' => [],
+        'scheduled'     => ['confirmed', 'arrived', 'cancelled', 'no_show'],
+        'confirmed'     => ['arrived', 'cancelled', 'no_show'],
+        'arrived'       => ['completed', 'cancelled', 'not_available'],
+        'not_available' => ['arrived', 'cancelled'],   // stepped out / came back
+        'no_show'       => ['arrived'],                // turned up late
+        'completed'     => [],
+        'cancelled'     => [],
+    ];
+
+    /** Receptionist-captured intake vitals: column => [min, max, integer?]. */
+    private const INTAKE_VITALS = [
+        'weight_kg' => [0.3, 500, false], 'height_cm' => [20, 250, false],
+        'bp_systolic' => [40, 300, true], 'bp_diastolic' => [20, 200, true],
+        'pulse_bpm' => [20, 250, true], 'temperature_f' => [90, 110, false],
+        'spo2_pct' => [50, 100, true], 'rbs_fasting_mg_dl' => [10, 1500, true], 'rbs_pp_mg_dl' => [10, 1500, true],
     ];
 
     // ── GET /appointments ────────────────────────────────────────────────────
     public function list(): void
     {
         $doctor = $this->requireClinic();
+        $this->autoCloseStale((int) $doctor['id']);
         $sql    = $this->baseSelect() . ' WHERE a.doctor_id = :d';
         $params = [':d' => $doctor['id']];
 
@@ -52,8 +62,48 @@ class AppointmentController extends BaseController
         }
         $sql .= ' ORDER BY a.scheduled_at ASC, a.id ASC LIMIT 300';
 
-        $rows = $this->db->getRows($sql, $params);
-        Response::success(['items' => array_map([self::class, 'shape'], $rows)], 'Appointments fetched');
+        $rows  = $this->db->getRows($sql, $params);
+        $items = $this->attachBills(array_map([self::class, 'shape'], $rows), (int) $doctor['id']);
+        Response::success(['items' => $items], 'Appointments fetched');
+    }
+
+    /**
+     * Lazy end-of-day cleanup (Module 4.4, no cron): any still-active appointment
+     * from a previous day is auto-cancelled on the next queue load.
+     */
+    private function autoCloseStale(int $doctorId): void
+    {
+        $this->db->update('appointments',
+            ['status' => 'cancelled', 'cancelled_by' => 'system', 'cancel_reason' => 'Auto-closed at day end'],
+            "doctor_id = :d AND scheduled_at < :today AND status IN ('scheduled','confirmed','arrived','not_available')",
+            [':d' => $doctorId, ':today' => gmdate('Y-m-d 00:00:00')]
+        );
+    }
+
+    /** Attach the most-recent open bill (if any) to each appointment, for the "Collect ₹X" prompt. */
+    private function attachBills(array $items, int $doctorId): array
+    {
+        $ids = array_values(array_filter(array_map(fn ($i) => $i['id'], $items)));
+        if (!$ids) return $items;
+        $ph = []; $params = [':d' => $doctorId];
+        foreach ($ids as $k => $v) { $ph[] = ":a$k"; $params[":a$k"] = $v; }
+        $rows = $this->db->getRows(
+            "SELECT appointment_id, id, bill_no, total, paid, status FROM bills
+              WHERE doctor_id = :d AND status <> 'cancelled' AND appointment_id IN (" . implode(',', $ph) . ')',
+            $params
+        );
+        $map = [];
+        foreach ($rows as $b) {
+            $apId = (int) $b['appointment_id'];
+            if (!isset($map[$apId]) || (int) $b['id'] > $map[$apId]['id']) {
+                $map[$apId] = [
+                    'id' => (int) $b['id'], 'bill_no' => $b['bill_no'], 'total' => (float) $b['total'], 'paid' => (float) $b['paid'],
+                    'due' => round((float) $b['total'] - (float) $b['paid'], 2), 'status' => $b['status'],
+                ];
+            }
+        }
+        foreach ($items as &$it) { $it['bill'] = $map[$it['id']] ?? null; }
+        return $items;
     }
 
     // ── POST /appointments ───────────────────────────────────────────────────
@@ -82,6 +132,9 @@ class AppointmentController extends BaseController
             }
         }
 
+        $caseType = $this->request->get('case_type');
+        $caseType = in_array($caseType, ['new', 'old', 'emergency'], true) ? $caseType : null;
+
         $clinic = $this->db->getRow('SELECT id FROM clinics WHERE doctor_id = :d AND deleted_at IS NULL ORDER BY is_primary DESC, id LIMIT 1', [':d' => $doctor['id']]);
         $id = $this->db->insert('appointments', [
             'doctor_id'    => $doctor['id'],
@@ -92,6 +145,7 @@ class AppointmentController extends BaseController
             'reason'       => $in['reason'],
             'notes'        => $in['notes'],
             'status'       => $walkIn ? 'arrived' : 'scheduled',
+            'case_type'    => $caseType,
         ]);
         $this->db->update('patients', ['updated_at' => CommonHelper::now()], 'id = :id', [':id' => $patient['id']]);
 
@@ -128,7 +182,7 @@ class AppointmentController extends BaseController
         $id     = (int) $params['id'];
         $appt   = $this->rowOrFail($id, (int) $doctor['id']);
 
-        $this->validate(['status' => 'required|in:scheduled,confirmed,arrived,completed,cancelled,no_show']);
+        $this->validate(['status' => 'required|in:scheduled,confirmed,arrived,not_available,completed,cancelled,no_show']);
         if ($this->isStaff() && $this->request->input('status') === 'completed') {
             Response::forbidden('A visit is completed when the doctor finishes the prescription.');
         }
@@ -146,6 +200,75 @@ class AppointmentController extends BaseController
         $this->db->update('appointments', $data, 'id = :id', [':id' => $id]);
 
         Response::success(['appointment' => $this->load($id, (int) $doctor['id'])], 'Appointment updated');
+    }
+
+    // ── POST /appointments/{id}/call ─────────────────────────────────────────
+    /** The doctor (or receptionist) calls the patient in; the queue device announces them. */
+    public function call(array $params): void
+    {
+        $doctor = $this->requireClinic();
+        $id     = (int) $params['id'];
+        $appt   = $this->rowOrFail($id, (int) $doctor['id']);
+        if (!in_array($appt['status'], ['scheduled', 'confirmed', 'arrived', 'not_available'], true)) {
+            Response::error('Only a waiting patient can be called in.', 409);
+        }
+        $this->db->update('appointments', ['called_at' => gmdate('Y-m-d H:i:s')], 'id = :id', [':id' => $id]);
+        Response::success(['appointment' => $this->load($id, (int) $doctor['id'])], 'Patient called');
+    }
+
+    // ── GET /appointments/{id}/intake ────────────────────────────────────────
+    public function getIntake(array $params): void
+    {
+        $doctor = $this->requireClinic();
+        $id     = (int) $params['id'];
+        $this->rowOrFail($id, (int) $doctor['id']);
+        Response::success(['intake' => $this->intakeFor($id)], 'Intake fetched');
+    }
+
+    // ── POST /appointments/{id}/intake ───────────────────────────────────────
+    /** The receptionist records vitals at intake; the doctor's Rx editor prefills from them. */
+    public function saveIntake(array $params): void
+    {
+        $doctor = $this->requireClinic();
+        $id     = (int) $params['id'];
+        $appt   = $this->rowOrFail($id, (int) $doctor['id']);
+
+        $vit = []; $err = [];
+        foreach (self::INTAKE_VITALS as $col => [$min, $max, $int]) {
+            $raw = $this->request->input($col);
+            if ($raw === null || $raw === '') { $vit[$col] = null; continue; }
+            if (!is_numeric($raw)) { $err[$col] = ['Enter a number.']; continue; }
+            $v = $int ? (int) $raw : round((float) $raw, 1);
+            if ($v < $min || $v > $max) { $err[$col] = ["Enter a value between $min and $max."]; continue; }
+            $vit[$col] = $v;
+        }
+        if (($vit['bp_systolic'] ?? null) !== null && ($vit['bp_diastolic'] ?? null) !== null && $vit['bp_diastolic'] >= $vit['bp_systolic']) {
+            $err['bp_diastolic'] = ['Diastolic should be below systolic.'];
+        }
+        if ($err) Response::validationError($err);
+
+        $data     = $vit + ['recorded_by_staff_id' => $this->staff['id'] ?? null];
+        $existing = $this->db->getRow('SELECT id FROM intake_vitals WHERE appointment_id = :a', [':a' => $id]);
+        if ($existing) {
+            $this->db->update('intake_vitals', $data, 'id = :i', [':i' => $existing['id']]);
+        } else {
+            $this->db->insert('intake_vitals', $data + ['doctor_id' => (int) $doctor['id'], 'appointment_id' => $id, 'patient_id' => (int) $appt['patient_id']]);
+        }
+        Response::success(['intake' => $this->intakeFor($id)], 'Vitals saved');
+    }
+
+    private function intakeFor(int $apptId): ?array
+    {
+        $r = $this->db->getRow('SELECT * FROM intake_vitals WHERE appointment_id = :a', [':a' => $apptId]);
+        if (!$r) return null;
+        $num = fn ($v) => $v === null ? null : $v + 0;
+        return [
+            'weight_kg' => $num($r['weight_kg']), 'height_cm' => $num($r['height_cm']),
+            'bp_systolic' => $num($r['bp_systolic']), 'bp_diastolic' => $num($r['bp_diastolic']),
+            'pulse_bpm' => $num($r['pulse_bpm']), 'temperature_f' => $num($r['temperature_f']),
+            'spo2_pct' => $num($r['spo2_pct']), 'rbs_fasting_mg_dl' => $num($r['rbs_fasting_mg_dl']), 'rbs_pp_mg_dl' => $num($r['rbs_pp_mg_dl']),
+            'recorded_at' => $r['updated_at'],
+        ];
     }
 
     // ── Input ────────────────────────────────────────────────────────────────
@@ -215,7 +338,7 @@ class AppointmentController extends BaseController
     private function load(int $id, int $doctorId): array
     {
         $r = $this->db->getRow($this->baseSelect() . ' WHERE a.id = :i AND a.doctor_id = :d', [':i' => $id, ':d' => $doctorId]);
-        return self::shape($r);
+        return $this->attachBills([self::shape($r)], $doctorId)[0];
     }
 
     private static function shape(array $r): array
@@ -226,6 +349,8 @@ class AppointmentController extends BaseController
             'scheduled_at'    => $r['scheduled_at'],
             // When they checked in (the row's last change): drives "waiting 12 min".
             'arrived_at'      => $r['status'] === 'arrived' ? $r['updated_at'] : null,
+            'called_at'       => $r['called_at'] ?? null,
+            'case_type'       => $r['case_type'] ?? null,
             'duration_min'    => (int) $r['duration_min'],
             'reason'          => $r['reason'],
             'notes'           => $r['notes'],

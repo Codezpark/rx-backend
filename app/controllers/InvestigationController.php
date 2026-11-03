@@ -39,7 +39,7 @@ class InvestigationController extends BaseController
         'cancelled'    => [],
     ];
     private const FLAGS = ['normal', 'low', 'high', 'critical'];
-    private const FILE_MIME = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    private const FILE_MIME = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'application/pdf' => 'pdf'];
 
     // ── GET /orders ──────────────────────────────────────────────────────────
     public function list(): void
@@ -330,12 +330,12 @@ class InvestigationController extends BaseController
     private function storeFile(int $doctorId, ?string $old): string
     {
         $f = $this->request->file('file');
-        if (!$f || ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) Response::validationError(['file' => ['Choose a photo of the report.']]);
+        if (!$f || ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) Response::validationError(['file' => ['Choose a photo or PDF of the report.']]);
         if ($f['error'] !== UPLOAD_ERR_OK) Response::validationError(['file' => ['The upload did not complete. Please try again.']]);
-        if ($f['size'] > 5 * 1024 * 1024) Response::validationError(['file' => ['The photo is too large (max 5 MB).']]);
+        if ($f['size'] > 10 * 1024 * 1024) Response::validationError(['file' => ['The file is too large (max 10 MB).']]);
 
         $mime = (new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);
-        if (!isset(self::FILE_MIME[$mime])) Response::validationError(['file' => ['Only JPG, PNG or WebP photos are accepted.']]);
+        if (!isset(self::FILE_MIME[$mime])) Response::validationError(['file' => ['Only JPG, PNG, WebP or PDF files are accepted.']]);
 
         $dir = ROOT_PATH . '/storage/reports/' . $doctorId;
         if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) throw new RuntimeException('Could not create the reports folder.');
