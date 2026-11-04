@@ -74,4 +74,17 @@ check("browse-by-form returns that form", r["data"].get("kind") == "browse" and 
 s, r = call("GET", "catalog/medicines?q=Dolo&category=3", token=tok)  # Dolo is a tablet, not a syrup
 check("form filter excludes other forms", all(m["name"] != "Dolo 650" for m in r["data"]["items"]), [m["name"] for m in r["data"]["items"]][:6])
 
+# ── Syrup vs Suspension split within the one oral-liquid category (bug fix) ────
+s, r = call("GET", "catalog/medicines?category=3&form=SUS", token=tok)  # browse suspensions only
+sus = [m["name"] for m in r["data"]["items"]]
+check("Suspension filter returns only suspensions", sus and all("susp" in n.lower() for n in sus), sus)
+
+s, r = call("GET", "catalog/medicines?category=3&form=SYR", token=tok)  # browse syrups only
+syr = [m["name"] for m in r["data"]["items"]]
+check("Syrup filter excludes every suspension", syr and not any("suspension" in n.lower() for n in syr), syr)
+check("Syrup filter still returns real syrups", any("syrup" in n.lower() for n in syr), syr)
+
+s, r = call("GET", "catalog/medicines?q=a&category=3&form=SYR", token=tok)  # typing under Syrup
+check("typing under Syrup never surfaces a suspension", all("suspension" not in m["name"].lower() for m in r["data"]["items"]), [m["name"] for m in r["data"]["items"]][:8])
+
 finish()

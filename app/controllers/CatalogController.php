@@ -21,6 +21,25 @@ class CatalogController extends BaseController
 {
     private const UNITS = ['piece', 'ml', 'mg', 'gm', 'kg', 'IU', 'mcg', 'drop', 'puff', 'sachet', 'patch', 'suppository', 'unit', 'other'];
 
+    // "Syrup / Suspension" — the single oral-liquid category. Syrup vs suspension
+    // is told apart by the form word in the medicine name (no structured column).
+    private const LIQUID_CAT = 3;
+
+    /**
+     * Narrow the shared oral-liquid category (3) to the chosen sub-form by the
+     * form word in the medicine's name: "Suspension" → names containing "susp";
+     * "Syrup" → everything else in the category (syrups, dry syrups, and brands
+     * whose name states no form). The literals are constant, so no params.
+     */
+    private static function liquidFormSql(string $form): string
+    {
+        return match ($form) {
+            'SUS'        => " AND m.name LIKE '%susp%'",
+            'SYR', 'LIQ' => " AND m.name NOT LIKE '%susp%'",
+            default      => '',
+        };
+    }
+
     // ── GET /catalog/medicines ───────────────────────────────────────────────
     public function medicines(): void
     {
@@ -28,11 +47,12 @@ class CatalogController extends BaseController
         $d      = (int) $doctor['id'];
         $q      = trim((string) $this->request->get('q', ''));
         $cat    = (int) $this->request->get('category', 0);   // optional form filter (medicine_categories.id)
+        $form   = strtoupper(trim((string) $this->request->get('form', '')));  // oral-liquid sub-form: SYR / SUS
         $limit  = $this->getLimit(20, 40);
 
         if ($q === '') {
             // With a form chosen but no text, browse that form; otherwise the doctor's frequent list.
-            $items = $cat > 0 ? $this->browseCategory($d, $cat, 20) : $this->frequentlyUsed($d, 12);
+            $items = $cat > 0 ? $this->browseCategory($d, $cat, 20, $form) : $this->frequentlyUsed($d, 12);
             Response::success(['items' => $items, 'kind' => $cat > 0 ? 'browse' : 'frequent'], 'Medicines fetched');
         }
 
@@ -52,7 +72,11 @@ class CatalogController extends BaseController
         }
         // Narrow the search to the chosen form (Module 1: form-first entry).
         $catSql = '';
-        if ($cat > 0) { $catSql = ' AND m.category_id = :cat'; $params[':cat'] = $cat; }
+        if ($cat > 0) {
+            $catSql = ' AND m.category_id = :cat';
+            $params[':cat'] = $cat;
+            if ($cat === self::LIQUID_CAT) $catSql .= self::liquidFormSql($form);
+        }
 
         $rows = $this->db->getRows(
             'SELECT m.id, m.name, m.generic_name, m.manufacturer, m.strength, m.default_unit, m.category_id, c.name AS category_name
@@ -311,12 +335,13 @@ class CatalogController extends BaseController
     // ── Helpers ──────────────────────────────────────────────────────────────
     /** The doctor's most prescribed medicines, each with how they last prescribed it. */
     /** Browse the catalogue for one form (medicine_categories.id) when no search text is typed yet. */
-    private function browseCategory(int $doctorId, int $cat, int $limit): array
+    private function browseCategory(int $doctorId, int $cat, int $limit, string $form = ''): array
     {
+        $liquid = $cat === self::LIQUID_CAT ? self::liquidFormSql($form) : '';
         $rows = $this->db->getRows(
             'SELECT m.id, m.name, m.generic_name, m.manufacturer, m.strength, m.default_unit, m.category_id, c.name AS category_name
              FROM medicines m JOIN medicine_categories c ON c.id = m.category_id
-             WHERE m.is_active = 1 AND m.category_id = :cat AND (m.doctor_id IS NULL OR m.doctor_id = :d)
+             WHERE m.is_active = 1 AND m.category_id = :cat' . $liquid . ' AND (m.doctor_id IS NULL OR m.doctor_id = :d)
              ORDER BY (m.doctor_id IS NOT NULL) DESC, m.name LIMIT ' . (int) $limit,
             [':cat' => $cat, ':d' => $doctorId]
         );
