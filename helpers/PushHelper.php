@@ -71,10 +71,44 @@ class PushHelper
     }
 
     /**
-     * Send one notification (title/body) plus a data map to each token, one
-     * request per token. Prunes tokens FCM reports as gone. Returns #sent.
+     * Send one notification (title/body) plus a data map to each token. Shows a
+     * heads-up on the high-importance "call_in" channel. Returns #sent.
      */
     public static function sendToTokens(array $tokens, string $title, string $body, array $data = []): int
+    {
+        return self::deliver($tokens, static fn (string $t): array => [
+            'message' => [
+                'token'        => $t,
+                'notification' => ['title' => $title, 'body' => $body],
+                'data'         => array_map('strval', $data),
+                'android'      => ['priority' => 'high', 'notification' => ['sound' => 'default', 'default_sound' => true, 'channel_id' => 'call_in']],
+            ],
+        ]);
+    }
+
+    /**
+     * Send a SILENT (data-only) message to each token — no `notification` block,
+     * so the OS shows nothing and the app handles it in code (foreground listener
+     * or the background isolate). Used for the "force_logout" signal. High
+     * priority so it is delivered promptly even when the app is backgrounded.
+     * Returns #sent.
+     */
+    public static function sendDataToTokens(array $tokens, array $data): int
+    {
+        return self::deliver($tokens, static fn (string $t): array => [
+            'message' => [
+                'token'   => $t,
+                'data'    => array_map('strval', $data),
+                'android' => ['priority' => 'high'],
+            ],
+        ]);
+    }
+
+    /**
+     * Post one message per token (FCM v1), pruning tokens FCM reports as gone.
+     * $build receives a token and returns the full message envelope. Returns #sent.
+     */
+    private static function deliver(array $tokens, callable $build): int
     {
         $tokens = array_values(array_unique(array_filter(array_map('strval', $tokens))));
         if (!$tokens) return 0;
@@ -85,20 +119,12 @@ class PushHelper
         $url  = 'https://fcm.googleapis.com/v1/projects/' . $sa['project_id'] . '/messages:send';
         $sent = 0;
         foreach ($tokens as $t) {
-            $message = [
-                'message' => [
-                    'token'        => $t,
-                    'notification' => ['title' => $title, 'body' => $body],
-                    'data'         => array_map('strval', $data),
-                    'android'      => ['priority' => 'high', 'notification' => ['sound' => 'default', 'default_sound' => true, 'channel_id' => 'call_in']],
-                ],
-            ];
             $ch = curl_init($url);
             curl_setopt_array($ch, [
                 CURLOPT_POST           => true,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $access, 'Content-Type: application/json'],
-                CURLOPT_POSTFIELDS     => (string) json_encode($message),
+                CURLOPT_POSTFIELDS     => (string) json_encode($build($t)),
                 CURLOPT_TIMEOUT        => 10,
             ]);
             $res  = curl_exec($ch);

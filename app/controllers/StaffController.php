@@ -70,7 +70,10 @@ class StaffController extends BaseController
         if (!$up) Response::validationError(['name' => ['Nothing to change.']]);
         $this->db->update('clinic_staff', $up, 'id = :i', [':i' => $s['id']]);
         if (isset($up['password_hash']) || ($up['is_active'] ?? 1) === 0) {
-            $this->auth->revokeAllForStaff((int) $s['id']);    // signed out everywhere; with a new password they sign in again
+            // Signed out everywhere: kill refresh tokens AND invalidate any still-valid
+            // access token, then push a silent force_logout so the device logs out now.
+            $this->auth->revokeAllForStaff((int) $s['id']);
+            $this->forceLogoutStaff((int) $s['id']);
         }
         Response::success(['staff' => self::shape($this->own((int) $s['id'], $d))], 'Saved');
     }
@@ -82,6 +85,7 @@ class StaffController extends BaseController
         $s = $this->own((int) $params['id'], $d);
         $this->db->update('clinic_staff', ['deleted_at' => gmdate('Y-m-d H:i:s'), 'is_active' => 0], 'id = :i', [':i' => $s['id']]);
         $this->auth->revokeAllForStaff((int) $s['id']);
+        $this->forceLogoutStaff((int) $s['id']);
         Response::success([], 'Removed');
     }
 
@@ -95,7 +99,12 @@ class StaffController extends BaseController
             Response::validationError(['current_password' => ['Your current password is not correct.']]);
         }
         AuthController::assertPasswordStrength((string) $this->request->input('password'));
-        $this->db->update('clinic_staff', ['password_hash' => CommonHelper::hashPassword((string) $this->request->input('password'))], 'id = :i', [':i' => $this->staff['id']]);
+        // Bump sessions_valid_from first so the fresh token below (iat >= now) still
+        // passes, while any access token already out on another device is rejected.
+        $this->db->update('clinic_staff', [
+            'password_hash'       => CommonHelper::hashPassword((string) $this->request->input('password')),
+            'sessions_valid_from' => date('Y-m-d H:i:s'),
+        ], 'id = :i', [':i' => $this->staff['id']]);
         $this->auth->revokeAllForStaff((int) $this->staff['id']);
         $fresh = $this->db->getRow('SELECT * FROM clinic_staff WHERE id = :i', [':i' => $this->staff['id']]);
         Response::success([
@@ -103,6 +112,33 @@ class StaffController extends BaseController
             'refresh_token' => $this->auth->generateStaffRefreshToken((int) $fresh['id']),
             'token_type'    => 'Bearer', 'expires_in' => Config::get('jwt.expiry'),
         ], 'Password changed');
+    }
+
+    /**
+     * Log a receptionist out of every device right now. Three layers:
+     *   1. sessions_valid_from = now — requireClinic() rejects any access token
+     *      issued before this instant, so even an unexpired one stops working.
+     *   2. a silent FCM "force_logout" push — the device logs out on the spot
+     *      (foreground) or on next resume/launch (backgrounded/closed).
+     *   3. their device tokens are dropped, so they get no further pushes.
+     * Refresh tokens are killed separately by Auth::revokeAllForStaff(). The push
+     * is best-effort; layer 1 holds regardless.
+     */
+    private function forceLogoutStaff(int $staffId): void
+    {
+        $this->db->update('clinic_staff', ['sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :i', [':i' => $staffId]);
+        try {
+            $tokens = array_column(
+                $this->db->getRows("SELECT token FROM device_tokens WHERE owner_type = 'staff' AND owner_id = :s", [':s' => $staffId]),
+                'token'
+            );
+            if ($tokens) {
+                PushHelper::sendDataToTokens($tokens, ['type' => 'force_logout']);
+                $this->db->delete('device_tokens', "owner_type = 'staff' AND owner_id = :s", [':s' => $staffId]);
+            }
+        } catch (\Throwable $e) {
+            // Push/token cleanup is best-effort; the session invalidation above stands.
+        }
     }
 
     private function own(int $id, int $d): array

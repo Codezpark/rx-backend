@@ -120,6 +120,12 @@ abstract class BaseController
         if (!$staff) {
             Response::unauthorized('Your session is no longer valid. Please sign in again.');
         }
+        // Force-logout: a password reset / disable bumps sessions_valid_from, so an
+        // access token issued (iat) before that instant is rejected even if unexpired.
+        if (!empty($staff['sessions_valid_from'])
+            && (int) ($auth['iat'] ?? 0) < strtotime((string) $staff['sessions_valid_from'])) {
+            Response::unauthorized('Your session was ended by the clinic. Please sign in again.');
+        }
         $this->staff = $staff;
         return $this->db->getRow('SELECT * FROM doctors WHERE id = :id', [':id' => (int) $staff['doctor_id']]);
     }
