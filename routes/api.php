@@ -86,6 +86,8 @@ $router->post('appointments',               'Appointment', 'create',    ['auth' 
 $router->put('appointments/{id}',           'Appointment', 'update',    ['auth' => true]);
 $router->post('appointments/{id}/status',   'Appointment', 'setStatus', ['auth' => true]);
 $router->post('appointments/{id}/call',      'Appointment', 'call',      ['auth' => true]);
+$router->post('device-tokens',               'Device', 'register', ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
+$router->post('device-tokens/remove',        'Device', 'remove',   ['auth' => true]);
 $router->get('appointments/{id}/intake',     'Appointment', 'getIntake', ['auth' => true]);
 $router->post('appointments/{id}/intake',    'Appointment', 'saveIntake',['auth' => true]);
 $router->get('followups',           'Followup', 'index',   ['auth' => true]);

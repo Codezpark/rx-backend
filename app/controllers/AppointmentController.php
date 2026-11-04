@@ -213,7 +213,31 @@ class AppointmentController extends BaseController
             Response::error('Only a waiting patient can be called in.', 409);
         }
         $this->db->update('appointments', ['called_at' => gmdate('Y-m-d H:i:s')], 'id = :id', [':id' => $id]);
+        $this->notifyCallIn((int) $doctor['id'], $id);
         Response::success(['appointment' => $this->load($id, (int) $doctor['id'])], 'Patient called');
+    }
+
+    /**
+     * Push the "call patient in" announcement to the clinic's devices (the
+     * receptionist's), excluding the device that pressed it so the caller is
+     * never alerted. Best-effort — never breaks the call action.
+     */
+    private function notifyCallIn(int $clinicDoctorId, int $apptId): void
+    {
+        try {
+            $row    = $this->db->getRow('SELECT p.name FROM appointments a JOIN patients p ON p.id = a.patient_id WHERE a.id = :i', [':i' => $apptId]);
+            $name   = trim((string) ($row['name'] ?? '')) ?: 'The next patient';
+            $caller = trim((string) $this->request->input('caller_token', ''));
+            $tokens = [];
+            foreach ($this->db->getRows('SELECT token FROM device_tokens WHERE doctor_id = :d', [':d' => $clinicDoctorId]) as $r) {
+                if ($r['token'] !== $caller) $tokens[] = $r['token'];
+            }
+            if ($tokens) {
+                PushHelper::sendToTokens($tokens, 'Next patient', "$name, please come in.", ['type' => 'call_in', 'name' => $name, 'appointment_id' => (string) $apptId]);
+            }
+        } catch (\Throwable $e) {
+            // ignore — the call still succeeds without the push
+        }
     }
 
     // ── GET /appointments/{id}/intake ────────────────────────────────────────
