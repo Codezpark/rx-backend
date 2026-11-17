@@ -71,6 +71,22 @@ class PushHelper
     }
 
     /**
+     * Which devices announce a call-in. $rows = [['token'=>…, 'owner_type'=>'doctor'|'staff'], …]
+     * for one clinic. Receptionist devices win; a clinic with none falls back to all its
+     * devices. The device that pressed "Call in" is deliberately NOT excluded.
+     */
+    public static function callInTokens(array $rows): array
+    {
+        $staff = [];
+        $all   = [];
+        foreach ($rows as $r) {
+            $all[] = (string) $r['token'];
+            if (($r['owner_type'] ?? '') === 'staff') $staff[] = (string) $r['token'];
+        }
+        return array_values(array_unique($staff ?: $all));
+    }
+
+    /**
      * Send one notification (title/body) plus a data map to each token. Shows a
      * heads-up on the high-importance "call_in" channel. Returns #sent.
      */
@@ -93,13 +109,17 @@ class PushHelper
      * priority so it is delivered promptly even when the app is backgrounded.
      * Returns #sent.
      */
-    public static function sendDataToTokens(array $tokens, array $data): int
+    public static function sendDataToTokens(array $tokens, array $data, ?int $ttlSeconds = null): int
     {
+        // A stale message is worse than none (e.g. an old "come in" announced minutes late),
+        // so callers can cap how long FCM may hold it for an offline phone.
+        $android = ['priority' => 'high'];
+        if ($ttlSeconds !== null) $android['ttl'] = $ttlSeconds . 's';
         return self::deliver($tokens, static fn (string $t): array => [
             'message' => [
                 'token'   => $t,
                 'data'    => array_map('strval', $data),
-                'android' => ['priority' => 'high'],
+                'android' => $android,
             ],
         ]);
     }

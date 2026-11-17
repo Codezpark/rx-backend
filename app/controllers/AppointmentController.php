@@ -212,28 +212,36 @@ class AppointmentController extends BaseController
         if (!in_array($appt['status'], ['scheduled', 'confirmed', 'arrived', 'not_available'], true)) {
             Response::error('Only a waiting patient can be called in.', 409);
         }
-        $this->db->update('appointments', ['called_at' => gmdate('Y-m-d H:i:s')], 'id = :id', [':id' => $id]);
-        $this->notifyCallIn((int) $doctor['id'], $id);
+        $calledAt = gmdate('Y-m-d H:i:s');
+        $this->db->update('appointments', ['called_at' => $calledAt], 'id = :id', [':id' => $id]);
+        $this->notifyCallIn((int) $doctor['id'], $id, $calledAt);
         Response::success(['appointment' => $this->load($id, (int) $doctor['id'])], 'Patient called');
     }
 
     /**
-     * Push the "call patient in" announcement to the clinic's devices (the
-     * receptionist's), excluding the device that pressed it so the caller is
-     * never alerted. Best-effort — never breaks the call action.
+     * Tell the reception device(s) to announce the patient. Sent as a SILENT,
+     * high-priority, data-only message so the app speaks the name itself — even
+     * when it is in the background or closed — and the same way no matter who
+     * pressed "Call in" (doctor's phone or desktop, or the receptionist's own
+     * device: the caller is NOT excluded). Goes to the clinic's receptionist
+     * devices; a clinic with none registered falls back to all its devices.
+     * Short TTL so a phone that was offline never announces an old call.
+     * Best-effort — never breaks the call action.
      */
-    private function notifyCallIn(int $clinicDoctorId, int $apptId): void
+    private function notifyCallIn(int $clinicDoctorId, int $apptId, string $calledAt): void
     {
         try {
-            $row    = $this->db->getRow('SELECT p.name FROM appointments a JOIN patients p ON p.id = a.patient_id WHERE a.id = :i', [':i' => $apptId]);
-            $name   = trim((string) ($row['name'] ?? '')) ?: 'The next patient';
-            $caller = trim((string) $this->request->input('caller_token', ''));
-            $tokens = [];
-            foreach ($this->db->getRows('SELECT token FROM device_tokens WHERE doctor_id = :d', [':d' => $clinicDoctorId]) as $r) {
-                if ($r['token'] !== $caller) $tokens[] = $r['token'];
-            }
+            $row  = $this->db->getRow('SELECT p.name FROM appointments a JOIN patients p ON p.id = a.patient_id WHERE a.id = :i', [':i' => $apptId]);
+            $name = trim((string) ($row['name'] ?? '')) ?: 'The next patient';
+            $tokens = PushHelper::callInTokens($this->db->getRows('SELECT token, owner_type FROM device_tokens WHERE doctor_id = :d', [':d' => $clinicDoctorId]));
             if ($tokens) {
-                PushHelper::sendToTokens($tokens, 'Next patient', "$name, please come in.", ['type' => 'call_in', 'name' => $name, 'appointment_id' => (string) $apptId]);
+                PushHelper::sendDataToTokens($tokens, [
+                    'type'           => 'call_in',
+                    'name'           => $name,
+                    'appointment_id' => (string) $apptId,
+                    // Same id on every device and in the poll, so one call is spoken once.
+                    'call_id'        => $apptId . '@' . strtotime($calledAt . ' UTC'),
+                ], 45);
             }
         } catch (\Throwable $e) {
             // ignore — the call still succeeds without the push
