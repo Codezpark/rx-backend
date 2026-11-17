@@ -112,6 +112,7 @@ $router->get('lab-orders/{id}',                   'Investigation', 'labDetail', 
 $router->put('lab-orders/{id}/results',           'Investigation', 'saveLabResults',  ['auth' => true]);
 $router->post('lab-orders/{id}/status',           'Investigation', 'labStatus',       ['auth' => true]);
 $router->post('lab-orders/{id}/file',             'Investigation', 'uploadLabFile',   ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
+$router->put('lab-orders/{id}/ocr',               'Investigation', 'saveLabOcr',      ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);
 $router->get('lab-orders/{id}/file',              'Investigation', 'labFile',         ['auth' => true]);
 $router->get('radiology-orders/{id}',             'Investigation', 'radDetail',       ['auth' => true]);
 $router->put('radiology-orders/{id}/report',      'Investigation', 'saveRadReport',   ['auth' => true]);

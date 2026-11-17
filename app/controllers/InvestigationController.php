@@ -195,9 +195,46 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->lab((int) $p['id'], $d);
+        if ($o['status'] === 'cancelled') Response::error('A cancelled order can’t take a report.', 409);
         $path = $this->storeFile($d, $o['result_file_url']);
-        $this->db->update('lab_orders', ['result_file_url' => $path], 'id = :id', [':id' => $o['id']]);
+        // A new file makes any earlier scan of the old one meaningless. Having the report in hand
+        // moves an order that was still waiting straight to "processing", so the list is right at once.
+        $data = ['result_file_url' => $path, 'ocr_text' => null, 'ocr_rows' => null, 'ocr_at' => null];
+        if (in_array($o['status'], ['ordered', 'sample_collected'], true)) $data['status'] = 'processing';
+        $this->db->update('lab_orders', $data, 'id = :id', [':id' => $o['id']]);
         Response::success(['order' => $this->labPayload($this->lab((int) $p['id'], $d))], 'Report attached');
+    }
+
+    /** The phone's OCR of the attached report: raw text plus rows of cells, stored with the file. */
+    public function saveLabOcr(array $p): void
+    {
+        $d = (int) $this->requireDoctor()['id'];
+        $o = $this->lab((int) $p['id'], $d);
+        if (empty($o['result_file_url'])) Response::error('Attach the report before saving its scan.', 409);
+
+        $text = $this->request->get('text', '');
+        $rows = $this->request->get('rows', []);
+        if (!is_string($text) || !is_array($rows)) Response::validationError(['rows' => ['The scan data is not valid.']]);
+        if (mb_strlen($text) > 200000) Response::validationError(['text' => ['The scanned text is too long.']]);
+        if (count($rows) > 600) Response::validationError(['rows' => ['The scan has too many rows.']]);
+
+        $clean = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) continue;
+            $cells = [];
+            foreach (array_slice(array_values($row), 0, 12) as $c) {
+                $c = trim(strip_tags((string) $c));
+                if ($c !== '') $cells[] = mb_substr($c, 0, 200);
+            }
+            if ($cells) $clean[] = $cells;
+        }
+        $text = trim(strip_tags($text));
+        $this->db->update('lab_orders', [
+            'ocr_text' => $text === '' ? null : $text,
+            'ocr_rows' => $clean ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null,
+            'ocr_at'   => CommonHelper::now(),
+        ], 'id = :id', [':id' => $o['id']]);
+        Response::success(['order' => $this->labPayload($this->lab((int) $p['id'], $d))], 'Scan saved');
     }
 
     public function labFile(array $p): void
@@ -297,7 +334,10 @@ class InvestigationController extends BaseController
             );
             if ($r) $prev[(int) $t['id']] = ['value' => $r['result_value'], 'unit' => $r['result_unit'], 'flag' => $r['result_flag'], 'date' => $r['at']];
         }
-        return InvestigationHelper::shapeLab($o, true, $prev) + ['patient' => self::patientOf($this->patientRow((int) $o['patient_id']) + [], true)];
+        $ocr = (isset($o['ocr_text']) || isset($o['ocr_rows']))
+            ? ['text' => $o['ocr_text'] ?? '', 'rows' => json_decode((string) ($o['ocr_rows'] ?? '[]'), true) ?: [], 'at' => $o['ocr_at'] ?? null]
+            : null;
+        return InvestigationHelper::shapeLab($o, true, $prev) + ['ocr' => $ocr, 'patient' => self::patientOf($this->patientRow((int) $o['patient_id']) + [], true)];
     }
 
     private function radPayload(array $o): array

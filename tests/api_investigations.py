@@ -134,6 +134,27 @@ check("imaging can be cancelled", s == 200, r)
 # ── private report photos ──
 s, r = upload(f"lab-orders/{lab_id}/file", tok, PNG)
 check("attach a report photo", s == 200 and r["data"]["order"]["has_file"], r)
+
+# ── upload moves the order on at once; the phone's scan is kept with the file ──
+s, r = call("POST", "prescriptions", {"patient_id": pid, "status": "final", "diagnosis": "Anaemia", "investigations": {"lab": {"tests": [{"test_id": T["CBC"]}]}}}, tok)
+fresh = r["data"]["prescription"]["investigations"]["lab"]["id"]
+s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "x", "rows": [["Hb", "13.5"]]}, tok)
+check("a scan needs a file first -> 409", s == 409, r)
+s, r = upload(f"lab-orders/{fresh}/file", tok, PNG)
+check("uploading the report moves an ordered lab to processing immediately", s == 200 and r["data"]["order"]["status"] == "processing" and r["data"]["order"]["ocr"] is None, r)
+rows = [["Haemoglobin", "13.5", "g/dL", "13.0 - 17.0"], ["Platelets", "250"], [], ["<b>WBC</b>", "7,200"]]
+s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "Haemoglobin 13.5 g/dL\nPlatelets 250", "rows": rows}, tok)
+o = r["data"]["order"] if s == 200 else {}
+check("scan rows and raw text are stored with the order", s == 200 and o["ocr"]["text"].startswith("Haemoglobin") and o["ocr"]["rows"][0] == rows[0] and len(o["ocr"]["rows"]) == 3 and o["ocr"]["rows"][2] == ["WBC", "7,200"] and o["ocr"]["at"], r)
+s, r = call("GET", f"lab-orders/{fresh}", token=tok)
+check("the detail returns the stored scan", r["data"]["order"]["ocr"]["rows"][1] == ["Platelets", "250"], r)
+s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "x", "rows": [["a"]] * 601}, tok)
+check("too many rows -> 422", s == 422, r)
+s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "x", "rows": [["a"]]}, tok2)
+check("another doctor cannot store a scan on it", s == 404, r)
+s, r = upload(f"lab-orders/{fresh}/file", tok, PNG)
+check("replacing the file clears the old scan", s == 200 and r["data"]["order"]["ocr"] is None, r)
+
 s, ctype, body = raw_get(f"lab-orders/{lab_id}/file", tok)
 check("the owner can read it back (image bytes)", s == 200 and ctype == "image/png" and body == PNG, (s, ctype, len(body)))
 s, ctype, body = raw_get(f"lab-orders/{lab_id}/file", tok2)
@@ -166,7 +187,7 @@ for method, path, body in [("GET", f"lab-orders/{lab_id}", None), ("PUT", f"lab-
     check(f"other doctor cannot {method} {path.split('/')[0]}", s == 404, (s, r))
 check("other doctor has no orders", call("GET", "orders?status=all", token=tok2)[1]["data"]["items"] == [], "")
 s, r = call("GET", "dashboard/summary", token=tok)
-check("summary drops finished and cancelled orders", r["data"]["orders_pending"] == 0, r["data"])
+check("summary drops finished and cancelled orders (only the report-in-progress one is left)", r["data"]["orders_pending"] == 1, r["data"])
 s, r = call("GET", "orders?status=done", token=tok)
 check("done list holds finished orders", {i["kind"] for i in r["data"]["items"]} == {"lab", "imaging"} and len(r["data"]["items"]) == 2, [(i["kind"], i["status"]) for i in r["data"]["items"]])
 finish()

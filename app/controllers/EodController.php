@@ -44,7 +44,7 @@ class EodController extends BaseController
         };
 
         // The queue: everyone booked or walked in that day.
-        foreach ($this->db->getRows('SELECT patient_id, status, case_type, COALESCE(arrived_at, scheduled_at) AS ts FROM appointments WHERE doctor_id = :d AND scheduled_at >= :f AND scheduled_at < :t', [':d' => $d, ':f' => $from, ':t' => $to]) as $a) {
+        foreach ($this->db->getRows('SELECT patient_id, status, case_type, scheduled_at AS ts FROM appointments WHERE doctor_id = :d AND scheduled_at >= :f AND scheduled_at < :t', [':d' => $d, ':f' => $from, ':t' => $to]) as $a) {
             $pid = (int) $a['patient_id'];
             $touch($pid);
             $promote($pid, match ($a['status']) {
