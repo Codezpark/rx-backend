@@ -1,0 +1,5063 @@
+[
+ {
+  "slug": "paracetamol",
+  "name": "Paracetamol",
+  "aliases": [
+   "acetaminophen",
+   "paracetamol / acetaminophen",
+   "calpol",
+   "crocin",
+   "dolo",
+   "pacimol",
+   "febrex",
+   "tylenol"
+  ],
+  "components": "paracetamol",
+  "category": "Analgesic / antipyretic",
+  "indication": "Fever, mild to moderate pain",
+  "all_indications": [
+   "Fever",
+   "Post-vaccination fever",
+   "Headache",
+   "Mild pain",
+   "Teething pain"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 10,
+  "dose_typ": 15,
+  "dose_max": 15,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": 5,
+  "max_single": 1000,
+  "max_daily": 4000,
+  "min_age_months": 1,
+  "max_age_months": 216,
+  "min_weight_kg": 3,
+  "bands": null,
+  "duration": "As needed (3 days, review if fever persists)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Avoid in severe hepatic impairment",
+  "neonatal_note": "10 mg/kg/dose every 6-8 hours",
+  "food_note": "No restriction",
+  "side_effects": [
+   "Hepatotoxicity on overdose",
+   "Rash (rare)"
+  ],
+  "contraindications": [
+   "Severe hepatic disease"
+  ],
+  "warnings": [
+   "Do not exceed 5 doses in 24 hours",
+   "Keep at least 4 hours between doses",
+   "Avoid combining with other paracetamol-containing products"
+  ],
+  "interactions": [
+   "Warfarin (prolonged use)",
+   "Alcohol",
+   "Enzyme inducers (phenytoin, carbamazepine)"
+  ],
+  "brands": [
+   "Calpol",
+   "Crocin",
+   "Dolo",
+   "Pacimol",
+   "Febrex"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "10-15 mg/kg/dose every 4-6 hours. Do not exceed 5 doses per 24 hours.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 120,
+    "per_volume_ml": 5,
+    "label": "120 mg/5 ml syrup",
+    "note": "Shake well",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 250,
+    "per_volume_ml": 5,
+    "label": "250 mg/5 ml suspension",
+    "note": "Shake well",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 100,
+    "per_volume_ml": 1,
+    "label": "100 mg/ml drops",
+    "note": "For infants",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "Can be crushed",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 650,
+    "per_volume_ml": null,
+    "label": "650 mg tablet",
+    "note": "Older children / adolescents",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "ibuprofen",
+  "name": "Ibuprofen",
+  "aliases": [
+   "brufen",
+   "ibugesic",
+   "ibuprin"
+  ],
+  "components": "ibuprofen",
+  "category": "Analgesic / NSAID",
+  "indication": "Fever, pain, inflammation",
+  "all_indications": [
+   "Fever",
+   "Pain",
+   "Inflammation",
+   "Dysmenorrhoea",
+   "Juvenile arthritis"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 4,
+  "dose_typ": 10,
+  "dose_max": 10,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 400,
+  "max_daily": 1200,
+  "min_age_months": 3,
+  "max_age_months": 216,
+  "min_weight_kg": 5,
+  "bands": null,
+  "duration": "As needed (max 3-5 days without review)",
+  "route": "Oral",
+  "renal_note": "Avoid in renal impairment / dehydration",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with or after food",
+  "side_effects": [
+   "Gastric irritation",
+   "Renal impairment if dehydrated",
+   "Bronchospasm in asthmatics"
+  ],
+  "contraindications": [
+   "Dehydration",
+   "Active GI bleeding",
+   "Dengue / bleeding disorders",
+   "Aspirin-sensitive asthma"
+  ],
+  "warnings": [
+   "Avoid in suspected dengue",
+   "Ensure good hydration",
+   "Do not combine with another NSAID"
+  ],
+  "interactions": [
+   "Aspirin",
+   "Anticoagulants",
+   "ACE inhibitors",
+   "Methotrexate"
+  ],
+  "brands": [
+   "Brufen",
+   "Ibugesic"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "4-10 mg/kg/dose every 6-8 hours.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml suspension",
+    "note": "Shake well; give with food",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 40,
+    "per_volume_ml": 1,
+    "label": "40 mg/ml drops",
+    "note": "For infants",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 400,
+    "per_volume_ml": null,
+    "label": "400 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "mefenamic-acid",
+  "name": "Mefenamic Acid",
+  "aliases": [
+   "mefenamic",
+   "meftal",
+   "meftal-p"
+  ],
+  "components": "mefenamic acid",
+  "category": "Analgesic / NSAID",
+  "indication": "Fever, pain",
+  "all_indications": [
+   "Fever",
+   "Pain",
+   "Dysmenorrhoea"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 6.5,
+  "dose_typ": 6.5,
+  "dose_max": 6.5,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 500,
+  "max_daily": 1500,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Max 7 days",
+  "route": "Oral",
+  "renal_note": "Avoid in renal impairment",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Diarrhoea",
+   "Gastric irritation",
+   "Rash"
+  ],
+  "contraindications": [
+   "Peptic ulcer",
+   "Renal impairment",
+   "Inflammatory bowel disease"
+  ],
+  "warnings": [
+   "Stop if diarrhoea or rash develops",
+   "Avoid in suspected dengue"
+  ],
+  "interactions": [
+   "Anticoagulants",
+   "Aspirin"
+  ],
+  "brands": [
+   "Meftal"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "6.5 mg/kg/dose three times a day, short course.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 50,
+    "per_volume_ml": 5,
+    "label": "50 mg/5 ml suspension",
+    "note": "Give with food",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "amoxicillin",
+  "name": "Amoxicillin",
+  "aliases": [
+   "amoxycillin",
+   "amoxil",
+   "novamox",
+   "mox"
+  ],
+  "components": "amoxicillin",
+  "category": "Antibiotic (penicillin)",
+  "indication": "Bacterial infections of ear, throat, chest, urine",
+  "all_indications": [
+   "Otitis media",
+   "Pharyngitis",
+   "Pneumonia",
+   "Sinusitis",
+   "Urinary tract infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 20,
+  "dose_typ": 40,
+  "dose_max": 90,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 3000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 2,
+  "bands": null,
+  "duration": "5-7 days",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "<7 days: 30 mg/kg/day in 2 doses",
+  "food_note": "With or without food",
+  "side_effects": [
+   "Diarrhoea",
+   "Rash",
+   "Nausea"
+  ],
+  "contraindications": [
+   "Penicillin allergy"
+  ],
+  "warnings": [
+   "Check for penicillin allergy",
+   "Complete the course",
+   "High dose (80-90 mg/kg/day) is used for otitis media / resistant pneumococcus"
+  ],
+  "interactions": [
+   "Methotrexate",
+   "Warfarin",
+   "Oral contraceptives (rare)"
+  ],
+  "brands": [
+   "Novamox",
+   "Mox",
+   "Amoxil"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "20-40 mg/kg/day in divided doses every 8 hours.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml dry syrup",
+    "note": "Reconstitute with boiled, cooled water",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 250,
+    "per_volume_ml": 5,
+    "label": "250 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 100,
+    "per_volume_ml": 1,
+    "label": "100 mg/ml drops",
+    "note": "For infants",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 125,
+    "per_volume_ml": null,
+    "label": "125 mg dispersible",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg dispersible",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg capsule",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "amoxicillin-clavulanate",
+  "name": "Amoxicillin + Clavulanate",
+  "aliases": [
+   "amoxycillin + clavulanic acid",
+   "amoxicillin + clavulanate potassium",
+   "co-amoxiclav",
+   "augmentin",
+   "augmentin duo",
+   "clavam",
+   "moxikind-cv",
+   "mega-cv"
+  ],
+  "components": "amoxicillin+clavulanic acid",
+  "category": "Antibiotic (penicillin + beta-lactamase inhibitor)",
+  "indication": "Resistant ear, sinus, chest, skin, urine infections",
+  "all_indications": [
+   "Otitis media",
+   "Sinusitis",
+   "Pneumonia",
+   "Skin and soft tissue infection",
+   "Urinary tract infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 25,
+  "dose_typ": 45,
+  "dose_max": 90,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 1750,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 3,
+  "bands": null,
+  "duration": "5-7 days",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give at the start of a meal to reduce stomach upset",
+  "side_effects": [
+   "Diarrhoea",
+   "Nausea",
+   "Rash",
+   "Cholestatic jaundice (rare)"
+  ],
+  "contraindications": [
+   "Penicillin allergy",
+   "Previous amoxicillin-clavulanate jaundice"
+  ],
+  "warnings": [
+   "Dose by the amoxicillin component, not the total label strength",
+   "Use a 7:1 or 14:1 product for higher doses to limit clavulanate-related diarrhoea"
+  ],
+  "interactions": [
+   "Methotrexate",
+   "Warfarin",
+   "Allopurinol (rash)"
+  ],
+  "brands": [
+   "Augmentin",
+   "Clavam",
+   "Moxikind-CV",
+   "Mega-CV"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "25-45 mg/kg/day (as amoxicillin) in divided doses every 12 hours.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200/28.5 mg per 5 ml dry syrup (Duo)",
+    "note": "Dose by the AMOXICILLIN component",
+    "strength_total": 228.5
+   },
+   {
+    "form_type": "syrup",
+    "strength": 400,
+    "per_volume_ml": 5,
+    "label": "400/57 mg per 5 ml dry syrup (Duo forte)",
+    "note": "Dose by the AMOXICILLIN component",
+    "strength_total": 457
+   },
+   {
+    "form_type": "syrup",
+    "strength": 600,
+    "per_volume_ml": 5,
+    "label": "600/42.9 mg per 5 ml (ES)",
+    "note": "High-dose; dose by the AMOXICILLIN component",
+    "strength_total": 642.9
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "375 mg tablet (250/125)",
+    "note": "Dose by amoxicillin",
+    "strength_total": 375
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "625 mg tablet (500/125)",
+    "note": "Dose by amoxicillin",
+    "strength_total": 625
+   }
+  ]
+ },
+ {
+  "slug": "cefalexin",
+  "name": "Cefalexin",
+  "aliases": [
+   "cephalexin",
+   "sporidex",
+   "phexin"
+  ],
+  "components": "cefalexin",
+  "category": "Antibiotic (1st-gen cephalosporin)",
+  "indication": "Skin, throat, bone and urinary infections",
+  "all_indications": [
+   "Skin and soft tissue infection",
+   "Pharyngitis",
+   "Urinary tract infection",
+   "Bone and joint infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 25,
+  "dose_typ": 50,
+  "dose_max": 100,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 4000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-7 days",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "With or without food",
+  "side_effects": [
+   "Diarrhoea",
+   "Rash",
+   "Nausea"
+  ],
+  "contraindications": [
+   "Cephalosporin allergy"
+  ],
+  "warnings": [
+   "Caution in penicillin allergy"
+  ],
+  "interactions": [
+   "Probenecid",
+   "Metformin"
+  ],
+  "brands": [
+   "Sporidex",
+   "Phexin"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "25-50 mg/kg/day in divided doses.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 250,
+    "per_volume_ml": 5,
+    "label": "250 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg capsule",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "cefadroxil",
+  "name": "Cefadroxil",
+  "aliases": [
+   "cefadroxyl",
+   "droxyl"
+  ],
+  "components": "cefadroxil",
+  "category": "Antibiotic (1st-gen cephalosporin)",
+  "indication": "Skin, throat, urinary infections",
+  "all_indications": [
+   "Skin and soft tissue infection",
+   "Pharyngitis",
+   "Urinary tract infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 30,
+  "dose_typ": 30,
+  "dose_max": 50,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 2000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-10 days",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 50",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Diarrhoea",
+   "Rash"
+  ],
+  "contraindications": [
+   "Cephalosporin allergy"
+  ],
+  "warnings": [
+   "Caution in penicillin allergy"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "30 mg/kg/day in two divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 250,
+    "per_volume_ml": 5,
+    "label": "250 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 125,
+    "per_volume_ml": null,
+    "label": "125 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg capsule",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "cefixime",
+  "name": "Cefixime",
+  "aliases": [
+   "zifi",
+   "taxim-o",
+   "mahacef",
+   "cefolac"
+  ],
+  "components": "cefixime",
+  "category": "Antibiotic (3rd-gen cephalosporin)",
+  "indication": "Respiratory, urinary, typhoid and ENT infections",
+  "all_indications": [
+   "Urinary tract infection",
+   "Typhoid",
+   "Pharyngitis",
+   "Otitis media",
+   "Pneumonia"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 8,
+  "dose_typ": 8,
+  "dose_max": 10,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 400,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-7 days (typhoid 10-14 days)",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 20",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "With or without food",
+  "side_effects": [
+   "Diarrhoea",
+   "Abdominal pain",
+   "Rash"
+  ],
+  "contraindications": [
+   "Cephalosporin allergy"
+  ],
+  "warnings": [
+   "Caution in penicillin allergy"
+  ],
+  "interactions": [
+   "Carbamazepine",
+   "Warfarin"
+  ],
+  "brands": [
+   "Zifi",
+   "Taxim-O",
+   "Mahacef",
+   "Cefolac"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "8 mg/kg/day divided every 12 hours.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml dry syrup",
+    "note": "Reconstitute with boiled, cooled water",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 50,
+    "per_volume_ml": 5,
+    "label": "50 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 50,
+    "per_volume_ml": null,
+    "label": "50 mg dispersible",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg dispersible",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "cefpodoxime",
+  "name": "Cefpodoxime",
+  "aliases": [
+   "cepodem",
+   "doxcef",
+   "cefpodoxime proxetil"
+  ],
+  "components": "cefpodoxime",
+  "category": "Antibiotic (3rd-gen cephalosporin)",
+  "indication": "Respiratory, ENT, urinary and skin infections",
+  "all_indications": [
+   "Pharyngitis",
+   "Otitis media",
+   "Pneumonia",
+   "Urinary tract infection",
+   "Skin infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 8,
+  "dose_typ": 10,
+  "dose_max": 10,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 400,
+  "min_age_months": 2,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-10 days",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Diarrhoea",
+   "Nausea",
+   "Rash"
+  ],
+  "contraindications": [
+   "Cephalosporin allergy"
+  ],
+  "warnings": [
+   "Caution in penicillin allergy"
+  ],
+  "interactions": [
+   "Antacids / H2 blockers reduce absorption"
+  ],
+  "brands": [
+   "Cepodem",
+   "Doxcef"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "10 mg/kg/day in two divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 50,
+    "per_volume_ml": 5,
+    "label": "50 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 50,
+    "per_volume_ml": null,
+    "label": "50 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "cefuroxime",
+  "name": "Cefuroxime",
+  "aliases": [
+   "cefuroxime axetil",
+   "ceftum",
+   "zocef"
+  ],
+  "components": "cefuroxime",
+  "category": "Antibiotic (2nd-gen cephalosporin)",
+  "indication": "Respiratory, ENT, skin and urinary infections",
+  "all_indications": [
+   "Otitis media",
+   "Pharyngitis",
+   "Pneumonia",
+   "Urinary tract infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 20,
+  "dose_typ": 30,
+  "dose_max": 30,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 1000,
+  "min_age_months": 3,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-10 days",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food (improves absorption)",
+  "side_effects": [
+   "Diarrhoea",
+   "Nausea",
+   "Rash"
+  ],
+  "contraindications": [
+   "Cephalosporin allergy"
+  ],
+  "warnings": [
+   "Caution in penicillin allergy"
+  ],
+  "interactions": [
+   "Antacids reduce absorption"
+  ],
+  "brands": [
+   "Ceftum",
+   "Zocef"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "20-30 mg/kg/day in two divided doses with food.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 125,
+    "per_volume_ml": null,
+    "label": "125 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "azithromycin",
+  "name": "Azithromycin",
+  "aliases": [
+   "azithral",
+   "zithrox",
+   "azee"
+  ],
+  "components": "azithromycin",
+  "category": "Antibiotic (macrolide)",
+  "indication": "Respiratory, throat, ear, enteric and atypical infections",
+  "all_indications": [
+   "Pharyngitis",
+   "Community-acquired pneumonia",
+   "Otitis media",
+   "Typhoid (alternative)",
+   "Pertussis",
+   "Scrub typhus / atypical pathogens"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 10,
+  "dose_typ": 10,
+  "dose_max": 12,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 500,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "3 days (5 days for some indications)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Caution in hepatic impairment",
+  "neonatal_note": "",
+  "food_note": "Suspension may be given with or without food",
+  "side_effects": [
+   "Nausea",
+   "Diarrhoea",
+   "Abdominal pain",
+   "QT prolongation (rare)"
+  ],
+  "contraindications": [
+   "Macrolide allergy",
+   "Known QT prolongation"
+  ],
+  "warnings": [
+   "Once daily; complete the course",
+   "Antacids: separate by 2 hours"
+  ],
+  "interactions": [
+   "Antacids",
+   "Warfarin",
+   "Drugs that prolong QT"
+  ],
+  "brands": [
+   "Azithral",
+   "Zithrox",
+   "Azee"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "10 mg/kg/day once daily for 3 days.",
+  "verified": 1,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml suspension",
+    "note": "Shake well",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200 mg/5 ml suspension",
+    "note": "Shake well",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "clarithromycin",
+  "name": "Clarithromycin",
+  "aliases": [
+   "claribid",
+   "klacid"
+  ],
+  "components": "clarithromycin",
+  "category": "Antibiotic (macrolide)",
+  "indication": "Respiratory and skin infections",
+  "all_indications": [
+   "Pharyngitis",
+   "Pneumonia",
+   "Sinusitis",
+   "Skin infection",
+   "H. pylori (combination)"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 15,
+  "dose_typ": 15,
+  "dose_max": 15,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 1000,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-10 days",
+  "route": "Oral",
+  "renal_note": "Halve the dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Taste disturbance",
+   "Nausea",
+   "QT prolongation"
+  ],
+  "contraindications": [
+   "Macrolide allergy",
+   "QT prolongation"
+  ],
+  "warnings": [
+   "Many drug interactions (CYP3A4)"
+  ],
+  "interactions": [
+   "Carbamazepine",
+   "Theophylline",
+   "Statins",
+   "Warfarin"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "7.5 mg/kg/dose twice daily.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 250,
+    "per_volume_ml": 5,
+    "label": "250 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "erythromycin",
+  "name": "Erythromycin",
+  "aliases": [
+   "erythrocin",
+   "erythromycin ethylsuccinate",
+   "erythromycin estolate"
+  ],
+  "components": "erythromycin",
+  "category": "Antibiotic (macrolide)",
+  "indication": "Penicillin-allergic respiratory / skin infections, pertussis",
+  "all_indications": [
+   "Pertussis",
+   "Pharyngitis (penicillin allergy)",
+   "Skin infection"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 30,
+  "dose_typ": 40,
+  "dose_max": 50,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 2000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "7-14 days",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Avoid estolate in liver disease",
+  "neonatal_note": "",
+  "food_note": "Give after food",
+  "side_effects": [
+   "Nausea",
+   "Vomiting",
+   "Abdominal cramps",
+   "Infantile hypertrophic pyloric stenosis in neonates"
+  ],
+  "contraindications": [
+   "Macrolide allergy"
+  ],
+  "warnings": [
+   "Avoid in neonates unless essential"
+  ],
+  "interactions": [
+   "Theophylline",
+   "Carbamazepine",
+   "Warfarin",
+   "Statins"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "30-50 mg/kg/day in divided doses every 6 hours.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200 mg/5 ml (ethylsuccinate)",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "cloxacillin",
+  "name": "Cloxacillin",
+  "aliases": [
+   "cloxacillin sodium",
+   "cloxin",
+   "staphylococcal penicillin"
+  ],
+  "components": "cloxacillin",
+  "category": "Antibiotic (anti-staphylococcal penicillin)",
+  "indication": "Staphylococcal skin and soft tissue infections",
+  "all_indications": [
+   "Impetigo",
+   "Cellulitis",
+   "Boils / abscess",
+   "Staphylococcal infections"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 50,
+  "dose_typ": 50,
+  "dose_max": 100,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 2000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "7-10 days",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give on an empty stomach (1 hour before food)",
+  "side_effects": [
+   "Diarrhoea",
+   "Rash",
+   "Hepatitis (rare)"
+  ],
+  "contraindications": [
+   "Penicillin allergy"
+  ],
+  "warnings": [
+   "Take on an empty stomach for best absorption"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "50-100 mg/kg/day in 4 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "capsule",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 125,
+    "per_volume_ml": 5,
+    "label": "125 mg/5 ml dry syrup",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "co-trimoxazole",
+  "name": "Co-trimoxazole (TMP-SMX)",
+  "aliases": [
+   "trimethoprim + sulfamethoxazole",
+   "sulfamethoxazole + trimethoprim",
+   "trimethoprim + sulphamethoxazole",
+   "cotrimoxazole",
+   "tmp-smx",
+   "septran",
+   "bactrim"
+  ],
+  "components": "sulfamethoxazole+trimethoprim",
+  "category": "Antibiotic (sulphonamide combination)",
+  "indication": "Urinary tract infection, Pneumocystis prophylaxis",
+  "all_indications": [
+   "Urinary tract infection",
+   "Pneumocystis prophylaxis",
+   "Shigellosis",
+   "Chronic suppurative otitis media"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 6,
+  "dose_typ": 8,
+  "dose_max": 12,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 320,
+  "min_age_months": 2,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-7 days (UTI)",
+  "route": "Oral",
+  "renal_note": "Halve the dose if GFR 15-30; avoid if < 15",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "With plenty of fluids",
+  "side_effects": [
+   "Rash",
+   "Nausea",
+   "Hyperkalaemia",
+   "Stevens-Johnson syndrome (rare)"
+  ],
+  "contraindications": [
+   "Age < 6 weeks",
+   "G6PD deficiency",
+   "Sulpha allergy",
+   "Severe renal/hepatic disease"
+  ],
+  "warnings": [
+   "Dose by the TRIMETHOPRIM component",
+   "Stop at the first sign of rash"
+  ],
+  "interactions": [
+   "Warfarin",
+   "Phenytoin",
+   "Methotrexate",
+   "ACE inhibitors"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Trimethoprim 6-12 mg/kg/day in two divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 40,
+    "per_volume_ml": 5,
+    "label": "40 mg TMP + 200 mg SMX per 5 ml",
+    "note": "Dose by the TRIMETHOPRIM component",
+    "strength_total": 240
+   },
+   {
+    "form_type": "tablet",
+    "strength": 80,
+    "per_volume_ml": null,
+    "label": "80 mg TMP + 400 mg SMX tablet (SS)",
+    "note": "Dose by trimethoprim",
+    "strength_total": 480
+   },
+   {
+    "form_type": "tablet",
+    "strength": 160,
+    "per_volume_ml": null,
+    "label": "160 mg TMP + 800 mg SMX tablet (DS)",
+    "note": "Dose by trimethoprim",
+    "strength_total": 960
+   }
+  ]
+ },
+ {
+  "slug": "metronidazole",
+  "name": "Metronidazole",
+  "aliases": [
+   "metrogyl",
+   "flagyl"
+  ],
+  "components": "metronidazole",
+  "category": "Antiprotozoal / antibacterial",
+  "indication": "Amoebiasis, giardiasis, anaerobic infections",
+  "all_indications": [
+   "Amoebic dysentery",
+   "Giardiasis",
+   "Anaerobic infections",
+   "Dental infections"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 22.5,
+  "dose_typ": 30,
+  "dose_max": 50,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 1200,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-7 days (amoebiasis 7-10 days)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Reduce dose in severe hepatic impairment",
+  "neonatal_note": "15 mg/kg/day in 2 doses",
+  "food_note": "Give after food",
+  "side_effects": [
+   "Metallic taste",
+   "Nausea",
+   "Peripheral neuropathy on long courses"
+  ],
+  "contraindications": [
+   "Hypersensitivity to nitroimidazoles"
+  ],
+  "warnings": [
+   "Avoid alcohol in adolescents"
+  ],
+  "interactions": [
+   "Warfarin",
+   "Phenytoin",
+   "Alcohol (disulfiram-like)"
+  ],
+  "brands": [
+   "Metrogyl",
+   "Flagyl"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "22.5-40 mg/kg/day in three divided doses; up to 50 mg/kg/day for amoebiasis.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200 mg/5 ml suspension (benzoate)",
+    "note": "Check the label: some brands state the benzoate salt",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 400,
+    "per_volume_ml": null,
+    "label": "400 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "nitrofurantoin",
+  "name": "Nitrofurantoin",
+  "aliases": [
+   "furadantin",
+   "nitrofurantoin macrocrystals"
+  ],
+  "components": "nitrofurantoin",
+  "category": "Urinary antiseptic",
+  "indication": "Lower urinary tract infection; prophylaxis",
+  "all_indications": [
+   "Cystitis",
+   "UTI prophylaxis"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 5,
+  "dose_typ": 5,
+  "dose_max": 7,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 400,
+  "min_age_months": 3,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5-7 days (prophylaxis: 1-2 mg/kg once at night)",
+  "route": "Oral",
+  "renal_note": "Avoid if GFR < 45",
+  "hepatic_note": "Caution",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Nausea",
+   "Vomiting",
+   "Pulmonary reactions (rare)"
+  ],
+  "contraindications": [
+   "Age < 3 months",
+   "G6PD deficiency",
+   "Renal impairment"
+  ],
+  "warnings": [
+   "Not for pyelonephritis / systemic infection"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "5-7 mg/kg/day in 4 divided doses for treatment.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 25,
+    "per_volume_ml": 5,
+    "label": "25 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 50,
+    "per_volume_ml": null,
+    "label": "50 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg capsule",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "linezolid",
+  "name": "Linezolid",
+  "aliases": [
+   "zyvox",
+   "linox"
+  ],
+  "components": "linezolid",
+  "category": "Antibiotic (oxazolidinone)",
+  "indication": "Resistant gram-positive infections (specialist use)",
+  "all_indications": [
+   "MRSA / VRE infection",
+   "Resistant pneumonia",
+   "Skin infection"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 10,
+  "dose_typ": 10,
+  "dose_max": 10,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 600,
+  "max_daily": 1200,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "As per culture / specialist",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Myelosuppression",
+   "Diarrhoea",
+   "Headache"
+  ],
+  "contraindications": [
+   "Use with MAO inhibitors"
+  ],
+  "warnings": [
+   "Specialist / culture-guided use; monitor blood counts if > 10-14 days",
+   "Age 12 y and over: 600 mg twice daily"
+  ],
+  "interactions": [
+   "SSRIs",
+   "MAO inhibitors",
+   "Pseudoephedrine"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "10 mg/kg/dose every 8 hours up to age 12 years.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 600,
+    "per_volume_ml": null,
+    "label": "600 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "doxycycline",
+  "name": "Doxycycline",
+  "aliases": [
+   "doxy",
+   "doxt"
+  ],
+  "components": "doxycycline",
+  "category": "Antibiotic (tetracycline)",
+  "indication": "Scrub typhus, rickettsial, atypical and acne infections (age 8 y and over)",
+  "all_indications": [
+   "Scrub typhus",
+   "Rickettsial infection",
+   "Leptospirosis",
+   "Acne",
+   "Cholera"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 2,
+  "dose_typ": 4,
+  "dose_max": 4,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 200,
+  "min_age_months": 96,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "7-10 days (scrub typhus 5-7 days)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with a full glass of water; avoid dairy / antacids within 2 hours",
+  "side_effects": [
+   "Nausea",
+   "Oesophagitis",
+   "Photosensitivity",
+   "Tooth discolouration < 8 years"
+  ],
+  "contraindications": [
+   "Age under 8 years (except severe rickettsial disease)",
+   "Pregnancy"
+  ],
+  "warnings": [
+   "Take upright with water",
+   "Avoid sun exposure"
+  ],
+  "interactions": [
+   "Antacids",
+   "Iron",
+   "Calcium",
+   "Isotretinoin"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "2-4 mg/kg/day in two divided doses (max 200 mg/day).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "capsule",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 50,
+    "per_volume_ml": 5,
+    "label": "50 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "albendazole",
+  "name": "Albendazole",
+  "aliases": [
+   "zentel",
+   "bandy",
+   "alben"
+  ],
+  "components": "albendazole",
+  "category": "Anthelmintic",
+  "indication": "Roundworm, hookworm, whipworm, threadworm, giardia",
+  "all_indications": [
+   "Ascariasis",
+   "Hookworm",
+   "Trichuriasis",
+   "Enterobiasis",
+   "Giardiasis"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 12,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 12,
+    "max_age_m": 23,
+    "dose": 200,
+    "n": 1
+   },
+   {
+    "min_age_m": 24,
+    "max_age_m": 216,
+    "dose": 400,
+    "n": 1
+   }
+  ],
+  "duration": "Single dose; repeat after 2 weeks if needed",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Caution in hepatic impairment",
+  "neonatal_note": "",
+  "food_note": "Give with a fatty meal",
+  "side_effects": [
+   "Abdominal pain",
+   "Headache",
+   "Raised liver enzymes"
+  ],
+  "contraindications": [
+   "Age < 1 year",
+   "Pregnancy"
+  ],
+  "warnings": [
+   "Not recommended under 1 year",
+   "Repeat after 2 weeks for heavy infection"
+  ],
+  "interactions": [],
+  "brands": [
+   "Zentel",
+   "Bandy"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "200 mg for 1-2 years; 400 mg for 2 years and above.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200 mg/5 ml suspension",
+    "note": "Shake well",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 400,
+    "per_volume_ml": null,
+    "label": "400 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "chewable",
+    "strength": 400,
+    "per_volume_ml": null,
+    "label": "400 mg chewable",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "mebendazole",
+  "name": "Mebendazole",
+  "aliases": [
+   "vermox",
+   "wormin"
+  ],
+  "components": "mebendazole",
+  "category": "Anthelmintic",
+  "indication": "Roundworm, whipworm, hookworm, threadworm",
+  "all_indications": [
+   "Ascariasis",
+   "Trichuriasis",
+   "Enterobiasis",
+   "Hookworm"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 2,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 24,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 24,
+    "max_age_m": 216,
+    "dose": 100,
+    "n": 2
+   }
+  ],
+  "duration": "3 days (100 mg twice daily); or 500 mg once",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Abdominal pain",
+   "Diarrhoea"
+  ],
+  "contraindications": [
+   "Age < 2 years"
+  ],
+  "warnings": [
+   "Not recommended under 2 years"
+  ],
+  "interactions": [],
+  "brands": [
+   "Vermox",
+   "Wormin"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "100 mg twice daily for 3 days, or 500 mg as a single dose.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "chewable",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg chewable",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "chewable",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg chewable",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "ivermectin",
+  "name": "Ivermectin",
+  "aliases": [
+   "iverheal",
+   "ivecop",
+   "scabioral"
+  ],
+  "components": "ivermectin",
+  "category": "Antiparasitic",
+  "indication": "Scabies, strongyloidiasis",
+  "all_indications": [
+   "Scabies",
+   "Strongyloidiasis",
+   "Pediculosis"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 0.2,
+  "dose_typ": 0.2,
+  "dose_max": 0.2,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 15,
+  "bands": null,
+  "duration": "Single dose; repeat after 7-14 days for scabies",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give on an empty stomach with water",
+  "side_effects": [
+   "Itching (dead mites)",
+   "Dizziness",
+   "Nausea"
+  ],
+  "contraindications": [
+   "Weight < 15 kg"
+  ],
+  "warnings": [
+   "Not for children under 15 kg",
+   "Treat close contacts"
+  ],
+  "interactions": [],
+  "brands": [
+   "Iverheal",
+   "Scabioral"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.2 mg/kg (200 mcg/kg) as a single dose.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 3,
+    "per_volume_ml": null,
+    "label": "3 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 6,
+    "per_volume_ml": null,
+    "label": "6 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 12,
+    "per_volume_ml": null,
+    "label": "12 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "nitazoxanide",
+  "name": "Nitazoxanide",
+  "aliases": [
+   "nitazox",
+   "alinia"
+  ],
+  "components": "nitazoxanide",
+  "category": "Antiprotozoal",
+  "indication": "Giardiasis, amoebiasis, cryptosporidiosis",
+  "all_indications": [
+   "Giardiasis",
+   "Amoebiasis",
+   "Cryptosporidiosis",
+   "Infectious diarrhoea"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 2,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 12,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 12,
+    "max_age_m": 47,
+    "dose": 100,
+    "n": 2
+   },
+   {
+    "min_age_m": 48,
+    "max_age_m": 143,
+    "dose": 200,
+    "n": 2
+   },
+   {
+    "min_age_m": 144,
+    "max_age_m": 216,
+    "dose": 500,
+    "n": 2
+   }
+  ],
+  "duration": "3 days",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Abdominal pain",
+   "Nausea",
+   "Yellow discolouration of urine"
+  ],
+  "contraindications": [
+   "Age < 1 year"
+  ],
+  "warnings": [],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1-3 y: 100 mg; 4-11 y: 200 mg; 12 y and above: 500 mg, twice daily for 3 days.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml suspension",
+    "note": "Shake well",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "tinidazole",
+  "name": "Tinidazole",
+  "aliases": [
+   "tiniba",
+   "fasigyn"
+  ],
+  "components": "tinidazole",
+  "category": "Antiprotozoal",
+  "indication": "Giardiasis, amoebiasis",
+  "all_indications": [
+   "Giardiasis",
+   "Amoebiasis",
+   "Bacterial vaginosis"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 50,
+  "dose_typ": 50,
+  "dose_max": 50,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": 2000,
+  "max_daily": null,
+  "min_age_months": 36,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Single dose (amoebiasis: 3 days)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Metallic taste",
+   "Nausea"
+  ],
+  "contraindications": [
+   "Age < 3 years",
+   "First trimester of pregnancy"
+  ],
+  "warnings": [
+   "Avoid alcohol"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "50 mg/kg as a single dose (max 2 g).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 300,
+    "per_volume_ml": null,
+    "label": "300 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 1000,
+    "per_volume_ml": null,
+    "label": "1000 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "fluconazole",
+  "name": "Fluconazole",
+  "aliases": [
+   "forcan",
+   "zocon",
+   "syscan"
+  ],
+  "components": "fluconazole",
+  "category": "Antifungal",
+  "indication": "Candidiasis, tinea (selected), cryptococcal infection",
+  "all_indications": [
+   "Oral candidiasis",
+   "Oesophageal candidiasis",
+   "Tinea capitis (alternative)",
+   "Cryptococcal meningitis"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 3,
+  "dose_typ": 3,
+  "dose_max": 6,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 400,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "7-14 days (oral candidiasis)",
+  "route": "Oral",
+  "renal_note": "Halve the dose if GFR < 50",
+  "hepatic_note": "Caution",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Nausea",
+   "Headache",
+   "Raised liver enzymes",
+   "QT prolongation (rare)"
+  ],
+  "contraindications": [
+   "Concurrent QT-prolonging drugs"
+  ],
+  "warnings": [
+   "6 mg/kg on day 1, then 3 mg/kg/day is common for oral candidiasis"
+  ],
+  "interactions": [
+   "Warfarin",
+   "Phenytoin",
+   "Statins",
+   "QT-prolonging drugs"
+  ],
+  "brands": [
+   "Forcan",
+   "Zocon"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "3-6 mg/kg once daily.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 50,
+    "per_volume_ml": 5,
+    "label": "50 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 50,
+    "per_volume_ml": null,
+    "label": "50 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 150,
+    "per_volume_ml": null,
+    "label": "150 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "griseofulvin",
+  "name": "Griseofulvin",
+  "aliases": [
+   "grisovin",
+   "griseofulvin microsize"
+  ],
+  "components": "griseofulvin",
+  "category": "Antifungal",
+  "indication": "Tinea capitis and extensive dermatophyte infections",
+  "all_indications": [
+   "Tinea capitis",
+   "Tinea corporis (extensive)"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 10,
+  "dose_typ": 10,
+  "dose_max": 20,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 1000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "6-8 weeks (tinea capitis)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with a fatty meal",
+  "side_effects": [
+   "Headache",
+   "Nausea",
+   "Photosensitivity",
+   "Rash"
+  ],
+  "contraindications": [
+   "Hepatic disease",
+   "Porphyria"
+  ],
+  "warnings": [
+   "Long course; check liver enzymes if prolonged"
+  ],
+  "interactions": [
+   "Warfarin",
+   "Oral contraceptives"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "10 mg/kg/day (microsize) once daily or in 2 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 125,
+    "per_volume_ml": null,
+    "label": "125 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "salbutamol",
+  "name": "Salbutamol (oral)",
+  "aliases": [
+   "albuterol",
+   "asthalin",
+   "ventolin"
+  ],
+  "components": "salbutamol",
+  "category": "Bronchodilator",
+  "indication": "Wheeze, asthma, bronchospasm",
+  "all_indications": [
+   "Asthma",
+   "Wheezing",
+   "Bronchiolitis (selected)"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 0.1,
+  "dose_typ": 0.1,
+  "dose_max": 0.15,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 4,
+  "max_daily": 12,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "3-5 days, review",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Tremor",
+   "Tachycardia",
+   "Hypokalaemia",
+   "Irritability"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Inhaled route (MDI with spacer / nebuliser) is preferred in acute asthma"
+  ],
+  "interactions": [
+   "Beta-blockers",
+   "Steroids / diuretics (low potassium)"
+  ],
+  "brands": [
+   "Asthalin",
+   "Ventolin"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.1-0.15 mg/kg/dose three times a day.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 2,
+    "per_volume_ml": 5,
+    "label": "2 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 2,
+    "per_volume_ml": null,
+    "label": "2 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 4,
+    "per_volume_ml": null,
+    "label": "4 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "montelukast",
+  "name": "Montelukast",
+  "aliases": [
+   "singulair",
+   "montair",
+   "montek"
+  ],
+  "components": "montelukast",
+  "category": "Leukotriene antagonist",
+  "indication": "Allergic rhinitis, asthma prophylaxis",
+  "all_indications": [
+   "Asthma prophylaxis",
+   "Allergic rhinitis",
+   "Exercise-induced bronchoconstriction"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 6,
+    "max_age_m": 71,
+    "dose": 4,
+    "n": 1
+   },
+   {
+    "min_age_m": 72,
+    "max_age_m": 179,
+    "dose": 5,
+    "n": 1
+   },
+   {
+    "min_age_m": 180,
+    "max_age_m": 216,
+    "dose": 10,
+    "n": 1
+   }
+  ],
+  "duration": "As per condition (usually weeks)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give in the evening",
+  "side_effects": [
+   "Headache",
+   "Abdominal pain",
+   "Sleep disturbance / behaviour changes"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Report mood or behaviour changes",
+   "Not for acute attacks"
+  ],
+  "interactions": [],
+  "brands": [
+   "Montair",
+   "Montek",
+   "Singulair"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "6 months-5 y: 4 mg; 6-14 y: 5 mg; 15 y and above: 10 mg, once daily in the evening.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "chewable",
+    "strength": 4,
+    "per_volume_ml": null,
+    "label": "4 mg chewable",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "chewable",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg chewable",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 4,
+    "per_volume_ml": 5,
+    "label": "4 mg/5 ml syrup / granules sachet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "prednisolone",
+  "name": "Prednisolone",
+  "aliases": [
+   "wysolone",
+   "omnacortil",
+   "predmet"
+  ],
+  "components": "prednisolone",
+  "category": "Corticosteroid",
+  "indication": "Asthma exacerbation, croup, allergic and inflammatory conditions",
+  "all_indications": [
+   "Acute asthma",
+   "Croup",
+   "Nephrotic syndrome (specialist)",
+   "Allergic reactions",
+   "Inflammatory conditions"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 0.5,
+  "dose_typ": 1,
+  "dose_max": 2,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 60,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "3-5 days for asthma (no taper needed if < 10 days)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food, in the morning",
+  "side_effects": [
+   "Increased appetite",
+   "Mood changes",
+   "Hyperglycaemia",
+   "Growth suppression on long courses"
+  ],
+  "contraindications": [
+   "Systemic fungal infection",
+   "Live vaccines on high doses"
+  ],
+  "warnings": [
+   "Do not stop abruptly after long courses",
+   "Watch for varicella exposure"
+  ],
+  "interactions": [
+   "NSAIDs",
+   "Anticonvulsants (reduce effect)",
+   "Diuretics"
+  ],
+  "brands": [
+   "Wysolone",
+   "Omnacortil"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1-2 mg/kg/day, usually a single morning dose (max 60 mg/day).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 5,
+    "per_volume_ml": 5,
+    "label": "5 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 15,
+    "per_volume_ml": 5,
+    "label": "15 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20 mg DT",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "dexamethasone",
+  "name": "Dexamethasone",
+  "aliases": [
+   "dexona",
+   "decdan"
+  ],
+  "components": "dexamethasone",
+  "category": "Corticosteroid",
+  "indication": "Croup, severe allergic / inflammatory conditions, cerebral oedema",
+  "all_indications": [
+   "Croup",
+   "Airway oedema",
+   "Allergic reaction",
+   "Bacterial meningitis adjunct"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 0.15,
+  "dose_typ": 0.15,
+  "dose_max": 0.6,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": 10,
+  "max_daily": null,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Single dose (croup); 1-3 days otherwise",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Hyperglycaemia",
+   "Mood changes",
+   "Gastric irritation"
+  ],
+  "contraindications": [
+   "Systemic infection without cover"
+  ],
+  "warnings": [
+   "Croup: a single 0.15-0.6 mg/kg dose is usually enough"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.15-0.6 mg/kg/dose.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 0.5,
+    "per_volume_ml": 5,
+    "label": "0.5 mg/5 ml elixir",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 0.5,
+    "per_volume_ml": null,
+    "label": "0.5 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 4,
+    "per_volume_ml": null,
+    "label": "4 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "ambroxol",
+  "name": "Ambroxol",
+  "aliases": [
+   "ambrodil",
+   "mucolite",
+   "ambroxol hydrochloride"
+  ],
+  "components": "ambroxol",
+  "category": "Mucolytic",
+  "indication": "Productive cough, thick mucus",
+  "all_indications": [
+   "Productive cough",
+   "Bronchitis"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 1.2,
+  "dose_typ": 1.2,
+  "dose_max": 1.6,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 90,
+  "min_age_months": 24,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5 days",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give after food",
+  "side_effects": [
+   "Nausea",
+   "Rash (rare)"
+  ],
+  "contraindications": [
+   "Age < 2 years (advised against)",
+   "Peptic ulcer"
+  ],
+  "warnings": [
+   "Cough and cold combinations are not recommended below 4 years"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1.2-1.6 mg/kg/day in 2-3 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 15,
+    "per_volume_ml": 5,
+    "label": "15 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 30,
+    "per_volume_ml": 5,
+    "label": "30 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 7.5,
+    "per_volume_ml": 1,
+    "label": "7.5 mg/ml drops",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 30,
+    "per_volume_ml": null,
+    "label": "30 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "cetirizine",
+  "name": "Cetirizine",
+  "aliases": [
+   "alerid",
+   "okacet",
+   "cetzine"
+  ],
+  "components": "cetirizine",
+  "category": "Antihistamine",
+  "indication": "Allergic rhinitis, urticaria, itching",
+  "all_indications": [
+   "Allergic rhinitis",
+   "Urticaria",
+   "Itching",
+   "Allergic conjunctivitis"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 6,
+    "max_age_m": 23,
+    "dose": 2.5,
+    "n": 1
+   },
+   {
+    "min_age_m": 24,
+    "max_age_m": 71,
+    "dose": 2.5,
+    "n": 2
+   },
+   {
+    "min_age_m": 72,
+    "max_age_m": 143,
+    "dose": 5,
+    "n": 2
+   },
+   {
+    "min_age_m": 144,
+    "max_age_m": 216,
+    "dose": 10,
+    "n": 1
+   }
+  ],
+  "duration": "As needed (3-7 days)",
+  "route": "Oral",
+  "renal_note": "Halve the dose if GFR < 30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Drowsiness",
+   "Dry mouth",
+   "Headache"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "May cause drowsiness"
+  ],
+  "interactions": [
+   "Alcohol / sedatives"
+  ],
+  "brands": [
+   "Alerid",
+   "Okacet"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "6-23 m: 2.5 mg once daily; 2-5 y: 2.5 mg twice daily; 6-11 y: 5 mg twice daily; 12 y and above: 10 mg once daily.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 5,
+    "per_volume_ml": 5,
+    "label": "5 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 10,
+    "per_volume_ml": 1,
+    "label": "10 mg/ml drops",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "levocetirizine",
+  "name": "Levocetirizine",
+  "aliases": [
+   "levocet",
+   "xyzal",
+   "teczine"
+  ],
+  "components": "levocetirizine",
+  "category": "Antihistamine",
+  "indication": "Allergic rhinitis, urticaria",
+  "all_indications": [
+   "Allergic rhinitis",
+   "Urticaria",
+   "Itching"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 6,
+    "max_age_m": 71,
+    "dose": 1.25,
+    "n": 1
+   },
+   {
+    "min_age_m": 72,
+    "max_age_m": 143,
+    "dose": 2.5,
+    "n": 1
+   },
+   {
+    "min_age_m": 144,
+    "max_age_m": 216,
+    "dose": 5,
+    "n": 1
+   }
+  ],
+  "duration": "As needed",
+  "route": "Oral",
+  "renal_note": "Avoid if GFR < 10",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give in the evening",
+  "side_effects": [
+   "Drowsiness",
+   "Dry mouth"
+  ],
+  "contraindications": [
+   "Hypersensitivity",
+   "Severe renal impairment"
+  ],
+  "warnings": [
+   "May cause drowsiness"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "6 m-5 y: 1.25 mg; 6-11 y: 2.5 mg; 12 y and above: 5 mg, once daily in the evening.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 2.5,
+    "per_volume_ml": 5,
+    "label": "2.5 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 2.5,
+    "per_volume_ml": null,
+    "label": "2.5 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "hydroxyzine",
+  "name": "Hydroxyzine",
+  "aliases": [
+   "atarax",
+   "hydroxyzine hydrochloride"
+  ],
+  "components": "hydroxyzine",
+  "category": "Antihistamine (sedating)",
+  "indication": "Itching, urticaria, anxiety, pre-medication",
+  "all_indications": [
+   "Itching",
+   "Urticaria",
+   "Allergic dermatitis"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 1,
+  "dose_typ": 2,
+  "dose_max": 2,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 100,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "As needed",
+  "route": "Oral",
+  "renal_note": "Reduce dose in renal impairment",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Drowsiness",
+   "Dry mouth",
+   "QT prolongation (rare)"
+  ],
+  "contraindications": [
+   "QT prolongation",
+   "Porphyria"
+  ],
+  "warnings": [
+   "Sedating; avoid driving / cycling"
+  ],
+  "interactions": [
+   "Sedatives",
+   "QT-prolonging drugs"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1-2 mg/kg/day in 3 divided doses (max 100 mg/day).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 10,
+    "per_volume_ml": 5,
+    "label": "10 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 25,
+    "per_volume_ml": null,
+    "label": "25 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "chlorpheniramine",
+  "name": "Chlorpheniramine",
+  "aliases": [
+   "chlorphenamine",
+   "cpm",
+   "piriton"
+  ],
+  "components": "chlorpheniramine",
+  "category": "Antihistamine (sedating)",
+  "indication": "Allergic rhinitis, urticaria, itching",
+  "all_indications": [
+   "Allergic rhinitis",
+   "Urticaria",
+   "Itching"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 0.35,
+  "dose_typ": 0.35,
+  "dose_max": 0.35,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": null,
+  "max_single": 4,
+  "max_daily": 12,
+  "min_age_months": 24,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "As needed (short course)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Drowsiness",
+   "Dry mouth",
+   "Paradoxical excitement"
+  ],
+  "contraindications": [
+   "Age < 2 years",
+   "Neonates"
+  ],
+  "warnings": [
+   "Avoid in infants",
+   "Combination cough / cold products are not recommended below 4 years"
+  ],
+  "interactions": [
+   "Sedatives",
+   "MAO inhibitors"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.35 mg/kg/day in divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 2,
+    "per_volume_ml": 5,
+    "label": "2 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 4,
+    "per_volume_ml": null,
+    "label": "4 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "ondansetron",
+  "name": "Ondansetron",
+  "aliases": [
+   "emeset",
+   "ondem",
+   "vomikind"
+  ],
+  "components": "ondansetron",
+  "category": "Antiemetic",
+  "indication": "Vomiting (gastroenteritis, chemotherapy, post-operative)",
+  "all_indications": [
+   "Acute gastroenteritis vomiting",
+   "Post-operative nausea",
+   "Chemotherapy-induced nausea"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 0.1,
+  "dose_typ": 0.15,
+  "dose_max": 0.15,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 8,
+  "max_daily": 24,
+  "min_age_months": 6,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "1-2 days",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Max 8 mg/day in severe hepatic impairment",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Headache",
+   "Constipation",
+   "QT prolongation"
+  ],
+  "contraindications": [
+   "Congenital long QT"
+  ],
+  "warnings": [
+   "Oral rehydration remains the mainstay"
+  ],
+  "interactions": [
+   "QT-prolonging drugs",
+   "Apomorphine"
+  ],
+  "brands": [
+   "Emeset",
+   "Ondem"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.15 mg/kg/dose up to three times a day (max 8 mg/dose).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 2,
+    "per_volume_ml": 5,
+    "label": "2 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 4,
+    "per_volume_ml": 5,
+    "label": "4 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 4,
+    "per_volume_ml": null,
+    "label": "4 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "mouth-dissolving",
+    "strength": 4,
+    "per_volume_ml": null,
+    "label": "4 mg MD tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "mouth-dissolving",
+    "strength": 8,
+    "per_volume_ml": null,
+    "label": "8 mg MD tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "domperidone",
+  "name": "Domperidone",
+  "aliases": [
+   "domstal",
+   "vomistop",
+   "motilium"
+  ],
+  "components": "domperidone",
+  "category": "Prokinetic / antiemetic",
+  "indication": "Nausea, vomiting, reflux",
+  "all_indications": [
+   "Nausea",
+   "Vomiting",
+   "Gastro-oesophageal reflux"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 0.25,
+  "dose_typ": 0.25,
+  "dose_max": 0.5,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 10,
+  "max_daily": 30,
+  "min_age_months": 12,
+  "max_age_months": 216,
+  "min_weight_kg": 15,
+  "bands": null,
+  "duration": "Short course (up to 1 week)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give 15-30 minutes before food",
+  "side_effects": [
+   "Dry mouth",
+   "Headache",
+   "QT prolongation"
+  ],
+  "contraindications": [
+   "Cardiac conduction disorders",
+   "GI bleeding / obstruction",
+   "Prolactinoma"
+  ],
+  "warnings": [
+   "Use at the lowest dose for the shortest time",
+   "Not recommended in infants"
+  ],
+  "interactions": [
+   "QT-prolonging drugs",
+   "Ketoconazole",
+   "Macrolides"
+  ],
+  "brands": [
+   "Domstal"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.25 mg/kg/dose up to three times a day (max 30 mg/day).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 5,
+    "per_volume_ml": 5,
+    "label": "5 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "omeprazole",
+  "name": "Omeprazole",
+  "aliases": [
+   "omez",
+   "ocid",
+   "prilosec"
+  ],
+  "components": "omeprazole",
+  "category": "Proton pump inhibitor",
+  "indication": "Gastro-oesophageal reflux, peptic ulcer, H. pylori",
+  "all_indications": [
+   "GERD",
+   "Peptic ulcer",
+   "H. pylori (combination)"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 0.7,
+  "dose_typ": 1,
+  "dose_max": 3.3,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 40,
+  "min_age_months": 12,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "4-8 weeks",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Reduce dose in severe hepatic impairment",
+  "neonatal_note": "",
+  "food_note": "Give 30 minutes before breakfast",
+  "side_effects": [
+   "Headache",
+   "Diarrhoea",
+   "Abdominal pain"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Do not crush capsules; open and mix pellets with soft food"
+  ],
+  "interactions": [
+   "Clopidogrel",
+   "Methotrexate",
+   "Phenytoin"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1 mg/kg/day once daily (max 40 mg).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "capsule",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 40,
+    "per_volume_ml": null,
+    "label": "40 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "sachet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg sachet",
+    "note": "Mix with water / juice",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "pantoprazole",
+  "name": "Pantoprazole",
+  "aliases": [
+   "pantocid",
+   "pan",
+   "pantop"
+  ],
+  "components": "pantoprazole",
+  "category": "Proton pump inhibitor",
+  "indication": "Reflux, gastritis, peptic ulcer",
+  "all_indications": [
+   "GERD",
+   "Gastritis",
+   "Peptic ulcer"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 0.5,
+  "dose_typ": 1,
+  "dose_max": 1,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 40,
+  "min_age_months": 60,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "4-8 weeks",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give 30 minutes before breakfast",
+  "side_effects": [
+   "Headache",
+   "Diarrhoea"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Swallow tablet whole"
+  ],
+  "interactions": [
+   "Clopidogrel",
+   "Warfarin"
+  ],
+  "brands": [
+   "Pantocid",
+   "Pan"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.5-1 mg/kg/day once daily (max 40 mg).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 40,
+    "per_volume_ml": null,
+    "label": "40 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "zinc-sulfate",
+  "name": "Zinc (elemental)",
+  "aliases": [
+   "zinc sulphate",
+   "zinc acetate",
+   "zinc gluconate",
+   "zincovit-z",
+   "zinconia",
+   "zinc"
+  ],
+  "components": "zinc",
+  "category": "Mineral supplement",
+  "indication": "Acute diarrhoea, zinc deficiency",
+  "all_indications": [
+   "Acute diarrhoea",
+   "Zinc deficiency",
+   "Malnutrition"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 0,
+    "max_age_m": 5,
+    "dose": 10,
+    "n": 1
+   },
+   {
+    "min_age_m": 6,
+    "max_age_m": 216,
+    "dose": 20,
+    "n": 1
+   }
+  ],
+  "duration": "14 days",
+  "route": "Oral",
+  "renal_note": "Caution in renal impairment",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Nausea",
+   "Vomiting",
+   "Metallic taste"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Give for the full 14 days even after the diarrhoea stops",
+   "Doses are elemental zinc"
+  ],
+  "interactions": [
+   "Iron and calcium (separate)",
+   "Quinolones / tetracyclines (separate)"
+  ],
+  "brands": [
+   "Zinconia",
+   "Zincovit-Z"
+  ],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Under 6 months: 10 mg/day; 6 months and above: 20 mg/day for 14 days.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "dispersible",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20 mg elemental dispersible tablet",
+    "note": "Dissolve in a little water / ORS",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 20,
+    "per_volume_ml": 5,
+    "label": "20 mg elemental/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 10,
+    "per_volume_ml": 1,
+    "label": "10 mg elemental/ml drops",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "racecadotril",
+  "name": "Racecadotril",
+  "aliases": [
+   "redotil",
+   "hidrasec"
+  ],
+  "components": "racecadotril",
+  "category": "Antidiarrhoeal (antisecretory)",
+  "indication": "Acute watery diarrhoea",
+  "all_indications": [
+   "Acute watery diarrhoea"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 1.5,
+  "dose_typ": 1.5,
+  "dose_max": 1.5,
+  "doses_per_day": 3,
+  "frequency_hours": 8,
+  "max_doses_per_day": null,
+  "max_single": 100,
+  "max_daily": null,
+  "min_age_months": 3,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Until 2 formed stools (max 7 days)",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Headache",
+   "Rash"
+  ],
+  "contraindications": [
+   "Hypersensitivity",
+   "Blood / mucus in stool"
+  ],
+  "warnings": [
+   "Always give with oral rehydration",
+   "Not for bloody diarrhoea"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1.5 mg/kg/dose three times a day.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "sachet",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg sachet (infants)",
+    "note": "Mix with food / water",
+    "strength_total": null
+   },
+   {
+    "form_type": "sachet",
+    "strength": 30,
+    "per_volume_ml": null,
+    "label": "30 mg sachet (children)",
+    "note": "Mix with food / water",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg capsule",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "lactulose",
+  "name": "Lactulose",
+  "aliases": [
+   "duphalac",
+   "looz",
+   "cremaffin"
+  ],
+  "components": "lactulose",
+  "category": "Osmotic laxative",
+  "indication": "Constipation",
+  "all_indications": [
+   "Constipation",
+   "Hepatic encephalopathy (specialist)"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "ml",
+  "dose_min": 1,
+  "dose_typ": 1.5,
+  "dose_max": 3,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 40,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Until stools are regular; wean gradually",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Flatulence",
+   "Abdominal cramps",
+   "Diarrhoea"
+  ],
+  "contraindications": [
+   "Galactosaemia",
+   "Intestinal obstruction"
+  ],
+  "warnings": [
+   "May take 24-48 hours to work",
+   "Reduce the dose if stools are loose"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "1-3 ml/kg/day in 1-2 divided doses (volume).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 10,
+    "per_volume_ml": 15,
+    "label": "10 g/15 ml solution",
+    "note": "Dose is the volume; label strength shown for reference",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "bisacodyl",
+  "name": "Bisacodyl",
+  "aliases": [
+   "dulcolax",
+   "bisacodyl suppository"
+  ],
+  "components": "bisacodyl",
+  "category": "Stimulant laxative",
+  "indication": "Short-term relief of constipation",
+  "all_indications": [
+   "Constipation"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": null,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 48,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 48,
+    "max_age_m": 119,
+    "dose": 5,
+    "n": 1
+   },
+   {
+    "min_age_m": 120,
+    "max_age_m": 216,
+    "dose": 5,
+    "n": 1
+   }
+  ],
+  "duration": "Short term only",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give at night",
+  "side_effects": [
+   "Abdominal cramps",
+   "Diarrhoea"
+  ],
+  "contraindications": [
+   "Intestinal obstruction",
+   "Age < 4 years"
+  ],
+  "warnings": [
+   "Do not use for long periods",
+   "Not for children under 4 years without advice"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "4-9 y: 5 mg; 10 y and above: 5-10 mg once daily at night.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg tablet",
+    "note": "Swallow whole",
+    "strength_total": null
+   },
+   {
+    "form_type": "suppository",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg suppository",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "suppository",
+    "strength": 10,
+    "per_volume_ml": null,
+    "label": "10 mg suppository",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "phenobarbitone",
+  "name": "Phenobarbitone",
+  "aliases": [
+   "phenobarbital",
+   "gardenal"
+  ],
+  "components": "phenobarbitone",
+  "category": "Anticonvulsant",
+  "indication": "Seizures",
+  "all_indications": [
+   "Generalised seizures",
+   "Neonatal seizures"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 3,
+  "dose_typ": 3,
+  "dose_max": 5,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 300,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Long term as advised",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Caution",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Sedation",
+   "Hyperactivity",
+   "Cognitive effects"
+  ],
+  "contraindications": [
+   "Porphyria",
+   "Severe respiratory depression"
+  ],
+  "warnings": [
+   "Do not stop abruptly",
+   "Specialist follow-up; monitor levels if needed"
+  ],
+  "interactions": [
+   "Many (enzyme inducer): valproate, warfarin, oral contraceptives"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "3-5 mg/kg/day maintenance (single or divided).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 15,
+    "per_volume_ml": null,
+    "label": "15 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 30,
+    "per_volume_ml": null,
+    "label": "30 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 60,
+    "per_volume_ml": null,
+    "label": "60 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 20,
+    "per_volume_ml": 5,
+    "label": "20 mg/5 ml elixir",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "sodium-valproate",
+  "name": "Sodium Valproate",
+  "aliases": [
+   "valproate",
+   "valproic acid",
+   "epilex",
+   "encorate",
+   "divalproex"
+  ],
+  "components": "valproate",
+  "category": "Anticonvulsant",
+  "indication": "Epilepsy",
+  "all_indications": [
+   "Generalised seizures",
+   "Absence seizures",
+   "Febrile seizure prophylaxis (selected)"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 20,
+  "dose_typ": 20,
+  "dose_max": 40,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 2500,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Long term as advised",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Avoid in hepatic disease",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Weight gain",
+   "Tremor",
+   "Hepatotoxicity",
+   "Pancreatitis",
+   "Thrombocytopenia"
+  ],
+  "contraindications": [
+   "Liver disease",
+   "Mitochondrial disorders",
+   "Age < 2 years (high-risk of liver toxicity)"
+  ],
+  "warnings": [
+   "Check liver function and platelets",
+   "Avoid in adolescent girls where possible (teratogenic)"
+  ],
+  "interactions": [
+   "Phenobarbitone",
+   "Carbamazepine",
+   "Aspirin",
+   "Lamotrigine"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "20-30 mg/kg/day in 2 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 300,
+    "per_volume_ml": null,
+    "label": "300 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "levetiracetam",
+  "name": "Levetiracetam",
+  "aliases": [
+   "levipil",
+   "keppra",
+   "levera"
+  ],
+  "components": "levetiracetam",
+  "category": "Anticonvulsant",
+  "indication": "Epilepsy",
+  "all_indications": [
+   "Focal seizures",
+   "Generalised seizures",
+   "Myoclonic seizures"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 20,
+  "dose_typ": 20,
+  "dose_max": 60,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 3000,
+  "min_age_months": 1,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Long term as advised",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 80",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Somnolence",
+   "Irritability / behaviour change",
+   "Dizziness"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Do not stop abruptly",
+   "Watch for mood / behaviour changes"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Start 10 mg/kg twice daily; maintenance 20-60 mg/kg/day in 2 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 500,
+    "per_volume_ml": 5,
+    "label": "500 mg/5 ml (100 mg/ml) oral solution",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 250,
+    "per_volume_ml": null,
+    "label": "250 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 500,
+    "per_volume_ml": null,
+    "label": "500 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 750,
+    "per_volume_ml": null,
+    "label": "750 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "carbamazepine",
+  "name": "Carbamazepine",
+  "aliases": [
+   "tegretol",
+   "mazetol",
+   "zen"
+  ],
+  "components": "carbamazepine",
+  "category": "Anticonvulsant",
+  "indication": "Focal seizures, trigeminal neuralgia",
+  "all_indications": [
+   "Focal seizures",
+   "Generalised tonic-clonic seizures"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 10,
+  "dose_typ": 10,
+  "dose_max": 20,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 1200,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Long term as advised",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "Avoid in hepatic disease",
+  "neonatal_note": "",
+  "food_note": "Give with food",
+  "side_effects": [
+   "Drowsiness",
+   "Dizziness",
+   "Rash",
+   "Hyponatraemia",
+   "Stevens-Johnson syndrome (HLA-B*1502)"
+  ],
+  "contraindications": [
+   "AV block",
+   "Bone marrow depression",
+   "Porphyria"
+  ],
+  "warnings": [
+   "Start low and titrate",
+   "Check HLA-B*1502 in at-risk populations"
+  ],
+  "interactions": [
+   "Macrolides",
+   "Valproate",
+   "Oral contraceptives"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "10-20 mg/kg/day in 2 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 100,
+    "per_volume_ml": 5,
+    "label": "100 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 400,
+    "per_volume_ml": null,
+    "label": "400 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "topiramate",
+  "name": "Topiramate",
+  "aliases": [
+   "topamac",
+   "topamax",
+   "topirol"
+  ],
+  "components": "topiramate",
+  "category": "Anticonvulsant",
+  "indication": "Epilepsy, migraine prophylaxis",
+  "all_indications": [
+   "Focal seizures",
+   "Generalised seizures",
+   "Migraine prophylaxis"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 1,
+  "dose_typ": 3,
+  "dose_max": 9,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 400,
+  "min_age_months": 24,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "Long term as advised",
+  "route": "Oral",
+  "renal_note": "Halve the dose if GFR < 70",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Drowsiness",
+   "Weight loss",
+   "Paraesthesia",
+   "Cognitive slowing",
+   "Kidney stones"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Titrate slowly",
+   "Maintain hydration"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Start 1-3 mg/kg/day; maintenance 5-9 mg/kg/day in 2 divided doses.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 25,
+    "per_volume_ml": null,
+    "label": "25 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 50,
+    "per_volume_ml": null,
+    "label": "50 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 15,
+    "per_volume_ml": null,
+    "label": "15 mg sprinkle capsule",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "vitamin-d3",
+  "name": "Vitamin D3 (Cholecalciferol)",
+  "aliases": [
+   "cholecalciferol",
+   "vitamin d",
+   "calcirol",
+   "d-rise",
+   "uprise-d3"
+  ],
+  "components": "cholecalciferol",
+  "category": "Vitamin",
+  "indication": "Rickets prevention and treatment",
+  "all_indications": [
+   "Rickets prevention",
+   "Vitamin D deficiency",
+   "Rickets treatment (higher doses)"
+  ],
+  "basis": "band",
+  "dose_unit": "IU",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 4000,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 0,
+    "max_age_m": 11,
+    "dose": 400,
+    "n": 1
+   },
+   {
+    "min_age_m": 12,
+    "max_age_m": 216,
+    "dose": 600,
+    "n": 1
+   }
+  ],
+  "duration": "Prophylaxis: ongoing; treatment: 6-12 weeks",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Hypercalcaemia on overdose"
+  ],
+  "contraindications": [
+   "Hypercalcaemia",
+   "Hypervitaminosis D"
+  ],
+  "warnings": [
+   "Prophylactic doses shown. Treatment (e.g. 2,000 IU/day for 6-12 weeks, or 60,000 IU weekly) is set by the doctor"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Prophylaxis: 400 IU/day under 1 year; 600 IU/day above.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "drops",
+    "strength": 400,
+    "per_volume_ml": 1,
+    "label": "400 IU/ml drops",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "drops",
+    "strength": 800,
+    "per_volume_ml": 1,
+    "label": "800 IU/ml drops",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 60000,
+    "per_volume_ml": 5,
+    "label": "60,000 IU/5 ml (weekly)",
+    "note": "Weekly treatment dose",
+    "strength_total": null
+   },
+   {
+    "form_type": "sachet",
+    "strength": 60000,
+    "per_volume_ml": null,
+    "label": "60,000 IU sachet (weekly)",
+    "note": "Weekly treatment dose",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "iron",
+  "name": "Ferrous Salts (elemental iron)",
+  "aliases": [
+   "ferrous sulphate",
+   "ferrous sulfate",
+   "ferrous ascorbate",
+   "ferrous fumarate",
+   "iron",
+   "ferrous bisglycinate",
+   "orofer",
+   "fer-in-sol"
+  ],
+  "components": "iron",
+  "category": "Mineral supplement",
+  "indication": "Iron deficiency anaemia",
+  "all_indications": [
+   "Iron deficiency anaemia",
+   "Iron supplementation"
+  ],
+  "basis": "per_kg_day",
+  "dose_unit": "mg",
+  "dose_min": 1,
+  "dose_typ": 3,
+  "dose_max": 6,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": 200,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "3 months, continue 1-3 months after haemoglobin normalises",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Between meals if tolerated; with vitamin C",
+  "side_effects": [
+   "Constipation",
+   "Dark stools",
+   "Nausea",
+   "Teeth staining (liquids)"
+  ],
+  "contraindications": [
+   "Haemochromatosis",
+   "Haemolytic anaemia"
+  ],
+  "warnings": [
+   "Doses are ELEMENTAL iron",
+   "Keep out of reach: iron overdose is dangerous in children"
+  ],
+  "interactions": [
+   "Antacids",
+   "Calcium",
+   "Tetracyclines",
+   "Levothyroxine"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Therapeutic 3 mg/kg/day elemental iron in 1-2 doses (prophylaxis 1-2 mg/kg/day).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "drops",
+    "strength": 25,
+    "per_volume_ml": 1,
+    "label": "25 mg elemental iron/ml drops",
+    "note": "Doses are elemental iron",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 50,
+    "per_volume_ml": 5,
+    "label": "50 mg elemental iron/5 ml syrup",
+    "note": "Doses are elemental iron",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 100,
+    "per_volume_ml": null,
+    "label": "100 mg elemental iron tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "folic-acid",
+  "name": "Folic Acid",
+  "aliases": [
+   "folate",
+   "folvite",
+   "folic acid 5 mg"
+  ],
+  "components": "folic acid",
+  "category": "Vitamin",
+  "indication": "Folate deficiency, haemolytic anaemia, supplementation",
+  "all_indications": [
+   "Folate deficiency anaemia",
+   "Haemolytic anaemia",
+   "Methotrexate rescue (specialist)"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 1,
+  "frequency_hours": 24,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "min_age_m": 0,
+    "max_age_m": 11,
+    "dose": 0.5,
+    "n": 1
+   },
+   {
+    "min_age_m": 12,
+    "max_age_m": 216,
+    "dose": 1,
+    "n": 1
+   }
+  ],
+  "duration": "4 months (deficiency); ongoing for haemolytic anaemia",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Rare: nausea, bloating"
+  ],
+  "contraindications": [
+   "Untreated vitamin B12 deficiency"
+  ],
+  "warnings": [
+   "Therapeutic doses for megaloblastic anaemia are higher (5 mg/day); the figures shown are supplementation doses"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "0.5 mg/day under 1 year; 1 mg/day above (supplementation).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 5,
+    "per_volume_ml": null,
+    "label": "5 mg tablet",
+    "note": "A 1 mg dose is one-fifth of a tablet: use a liquid / 1 mg product",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 1,
+    "per_volume_ml": 5,
+    "label": "1 mg/5 ml syrup",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "oseltamivir",
+  "name": "Oseltamivir",
+  "aliases": [
+   "tamiflu",
+   "fluvir",
+   "antiflu"
+  ],
+  "components": "oseltamivir",
+  "category": "Antiviral",
+  "indication": "Influenza treatment and prophylaxis",
+  "all_indications": [
+   "Influenza (treatment)",
+   "Influenza (post-exposure prophylaxis)"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": [
+   {
+    "max_wt": 15,
+    "dose": 30,
+    "n": 2
+   },
+   {
+    "min_wt": 15.01,
+    "max_wt": 23,
+    "dose": 45,
+    "n": 2
+   },
+   {
+    "min_wt": 23.01,
+    "max_wt": 40,
+    "dose": 60,
+    "n": 2
+   },
+   {
+    "min_wt": 40.01,
+    "dose": 75,
+    "n": 2
+   }
+  ],
+  "duration": "5 days (start within 48 hours)",
+  "route": "Oral",
+  "renal_note": "Halve the dose if GFR 10-30",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "",
+  "side_effects": [
+   "Nausea",
+   "Vomiting",
+   "Neuropsychiatric events (rare)"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Doses are by weight; under 1 year the dose is 3 mg/kg twice daily"
+  ],
+  "interactions": [
+   "Live attenuated influenza vaccine"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "By weight: 15 kg or less 30 mg; 15-23 kg 45 mg; 23-40 kg 60 mg; over 40 kg 75 mg, twice daily for 5 days.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "capsule",
+    "strength": 30,
+    "per_volume_ml": null,
+    "label": "30 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 45,
+    "per_volume_ml": null,
+    "label": "45 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "capsule",
+    "strength": 75,
+    "per_volume_ml": null,
+    "label": "75 mg capsule",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "syrup",
+    "strength": 30,
+    "per_volume_ml": 5,
+    "label": "30 mg/5 ml (6 mg/ml) suspension",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "acyclovir",
+  "name": "Acyclovir",
+  "aliases": [
+   "aciclovir",
+   "zovirax",
+   "herpex"
+  ],
+  "components": "acyclovir",
+  "category": "Antiviral",
+  "indication": "Chickenpox, herpes simplex, herpes zoster",
+  "all_indications": [
+   "Chickenpox (varicella)",
+   "Herpes simplex gingivostomatitis",
+   "Herpes zoster"
+  ],
+  "basis": "per_kg_dose",
+  "dose_unit": "mg",
+  "dose_min": 10,
+  "dose_typ": 20,
+  "dose_max": 20,
+  "doses_per_day": 4,
+  "frequency_hours": 6,
+  "max_doses_per_day": null,
+  "max_single": 800,
+  "max_daily": null,
+  "min_age_months": 24,
+  "max_age_months": 216,
+  "min_weight_kg": 0,
+  "bands": null,
+  "duration": "5 days (start within 24 hours of the rash)",
+  "route": "Oral",
+  "renal_note": "Reduce dose if GFR < 50",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with plenty of fluids",
+  "side_effects": [
+   "Nausea",
+   "Headache",
+   "Renal impairment if dehydrated"
+  ],
+  "contraindications": [
+   "Hypersensitivity"
+  ],
+  "warnings": [
+   "Keep well hydrated"
+  ],
+  "interactions": [],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "Chickenpox: 20 mg/kg/dose four times a day (max 800 mg/dose).",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "syrup",
+    "strength": 200,
+    "per_volume_ml": 5,
+    "label": "200 mg/5 ml suspension",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 200,
+    "per_volume_ml": null,
+    "label": "200 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 400,
+    "per_volume_ml": null,
+    "label": "400 mg tablet",
+    "note": "",
+    "strength_total": null
+   },
+   {
+    "form_type": "tablet",
+    "strength": 800,
+    "per_volume_ml": null,
+    "label": "800 mg tablet",
+    "note": "",
+    "strength_total": null
+   }
+  ]
+ },
+ {
+  "slug": "artemether-lumefantrine",
+  "name": "Artemether + Lumefantrine",
+  "aliases": [
+   "coartem",
+   "lumerax",
+   "larinate"
+  ],
+  "components": "artemether+lumefantrine",
+  "category": "Antimalarial",
+  "indication": "Uncomplicated falciparum malaria",
+  "all_indications": [
+   "Uncomplicated P. falciparum malaria"
+  ],
+  "basis": "band",
+  "dose_unit": "mg",
+  "dose_min": null,
+  "dose_typ": null,
+  "dose_max": null,
+  "doses_per_day": 2,
+  "frequency_hours": 12,
+  "max_doses_per_day": null,
+  "max_single": null,
+  "max_daily": null,
+  "min_age_months": 0,
+  "max_age_months": 216,
+  "min_weight_kg": 5,
+  "bands": [
+   {
+    "min_wt": 5,
+    "max_wt": 14.99,
+    "dose": 20,
+    "n": 2
+   },
+   {
+    "min_wt": 15,
+    "max_wt": 24.99,
+    "dose": 40,
+    "n": 2
+   },
+   {
+    "min_wt": 25,
+    "max_wt": 34.99,
+    "dose": 60,
+    "n": 2
+   },
+   {
+    "min_wt": 35,
+    "dose": 80,
+    "n": 2
+   }
+  ],
+  "duration": "3 days",
+  "route": "Oral",
+  "renal_note": "",
+  "hepatic_note": "",
+  "neonatal_note": "",
+  "food_note": "Give with fatty food or milk",
+  "side_effects": [
+   "Headache",
+   "Dizziness",
+   "Nausea",
+   "QT prolongation"
+  ],
+  "contraindications": [
+   "Weight < 5 kg",
+   "Known QT prolongation"
+  ],
+  "warnings": [
+   "Take with fatty food",
+   "Test for malaria before treating"
+  ],
+  "interactions": [
+   "QT-prolonging drugs",
+   "CYP3A4 inducers / inhibitors"
+  ],
+  "brands": [],
+  "reference": "IAP / BNFc / WHO (standard ranges)",
+  "notes": "By weight: 5-14 kg 1 tablet; 15-24 kg 2; 25-34 kg 3; 35 kg and above 4, twice daily for 3 days.",
+  "verified": 0,
+  "formulations": [
+   {
+    "form_type": "tablet",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20/120 mg tablet",
+    "note": "Dose by the artemether component",
+    "strength_total": 140
+   },
+   {
+    "form_type": "dispersible",
+    "strength": 20,
+    "per_volume_ml": null,
+    "label": "20/120 mg dispersible tablet",
+    "note": "Dose by the artemether component",
+    "strength_total": 140
+   }
+  ]
+ }
+]

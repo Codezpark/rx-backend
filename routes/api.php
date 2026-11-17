@@ -63,7 +63,8 @@ $router->post('catalog/medicines', 'Catalog', 'addMedicine',  ['auth' => true, '
 $router->get('catalog/symptoms',   'Catalog', 'symptoms',     ['auth' => true]);
 $router->get('catalog/advice',     'Catalog', 'advice',       ['auth' => true]);
 $router->get('catalog/diagnoses',  'Catalog', 'diagnoses',    ['auth' => true]);
-$router->get('catalog/pediatric-dose', 'Catalog', 'pediatricDose', ['auth' => true]);
+$router->get('catalog/pediatric-dose',  'Catalog', 'pediatricDose',     ['auth' => true]);
+$router->get('catalog/pediatric-drugs', 'Catalog', 'pediatricDrugList', ['auth' => true]);
 $router->get('catalog/radiology',      'Catalog', 'radiology',     ['auth' => true]);
 
 // ── Prescriptions (JWT required) ─────────────────────────────────────────────

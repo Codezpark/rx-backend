@@ -24,13 +24,13 @@ s, r = call("GET", "catalog/medicines?q=Micro%20Labs", token=tok)
 check("search by company returns brands", any(m.get("manufacturer") == "Micro Labs" for m in r["data"]["items"]), [m["name"] for m in r["data"]["items"]][:6])
 
 # 1.3 — pediatric dose (Cefixime 8 mg/kg/day, 10 kg, /2, syrup 100/5ml → 40 mg/dose = 2 ml)
-s, r = call("GET", "catalog/pediatric-dose?generic=Cefixime&weight=10", token=tok)
+s, r = call("GET", "catalog/pediatric-dose?generic=Cefixime&weight=10&strength=100&per_ml=5", token=tok)
 check("pediatric-dose ok", s == 200, s)
 d = r["data"]
 check("pediatric found", d.get("found") is True, d)
-check("daily 80 mg", d.get("daily_mg_max") == 80, d)
-check("per-dose 40 mg (BD)", d.get("per_dose_mg_max") == 40 and d.get("divisions") == 2, d)
-check("per-dose 2 ml at 100 mg/5ml", d.get("per_dose_ml_max") == 2, d)
+check("daily 80 mg", d.get("daily") == 80, d)
+check("per-dose 40 mg (BD)", d.get("single") == 40 and d.get("doses_per_day") == 2, d)
+check("per-dose 2 ml at 100 mg/5ml", d["formulations"][d["chosen"]]["ml_per_dose"] == 2, d)
 
 # unknown generic → found false
 s, r = call("GET", "catalog/pediatric-dose?generic=Nonexistol&weight=12", token=tok)

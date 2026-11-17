@@ -262,74 +262,101 @@ class CatalogController extends BaseController
     }
 
     // ── GET /catalog/pediatric-dose ──────────────────────────────────────────
-    /** Weight-based pediatric recommendation (advisory). No patient data stored. */
+    /**
+     * Weight-based pediatric recommendation (advisory). No patient data is stored.
+     * Query: weight (kg, required); one of generic (+ optional name) or drug (slug); optional age_months,
+     * strength + per_ml (the label strength of the medicine being prescribed, e.g. 250 per 5 ml), form (SYR, TAB...).
+     */
     public function pediatricDose(): void
     {
         $this->requireDoctor();
-        $generic = trim((string) $this->request->get('generic', ''));
-        $weight  = $this->request->get('weight');
-        if ($generic === '') {
-            Response::validationError(['generic' => ['Medicine generic name is required.']]);
-        }
-        if (!is_numeric($weight) || (float) $weight <= 0 || (float) $weight > 150) {
-            Response::validationError(['weight' => ['Enter the patient weight in kg (0–150).']]);
+        $weight = $this->request->get('weight');
+        if (!is_numeric($weight) || (float) $weight < 0.3 || (float) $weight > 150) {
+            Response::validationError(['weight' => ['Enter the patient weight in kg (0.3–150).']]);
         }
         $w = (float) $weight;
-
-        // Pick the longest reference generic that appears in the medicine's generic name.
-        $refs  = $this->db->getRows('SELECT * FROM pediatric_dose_reference WHERE is_active = 1');
-        $gl    = mb_strtolower($generic);
-        $match = null;
-        foreach ($refs as $r) {
-            if (mb_strpos($gl, mb_strtolower($r['generic_name'])) !== false
-                && ($match === null || mb_strlen($r['generic_name']) > mb_strlen($match['generic_name']))) {
-                $match = $r;
-            }
+        $age = $this->request->get('age_months');
+        if ($age !== null && $age !== '' && (!is_numeric($age) || (float) $age < 0 || (float) $age > 1560)) {
+            Response::validationError(['age_months' => ['Age in months must be between 0 and 1560.']]);
         }
-        if (!$match) {
+        $ageM = ($age === null || $age === '') ? null : (int) floor((float) $age);
+
+        $slug    = trim((string) $this->request->get('drug', ''));
+        $generic = trim((string) $this->request->get('generic', ''));
+        $name    = trim((string) $this->request->get('name', ''));
+        if ($slug === '' && $generic === '' && $name === '') {
+            Response::validationError(['generic' => ['Medicine generic name is required.']]);
+        }
+
+        $drugs = $this->pediatricDrugs();
+        $drug = null;
+        if ($slug !== '') {
+            foreach ($drugs as $d) if ($d['slug'] === $slug) { $drug = $d; break; }
+        } else {
+            $drug = PediatricDoseHelper::match($drugs, $generic, $name);
+        }
+        if (!$drug) {
             Response::success(['found' => false], 'No pediatric reference for this medicine');
         }
 
-        $div    = max(1, (int) $match['default_divisions']);
-        $dayMin = $w * (float) $match['mg_per_kg_day_min'];
-        $dayMax = $w * (float) $match['mg_per_kg_day_max'];
-        $capped = false;
-        if ($match['max_mg_per_day'] !== null) {
-            $cap = (float) $match['max_mg_per_day'];
-            if ($dayMin > $cap) { $dayMin = $cap; $capped = true; }
-            if ($dayMax > $cap) { $dayMax = $cap; $capped = true; }
-        }
-        $doseMin = $dayMin / $div;
-        $doseMax = $dayMax / $div;
+        $forms = $this->db->getRows('SELECT * FROM pediatric_drug_formulations WHERE drug_id = :d ORDER BY sort_order, id', [':d' => $drug['id']]);
+        $str = $this->request->get('strength');
+        $per = $this->request->get('per_ml');
+        $want = [
+            'strength' => is_numeric($str) && (float) $str > 0 ? (float) $str : null,
+            'per_ml'   => is_numeric($per) && (float) $per > 0 ? (float) $per : null,
+            'form'     => (string) $this->request->get('form', ''),
+        ];
+        $calc = PediatricDoseHelper::calculate($drug, $forms, $w, $ageM, $want);
 
-        $strength = $this->request->get('strength_mg_per_5ml');
-        $syrup    = is_numeric($strength) && (float) $strength > 0
-            ? (float) $strength
-            : ($match['common_syrup_mg_per_5ml'] !== null ? (float) $match['common_syrup_mg_per_5ml'] : null);
-        $mlMin = $mlMax = null;
-        if ($syrup) {
-            $mlMin = $doseMin / ($syrup / 5);
-            $mlMax = $doseMax / ($syrup / 5);
-        }
-
-        $r1 = fn ($v) => $v === null ? null : round($v, 1) + 0;
         Response::success([
-            'found'            => true,
-            'generic'          => $match['generic_name'],
-            'weight_kg'        => $w,
-            'divisions'        => $div,
-            'daily_mg_min'     => $r1($dayMin),
-            'daily_mg_max'     => $r1($dayMax),
-            'per_dose_mg_min'  => $r1($doseMin),
-            'per_dose_mg_max'  => $r1($doseMax),
-            'syrup_mg_per_5ml' => $syrup === null ? null : $r1($syrup),
-            'per_dose_ml_min'  => $r1($mlMin),
-            'per_dose_ml_max'  => $r1($mlMax),
-            'max_mg_per_day'   => $match['max_mg_per_day'] === null ? null : (int) $match['max_mg_per_day'],
-            'capped'           => $capped,
-            'notes'            => $match['notes'],
-            'source'           => $match['source'],
-        ], 'Pediatric dose computed');
+            'found'     => true,
+            'weight_kg' => $w,
+            'age_months' => $ageM,
+            'drug'      => [
+                'id' => (int) $drug['id'], 'slug' => $drug['slug'], 'name' => $drug['name'], 'category' => $drug['category'], 'route' => $drug['route'],
+                'indication' => $drug['indication'], 'indications' => $drug['all_indications'], 'basis' => $drug['basis'], 'unit' => $drug['dose_unit'],
+                'mg_per_kg_min' => $drug['dose_min'] === null ? null : (float) $drug['dose_min'], 'mg_per_kg_typ' => $drug['dose_typ'] === null ? null : (float) $drug['dose_typ'],
+                'mg_per_kg_max' => $drug['dose_max'] === null ? null : (float) $drug['dose_max'],
+                'duration' => $drug['duration'], 'notes' => $drug['notes'], 'reference' => $drug['reference'], 'verified' => (bool) $drug['verified'],
+                'min_age_months' => (int) $drug['min_age_months'], 'min_weight_kg' => (float) $drug['min_weight_kg'], 'brands' => $drug['brands'],
+                'renal_note' => $drug['renal_note'], 'hepatic_note' => $drug['hepatic_note'], 'neonatal_note' => $drug['neonatal_note'], 'food_note' => $drug['food_note'],
+                'side_effects' => $drug['side_effects'], 'contraindications' => $drug['contraindications'], 'warnings' => $drug['warnings'], 'interactions' => $drug['interactions'],
+            ],
+        ] + $calc, 'Pediatric dose computed');
+    }
+
+    // ── GET /catalog/pediatric-drugs ─────────────────────────────────────────
+    /** The reference list, for search / autocomplete: by drug name, brand, spelling or indication. */
+    public function pediatricDrugList(): void
+    {
+        $this->requireDoctor();
+        $q = mb_strtolower(trim((string) $this->request->get('q', '')));
+        $out = [];
+        foreach ($this->pediatricDrugs() as $d) {
+            if ($q !== '') {
+                $hay = mb_strtolower(implode(' | ', array_merge([$d['name'], $d['category'] ?? '', $d['indication'] ?? ''], $d['aliases'], $d['all_indications'])));
+                if (mb_strpos($hay, $q) === false) continue;
+            }
+            $out[] = ['slug' => $d['slug'], 'name' => $d['name'], 'category' => $d['category'], 'indication' => $d['indication'], 'brands' => $d['brands'], 'verified' => (bool) $d['verified']];
+        }
+        usort($out, fn ($a, $b) => strcasecmp($a['name'], $b['name']));
+        Response::success(['items' => array_slice($out, 0, 60), 'total' => count($out)], 'Pediatric reference fetched');
+    }
+
+    /** Every active reference drug with its JSON columns decoded and its aliases attached. */
+    private function pediatricDrugs(): array
+    {
+        $rows = $this->db->getRows('SELECT * FROM pediatric_drugs WHERE is_active = 1 ORDER BY name');
+        $aliases = [];
+        foreach ($this->db->getRows('SELECT drug_id, alias FROM pediatric_drug_aliases') as $a) $aliases[(int) $a['drug_id']][] = $a['alias'];
+        $json = fn ($v) => ($v === null || $v === '') ? [] : (json_decode((string) $v, true) ?: []);
+        foreach ($rows as &$r) {
+            foreach (['all_indications', 'side_effects', 'contraindications', 'warnings', 'interactions', 'brands', 'bands'] as $c) $r[$c] = $json($r[$c]);
+            $r['aliases'] = $aliases[(int) $r['id']] ?? [];
+        }
+        unset($r);
+        return $rows;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
