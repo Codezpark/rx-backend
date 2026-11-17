@@ -49,6 +49,7 @@ $router->put('patients/{id}',      'Patient', 'update',     ['auth' => true]);
 $router->delete('patients/{id}',   'Patient', 'delete',     ['auth' => true]);
 
 $router->get('dashboard/summary', 'Doctor', 'summary', ['auth' => true]);
+$router->get('eod',               'Eod',    'index',   ['auth' => true]);
 $router->get('insights', 'Insights', 'index', ['auth' => true]);
 $router->get('staff',           'Staff', 'index',  ['auth' => true]);
 $router->post('staff',          'Staff', 'create', ['auth' => true, 'rate_limit' => ['max' => 20, 'window' => 3600]]);
