@@ -380,6 +380,9 @@ class PrescriptionController extends BaseController
                 'freq_display'  => mb_substr($freq, 0, 50),
                 'instructions'  => ($n = self::clean((string) ($m['instructions'] ?? ''))) === '' ? null : mb_substr($n, 0, 500),
                 'is_substitutable' => !empty($m['is_substitutable']) ? 1 : 0,
+                // Audit trail: a dose that came from the pediatric calculator is flagged, with what it suggested.
+                'dose_auto_calculated' => !empty($m['is_auto_calculated']) ? 1 : 0,
+                'dose_calc_note' => !empty($m['is_auto_calculated']) && ($n = self::clean((string) ($m['calc_note'] ?? ''))) !== '' ? mb_substr($n, 0, 600) : null,
                 'sort_order'    => min(255, $i),
             ];
         }
@@ -585,7 +588,7 @@ class PrescriptionController extends BaseController
             'visit_date'  => $rx['visit_date'],
             'patient'     => [
                 'id' => (int) $rx['patient_id'], 'uhid' => $rx['uhid'], 'name' => $rx['patient_name'], 'sex' => $rx['patient_sex'],
-                'mobile' => $rx['patient_mobile'], 'age_label' => PatientController::ageLabel(['date_of_birth' => $rx['date_of_birth'], 'age_years' => $rx['age_years']]),
+                'mobile' => $rx['patient_mobile'], 'age_label' => PatientController::ageLabel(['date_of_birth' => $rx['date_of_birth'], 'age_years' => $rx['age_years']]), 'date_of_birth' => self::dobOut($rx['date_of_birth'] ?? null),
                 'known_allergies' => $rx['known_allergies'], 'blood_group' => $rx['blood_group'],
             ],
             'clinic' => $clinic ? [
@@ -624,6 +627,8 @@ class PrescriptionController extends BaseController
                 'times_per_day' => $m['times_per_day'] === null ? null : (int) $m['times_per_day'],
                 'freq_display' => $m['freq_display'], 'instructions' => $m['instructions'],
                 'is_substitutable' => (bool) $m['is_substitutable'],
+                'is_auto_calculated' => (bool) ($m['dose_auto_calculated'] ?? 0),
+                'calc_note' => $m['dose_calc_note'] ?? null,
             ], $meds),
             'advice' => array_map(fn ($a) => [
                 'id' => (int) $a['id'], 'template_id' => $a['template_id'] === null ? null : (int) $a['template_id'],
@@ -633,6 +638,11 @@ class PrescriptionController extends BaseController
             'followup_date' => $rx['followup_date'], 'followup_note' => $rx['followup_note'],
             'created_at' => $rx['created_at'],
         ];
+    }
+
+    private static function dobOut(?string $d): ?string
+    {
+        return ($d && $d !== '0000-00-00') ? $d : null;
     }
 
     /** Compact rows for lists: counts and the first few medicine names. */
@@ -655,7 +665,7 @@ class PrescriptionController extends BaseController
                 'followup_date' => $r['followup_date'],
                 'patient' => [
                     'id' => (int) $r['patient_id'], 'name' => $r['patient_name'], 'sex' => $r['patient_sex'], 'uhid' => $r['uhid'],
-                    'age_label' => PatientController::ageLabel(['date_of_birth' => $r['date_of_birth'], 'age_years' => $r['age_years']]),
+                    'age_label' => PatientController::ageLabel(['date_of_birth' => $r['date_of_birth'], 'age_years' => $r['age_years']]), 'date_of_birth' => self::dobOut($r['date_of_birth'] ?? null),
                 ],
             ];
             return $o;

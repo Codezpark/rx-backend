@@ -81,6 +81,25 @@ final class PediatricDoseHelper
         return null;
     }
 
+    /**
+     * Exact age on a given day from the date of birth: whole months, and decimal years (1 dp).
+     * Returns null when the date is not valid or lies after [$on].
+     *
+     * @return array{months:int, years:float, days:int}|null
+     */
+    public static function exactAge(string $dob, string $on): ?array
+    {
+        try {
+            $b = new DateTimeImmutable($dob, new DateTimeZone('UTC'));
+            $t = new DateTimeImmutable($on, new DateTimeZone('UTC'));
+        } catch (Throwable) {
+            return null;
+        }
+        if ($b > $t) return null;
+        $d = $b->diff($t);
+        return ['months' => $d->y * 12 + $d->m, 'years' => round((int) $d->days / 365.25, 1), 'days' => (int) $d->days];
+    }
+
     private static function num(mixed $v): ?float
     {
         return ($v === null || $v === '') ? null : (float) $v;
@@ -238,6 +257,18 @@ final class PediatricDoseHelper
         if ($ageM !== null && $ageM < $minAge) $alerts[] = ['level' => 'warning', 'text' => "Below the usual minimum age for this drug ($minAge months). Check it is appropriate."];
         if ($ageM !== null && $ageM > $maxAge) $alerts[] = ['level' => 'warning', 'text' => 'Above the paediatric age range. Use the adult dose if the child is large.'];
         if ($minWt > 0 && $w < $minWt) $alerts[] = ['level' => 'warning', 'text' => 'Below the usual minimum weight for this drug (' . self::r($minWt, 1) . ' kg).'];
+        // Age known only to the year (no date of birth): the real age could be up to 11 months older or younger,
+        // which only matters when a limit or a band edge is that close.
+        $edges = $minAge > 0 ? [$minAge] : [];
+        foreach ($drug['bands'] ?? [] as $bd) {
+            if (isset($bd['min_age_m']) && $bd['min_age_m'] > 0) $edges[] = (int) $bd['min_age_m'];
+            if (isset($bd['max_age_m']) && $bd['max_age_m'] < 216) $edges[] = (int) $bd['max_age_m'] + 1;
+        }
+        $near = false;
+        foreach ($edges as $e) if ($ageM !== null && abs($ageM - $e) <= 11) $near = true;
+        if (($want['age_exact'] ?? true) === false && $near) {
+            $alerts[] = ['level' => 'warning', 'text' => 'The age is only known to the year. Add the date of birth for an exact age: this drug’s dose or limits change close to this age.'];
+        }
         $maxDoses = $drug['max_doses_per_day'] ?? null;
         if ($maxDoses !== null) $alerts[] = ['level' => 'info', 'text' => "Do not exceed $maxDoses doses in 24 hours."];
 

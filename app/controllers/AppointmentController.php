@@ -391,7 +391,7 @@ class AppointmentController extends BaseController
             'patient'         => [
                 'id' => (int) $r['patient_id'], 'name' => $r['patient_name'], 'sex' => $r['patient_sex'], 'uhid' => $r['patient_uhid'],
                 'mobile' => $r['patient_mobile'], 'known_allergies' => $r['known_allergies'],
-                'age_label' => PatientController::ageLabel(['date_of_birth' => $r['date_of_birth'], 'age_years' => $r['age_years']]),
+                'age_label' => PatientController::ageLabel(['date_of_birth' => $r['date_of_birth'], 'age_years' => $r['age_years']]), 'date_of_birth' => (!empty($r['date_of_birth']) && $r['date_of_birth'] !== '0000-00-00') ? $r['date_of_birth'] : null,
             ],
         ];
     }

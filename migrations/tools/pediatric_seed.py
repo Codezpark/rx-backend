@@ -449,6 +449,16 @@ def main():
                 seen.add(k)
                 out.append("INSERT INTO `pediatric_drug_aliases` (drug_id, alias) VALUES (@d, %s);" % q(k))
         out.append('')
+    # The public website's calculator runs in the browser on this same data (no API, nothing sent anywhere).
+    web = os.path.abspath(os.path.join(ROOT, '..', 'prescriptionrx', 'web', 'src', 'lib', 'calculator'))
+    if os.path.isdir(os.path.dirname(web)):
+        os.makedirs(web, exist_ok=True)
+        keep = ['slug', 'name', 'aliases', 'brands', 'category', 'route', 'indication', 'all_indications', 'dose_unit', 'basis', 'dose_min', 'dose_typ', 'dose_max',
+                'doses_per_day', 'frequency_hours', 'max_doses_per_day', 'max_single', 'max_daily', 'min_age_months', 'max_age_months', 'min_weight_kg', 'bands',
+                'duration', 'renal_note', 'hepatic_note', 'neonatal_note', 'food_note', 'side_effects', 'contraindications', 'warnings', 'interactions', 'reference',
+                'notes', 'verified', 'formulations']
+        with open(os.path.join(web, 'drugs.json'), 'w') as f:
+            json.dump([{k: d[k] for k in keep} for d in drugs], f, ensure_ascii=False, separators=(',', ':'))
     with open(os.path.join(ROOT, 'migrations', 'sql', '017_seed_pediatric_drugs.sql'), 'w') as f:
         f.write('\n'.join(out))
     print('drugs:', len(drugs), 'formulations:', sum(len(d['formulations']) for d in drugs))

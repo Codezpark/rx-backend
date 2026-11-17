@@ -275,11 +275,24 @@ class CatalogController extends BaseController
             Response::validationError(['weight' => ['Enter the patient weight in kg (0.3–150).']]);
         }
         $w = (float) $weight;
-        $age = $this->request->get('age_months');
-        if ($age !== null && $age !== '' && (!is_numeric($age) || (float) $age < 0 || (float) $age > 1560)) {
-            Response::validationError(['age_months' => ['Age in months must be between 0 and 1560.']]);
+        // Age: an exact one from the date of birth (preferred), else months, else whole years.
+        $on  = (string) ($this->request->get('on') ?: gmdate('Y-m-d'));
+        $dob = trim((string) $this->request->get('dob', ''));
+        $ageM = null; $ageYears = null; $exact = false;
+        if ($dob !== '') {
+            $a = PediatricDoseHelper::exactAge($dob, $on);
+            if (!$a) Response::validationError(['dob' => ['The date of birth is not valid, or is in the future.']]);
+            [$ageM, $ageYears, $exact] = [$a['months'], $a['years'], true];
+        } else {
+            $age = $this->request->get('age_months');
+            if ($age !== null && $age !== '') {
+                if (!is_numeric($age) || (float) $age < 0 || (float) $age > 1560) {
+                    Response::validationError(['age_months' => ['Age in months must be between 0 and 1560.']]);
+                }
+                $ageM = (int) floor((float) $age);
+                $ageYears = round($ageM / 12, 1);
+            }
         }
-        $ageM = ($age === null || $age === '') ? null : (int) floor((float) $age);
 
         $slug    = trim((string) $this->request->get('drug', ''));
         $generic = trim((string) $this->request->get('generic', ''));
@@ -306,6 +319,7 @@ class CatalogController extends BaseController
             'strength' => is_numeric($str) && (float) $str > 0 ? (float) $str : null,
             'per_ml'   => is_numeric($per) && (float) $per > 0 ? (float) $per : null,
             'form'     => (string) $this->request->get('form', ''),
+            'age_exact' => $exact || $ageM === null,
         ];
         $calc = PediatricDoseHelper::calculate($drug, $forms, $w, $ageM, $want);
 
@@ -313,6 +327,8 @@ class CatalogController extends BaseController
             'found'     => true,
             'weight_kg' => $w,
             'age_months' => $ageM,
+            'age_years' => $ageYears,
+            'age_exact' => $exact,
             'drug'      => [
                 'id' => (int) $drug['id'], 'slug' => $drug['slug'], 'name' => $drug['name'], 'category' => $drug['category'], 'route' => $drug['route'],
                 'indication' => $drug['indication'], 'indications' => $drug['all_indications'], 'basis' => $drug['basis'], 'unit' => $drug['dose_unit'],

@@ -93,6 +93,28 @@ $r = $calc('paracetamol', 24, null, ['strength' => 500]);
 check('24 kg paracetamol: 360 mg = about 3/4 of a 500 mg tablet', $chosen($r)['units_label'] === '¾' && $chosen($r)['strength'] == 500, $chosen($r));
 check('fraction labels', PediatricDoseHelper::fraction(1.5) === '1 ½' && PediatricDoseHelper::fraction(0.25) === '¼' && PediatricDoseHelper::fraction(2.0) === '2', [PediatricDoseHelper::fraction(1.5)]);
 
+echo "Exact age from the date of birth\n";
+$a = PediatricDoseHelper::exactAge('2023-01-15', '2026-11-17');
+check('2023-01-15 on 2026-11-17 = 46 months, 3.8 years', $a['months'] === 46 && $a['years'] === 3.8, $a);
+check('one day short of 24 months is 23 months', PediatricDoseHelper::exactAge('2024-12-18', '2026-11-17')['months'] === 22 && PediatricDoseHelper::exactAge('2024-11-18', '2026-11-17')['months'] === 23, [PediatricDoseHelper::exactAge('2024-11-18', '2026-11-17')]);
+check('exactly 24 months', PediatricDoseHelper::exactAge('2024-11-17', '2026-11-17')['months'] === 24);
+check('newborn: 0 months', PediatricDoseHelper::exactAge('2026-11-10', '2026-11-17')['months'] === 0);
+check('a date of birth in the future is refused', PediatricDoseHelper::exactAge('2027-01-01', '2026-11-17') === null);
+check('garbage is refused', PediatricDoseHelper::exactAge('not a date', '2026-11-17') === null);
+check('a 5-year-old: decimal years', PediatricDoseHelper::exactAge('2021-05-17', '2026-11-17')['years'] === 5.5, PediatricDoseHelper::exactAge('2021-05-17', '2026-11-17'));
+$r = $calc('cetirizine', 12, 23);
+check('cetirizine at 23 months is the once-a-day band', near($r['single'], 2.5) && $r['doses_per_day'] === 1, $r);
+$r = $calc('cetirizine', 12, 24);
+check('cetirizine at 24 months is the twice-a-day band', near($r['single'], 2.5) && $r['doses_per_day'] === 2, $r);
+$r = $calc('cetirizine', 12, 30, ['age_exact' => false]);
+check('an age known only to the year gets a warning on an age-banded drug', (bool) array_filter($r['alerts'], fn ($a) => $a['level'] === 'warning' && str_contains($a['text'], 'date of birth')), $r['alerts']);
+$r = $calc('cetirizine', 12, 30, ['age_exact' => true]);
+check('an exact age does not', !array_filter($r['alerts'], fn ($a) => str_contains($a['text'], 'date of birth')), $r['alerts']);
+$r = $calc('paracetamol', 12, 30, ['age_exact' => false]);
+check('a drug with no age limits is not nagged', !array_filter($r['alerts'], fn ($a) => str_contains($a['text'], 'date of birth')), $r['alerts']);
+$r = $calc('cefixime', 12, 96, ['age_exact' => false]);
+check('over 6 years the approximation does not matter', !array_filter($r['alerts'], fn ($a) => str_contains($a['text'], 'date of birth')), $r['alerts']);
+
 echo "Matching the prescribed medicine\n";
 $list = array_values($drugs);
 $m = fn (string $g, string $n = '') => ($x = PediatricDoseHelper::match($list, $g, $n)) ? $x['slug'] : null;
