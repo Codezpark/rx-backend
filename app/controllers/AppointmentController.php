@@ -188,7 +188,7 @@ class AppointmentController extends BaseController
         }
         $next = (string) $this->request->get('status');
         if (!in_array($next, self::FLOW[$appt['status']] ?? [], true)) {
-            Response::error("An appointment that is “{$appt['status']}” can’t be marked “{$next}”.", 409);
+            Response::error(Lang::t('An appointment that is “{status}” can’t be marked “{next}”.', ['status' => $appt['status'], 'next' => $next]), 409);
         }
 
         $data = ['status' => $next];
@@ -271,7 +271,7 @@ class AppointmentController extends BaseController
             if ($raw === null || $raw === '') { $vit[$col] = null; continue; }
             if (!is_numeric($raw)) { $err[$col] = ['Enter a number.']; continue; }
             $v = $int ? (int) $raw : round((float) $raw, 1);
-            if ($v < $min || $v > $max) { $err[$col] = ["Enter a value between $min and $max."]; continue; }
+            if ($v < $min || $v > $max) { $err[$col] = [Lang::t('Enter a value between {min} and {max}.', ['min' => $min, 'max' => $max])]; continue; }
             $vit[$col] = $v;
         }
         if (($vit['bp_systolic'] ?? null) !== null && ($vit['bp_diastolic'] ?? null) !== null && $vit['bp_diastolic'] >= $vit['bp_systolic']) {

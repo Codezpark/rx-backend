@@ -38,7 +38,7 @@ class StaffController extends BaseController
             Response::error('This mobile number is already registered.', 409, ['phone' => ['This mobile number is already registered.']]);
         }
         $n = (int) $this->db->getRow('SELECT COUNT(*) AS n FROM clinic_staff WHERE doctor_id = :d AND deleted_at IS NULL', [':d' => $d])['n'];
-        if ($n >= self::MAX_STAFF) Response::error('You can add up to ' . self::MAX_STAFF . ' staff members.', 422);
+        if ($n >= self::MAX_STAFF) Response::error(Lang::t('You can add up to {n} staff members.', ['n' => self::MAX_STAFF]), 422);
 
         $id = $this->db->insert('clinic_staff', [
             'doctor_id' => $d, 'name' => $name, 'mobile' => $mobile, 'role' => 'receptionist', 'is_active' => 1,

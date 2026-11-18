@@ -130,7 +130,7 @@ class DoctorController extends BaseController
         if ($currency !== $cur) {
             $bills = (int) $this->db->getRow("SELECT COUNT(*) n FROM bills WHERE doctor_id = :d AND status <> 'cancelled'", [':d' => $d])['n'];
             if ($bills > 0 && !filter_var($this->request->get('confirm_no_conversion'), FILTER_VALIDATE_BOOLEAN)) {
-                Response::error("This clinic already has $bills bill(s). Changing the currency does NOT convert their amounts: they keep the same numbers in the new currency.", 409, ['needs_confirmation' => ['yes'], 'bills' => [(string) $bills]]);
+                Response::error(Lang::n('This clinic already has {n} bill. Changing the currency does NOT convert its amount: it keeps the same number in the new currency.', 'This clinic already has {n} bills. Changing the currency does NOT convert their amounts: they keep the same numbers in the new currency.', $bills), 409, ['needs_confirmation' => ['yes'], 'bills' => [(string) $bills]]);
             }
         }
         $data = ['language' => $lang, 'currency' => $currency, 'country' => $country];
@@ -340,8 +340,9 @@ class DoctorController extends BaseController
             if ($value === null) continue;
             $clash = $this->db->getRow("SELECT id FROM doctors WHERE {$column} = :v AND id <> :id", [':v' => $value, ':id' => $doctor['id']]);
             if ($clash) {
-                $label = $column === 'email' ? 'e-mail address' : 'registration number';
-                Response::validationError([$column => ["This {$label} is already used by another account."]]);
+                Response::validationError([$column => [$column === 'email'
+                    ? 'This e-mail address is already used by another account.'
+                    : 'This registration number is already used by another account.']]);
             }
         }
 

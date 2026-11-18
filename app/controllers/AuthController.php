@@ -317,7 +317,7 @@ class AuthController extends BaseController
             }
             if ($enforceCooldown) {
                 $wait = self::OTP_RESEND_WAIT - (time() - strtotime($last['created_at']));
-                Response::error("Please wait {$wait} seconds before requesting another code.", 429);
+                Response::error(Lang::n('Please wait {n} second before requesting another code.', 'Please wait {n} seconds before requesting another code.', max(1, $wait)), 429);
             }
         }
 
@@ -364,7 +364,7 @@ class AuthController extends BaseController
         if (!hash_equals((string) $row['otp'], trim($submitted))) {
             $this->db->executeQuery('UPDATE verification SET attempts = attempts + 1 WHERE id = :id', [':id' => $row['id']]);
             $left = self::OTP_MAX_ATTEMPTS - (int) $row['attempts'] - 1;
-            Response::error($left > 0 ? "Incorrect code. {$left} attempt" . ($left === 1 ? '' : 's') . ' left.' : 'Incorrect code. Please request a new one.', 400);
+            Response::error($left > 0 ? Lang::n('Incorrect code. {n} attempt left.', 'Incorrect code. {n} attempts left.', $left) : 'Incorrect code. Please request a new one.', 400);
         }
     }
 

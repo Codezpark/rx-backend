@@ -7,9 +7,10 @@ BASE = os.environ.get("RX_API_BASE", "http://localhost/prescription-rx/rx-backen
 fails = 0
 
 
-def call(method, path, body=None, token=None):
+def call(method, path, body=None, token=None, lang=None):
     h = {"Content-Type": "application/json"}
     if token: h["Authorization"] = "Bearer " + token
+    if lang: h["Accept-Language"] = lang
     req = urllib.request.Request(f"{BASE}/{path}", method=method, headers=h,
                                  data=json.dumps(body).encode() if body is not None else None)
     try:

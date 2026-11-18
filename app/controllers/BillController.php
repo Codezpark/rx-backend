@@ -166,7 +166,7 @@ class BillController extends BaseController
         }
         if (!$err && $rows) {
             $sum = array_sum(array_map(fn ($r) => $r[0], $rows));
-            if ($sum > $owed + 0.001) $err['amount'] = ['That is more than the ' . number_format($owed, 2) . ' still due.'];
+            if ($sum > $owed + 0.001) $err['amount'] = [Lang::t('That is more than the {amount} still due.', ['amount' => number_format($owed, 2)])];
         }
         return $rows;
     }

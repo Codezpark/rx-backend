@@ -104,7 +104,7 @@ class RateLimit
             header('X-RateLimit-Reset: ' . $resetAt);
 
             throw new RuntimeException(
-                "Rate limit exceeded. Try again in {$retryAfter} seconds.",
+                Lang::t('Rate limit exceeded. Try again in {n} seconds.', ['n' => $retryAfter]),
                 429
             );
         }

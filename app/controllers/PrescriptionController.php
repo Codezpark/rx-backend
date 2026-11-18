@@ -264,7 +264,7 @@ class PrescriptionController extends BaseController
             $raw = $this->request->get($col);
             if ($raw === null || $raw === '') { $row[$col] = null; continue; }
             if (!is_numeric($raw) || (float) $raw < $min || (float) $raw > $max) {
-                $err[$col] = ["Enter a value between {$min} and {$max}."];
+                $err[$col] = [Lang::t('Enter a value between {min} and {max}.', ['min' => $min, 'max' => $max])];
                 continue;
             }
             $row[$col] = $int ? (int) round((float) $raw) : round((float) $raw, 1);
@@ -315,7 +315,7 @@ class PrescriptionController extends BaseController
         // keep line breaks for notes, but collapse spaces/tabs
         $v = trim(preg_replace("/[ \t]+/u", ' ', $v));
         if (mb_strlen($v) > $max) {
-            $err[$key] = ["Please keep this under {$max} characters."];
+            $err[$key] = [Lang::t('Please keep this under {max} characters.', ['max' => $max])];
             return null;
         }
         return $v === '' ? null : $v;

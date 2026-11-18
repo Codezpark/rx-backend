@@ -1,0 +1,780 @@
+{
+ "+{n} more": {
+  "plural": false
+ },
+ "A cancelled order can’t take a report.": {
+  "plural": false
+ },
+ "A cancelled order can’t take results.": {
+  "plural": false
+ },
+ "A medicine with this name already exists.": {
+  "plural": false
+ },
+ "A new code has been sent.": {
+  "plural": false
+ },
+ "A patient with this name and mobile number already exists.": {
+  "plural": false
+ },
+ "A result can be at most 200 characters.": {
+  "plural": false
+ },
+ "A saved prescription can’t be edited. Cancel it and write a new one instead.": {
+  "plural": false
+ },
+ "A valid device token is required.": {
+  "plural": false
+ },
+ "A visit is completed when the doctor finishes the prescription.": {
+  "plural": false
+ },
+ "Account created. Enter the code we sent to verify your number.": {
+  "plural": false
+ },
+ "Account is not active": {
+  "plural": false
+ },
+ "Add a diagnosis, complaint or at least one medicine before saving.": {
+  "plural": false
+ },
+ "Add a diagnosis, complaint or at least one medicine first.": {
+  "plural": false
+ },
+ "Add at least one item.": {
+  "plural": false
+ },
+ "Address": {
+  "plural": false
+ },
+ "Advice must be a list.": {
+  "plural": false
+ },
+ "Age in months must be between 0 and 1560.": {
+  "plural": false
+ },
+ "Age must be between 0 and 120.": {
+  "plural": false
+ },
+ "Age years": {
+  "plural": false
+ },
+ "An appointment that is “{status}” can’t be marked “{next}”.": {
+  "plural": false
+ },
+ "An order that is “{current}” can’t be marked “{next}”.": {
+  "plural": false
+ },
+ "Appointment not found for this patient.": {
+  "plural": false
+ },
+ "Appointment not found.": {
+  "plural": false
+ },
+ "At most two sessions a day.": {
+  "plural": false
+ },
+ "Attach the report before saving its scan.": {
+  "plural": false
+ },
+ "Authentication required.": {
+  "plural": false
+ },
+ "Blood group": {
+  "plural": false
+ },
+ "Category id": {
+  "plural": false
+ },
+ "Choose a country.": {
+  "plural": false
+ },
+ "Choose a date and time for the appointment.": {
+  "plural": false
+ },
+ "Choose a follow-up date from today onwards.": {
+  "plural": false
+ },
+ "Choose a logo image.": {
+  "plural": false
+ },
+ "Choose a password different from the current one.": {
+  "plural": false
+ },
+ "Choose a patient from your register.": {
+  "plural": false
+ },
+ "Choose a patient.": {
+  "plural": false
+ },
+ "Choose a photo or PDF of the report.": {
+  "plural": false
+ },
+ "Choose a signature image.": {
+  "plural": false
+ },
+ "Choose a valid date.": {
+  "plural": false
+ },
+ "Choose a valid imaging type.": {
+  "plural": false
+ },
+ "Choose a valid medicine type.": {
+  "plural": false
+ },
+ "Choose cash, UPI, card or other.": {
+  "plural": false
+ },
+ "Choose one of the supported currencies.": {
+  "plural": false
+ },
+ "Choose one of the supported languages.": {
+  "plural": false
+ },
+ "Choose up to 10 imaging studies.": {
+  "plural": false
+ },
+ "Choose up to 40 tests per order.": {
+  "plural": false
+ },
+ "City": {
+  "plural": false
+ },
+ "Closing time must be after opening time.": {
+  "plural": false
+ },
+ "Could not create the logos folder.": {
+  "plural": false
+ },
+ "Could not create the reports folder.": {
+  "plural": false
+ },
+ "Could not create the signatures folder.": {
+  "plural": false
+ },
+ "Could not save the uploaded file.": {
+  "plural": false
+ },
+ "Countrycode": {
+  "plural": false
+ },
+ "Current password": {
+  "plural": false
+ },
+ "Date of birth": {
+  "plural": false
+ },
+ "Day must be 0–6 and appear once.": {
+  "plural": false
+ },
+ "Default unit": {
+  "plural": false
+ },
+ "Degree": {
+  "plural": false
+ },
+ "Diastolic must be lower than systolic.": {
+  "plural": false
+ },
+ "Diastolic should be below systolic.": {
+  "plural": false
+ },
+ "Discount cannot be more than the total.": {
+  "plural": false
+ },
+ "Doctors change their password from their profile.": {
+  "plural": false
+ },
+ "Dose quantity must be more than 0.": {
+  "plural": false
+ },
+ "Dose schedule must be a list.": {
+  "plural": false
+ },
+ "Duration min": {
+  "plural": false
+ },
+ "Duration must be 1–3650 days.": {
+  "plural": false
+ },
+ "Duration must be between 5 and 180 minutes.": {
+  "plural": false
+ },
+ "Each entry needs a day (0 = Sunday … 6 = Saturday).": {
+  "plural": false
+ },
+ "Each item needs a description (max 200 characters).": {
+  "plural": false
+ },
+ "Each item needs an amount.": {
+  "plural": false
+ },
+ "Each medicine needs a name (max 200 characters).": {
+  "plural": false
+ },
+ "Each time of day can be used once.": {
+  "plural": false
+ },
+ "Email": {
+  "plural": false
+ },
+ "Enter a 10-digit mobile number.": {
+  "plural": false
+ },
+ "Enter a number of days between 0 and 3650.": {
+  "plural": false
+ },
+ "Enter a number.": {
+  "plural": false
+ },
+ "Enter a valid 10-digit Indian mobile number.": {
+  "plural": false
+ },
+ "Enter a valid amount.": {
+  "plural": false
+ },
+ "Enter a valid date of birth (not in the future).": {
+  "plural": false
+ },
+ "Enter a valid fee.": {
+  "plural": false
+ },
+ "Enter a valid phone number.": {
+  "plural": false
+ },
+ "Enter a value between {min} and {max}.": {
+  "plural": false
+ },
+ "Enter the amount received.": {
+  "plural": false
+ },
+ "Enter the patient weight in kg (0.3–150).": {
+  "plural": false
+ },
+ "Enter the patient’s age or date of birth.": {
+  "plural": false
+ },
+ "Experience must be between 0 and 70 years.": {
+  "plural": false
+ },
+ "Experience yrs": {
+  "plural": false
+ },
+ "Flag must be normal, low, high or critical.": {
+  "plural": false
+ },
+ "Follow-up due in {n} days": {
+  "plural": true,
+  "singular": "Follow-up due in {n} day"
+ },
+ "Follow-up due today": {
+  "plural": false
+ },
+ "Follow-up was due yesterday": {
+  "plural": false
+ },
+ "Follow-up was due {n} days ago": {
+  "plural": true,
+  "singular": "Follow-up was due {n} day ago"
+ },
+ "Follow-up was due {n} weeks ago": {
+  "plural": true,
+  "singular": "Follow-up was due {n} week ago"
+ },
+ "Generic name": {
+  "plural": false
+ },
+ "Identifier": {
+  "plural": false
+ },
+ "If this number is registered, a reset code has been sent.": {
+  "plural": false
+ },
+ "Impression": {
+  "plural": false
+ },
+ "Incorrect code. Please request a new one.": {
+  "plural": false
+ },
+ "Incorrect code. {n} attempts left.": {
+  "plural": true,
+  "singular": "Incorrect code. {n} attempt left."
+ },
+ "Incorrect mobile number or password.": {
+  "plural": false
+ },
+ "Invalid dose slot.": {
+  "plural": false
+ },
+ "Invalid medicine.": {
+  "plural": false
+ },
+ "Investigations must be an object.": {
+  "plural": false
+ },
+ "Keep notes under 300 characters.": {
+  "plural": false
+ },
+ "Keep the reason under 120 characters.": {
+  "plural": false
+ },
+ "Known allergies": {
+  "plural": false
+ },
+ "Lab result pending for {n} days": {
+  "plural": true,
+  "singular": "Lab result pending for {n} day"
+ },
+ "Landline": {
+  "plural": false
+ },
+ "Manufacturer": {
+  "plural": false
+ },
+ "Medicine generic name is required.": {
+  "plural": false
+ },
+ "Medicines must be a list.": {
+  "plural": false
+ },
+ "Medicines ran out yesterday": {
+  "plural": false
+ },
+ "Medicines ran out {n} days ago": {
+  "plural": true,
+  "singular": "Medicines ran out {n} day ago"
+ },
+ "Medicines ran out {n} weeks ago": {
+  "plural": true,
+  "singular": "Medicines ran out {n} week ago"
+ },
+ "Medicines run out in {n} days": {
+  "plural": true,
+  "singular": "Medicines run out in {n} day"
+ },
+ "Medicines run out today": {
+  "plural": false
+ },
+ "Message is required (max 1000 characters)": {
+  "plural": false
+ },
+ "Missed appointment today": {
+  "plural": false
+ },
+ "Missed appointment yesterday": {
+  "plural": false
+ },
+ "Missed appointment {n} days ago": {
+  "plural": true,
+  "singular": "Missed appointment {n} day ago"
+ },
+ "Missed appointment {n} weeks ago": {
+  "plural": true,
+  "singular": "Missed appointment {n} week ago"
+ },
+ "Mobile": {
+  "plural": false
+ },
+ "Name": {
+  "plural": false
+ },
+ "No account found for this number.": {
+  "plural": false
+ },
+ "No active code. Please request a new one.": {
+  "plural": false
+ },
+ "No file was uploaded.": {
+  "plural": false
+ },
+ "No logo uploaded.": {
+  "plural": false
+ },
+ "No report is attached.": {
+  "plural": false
+ },
+ "No signature uploaded.": {
+  "plural": false
+ },
+ "Notes": {
+  "plural": false
+ },
+ "Nothing to change.": {
+  "plural": false
+ },
+ "Nothing to verify for this number. Please register again.": {
+  "plural": false
+ },
+ "Number verified. Welcome aboard!": {
+  "plural": false
+ },
+ "Occupation": {
+  "plural": false
+ },
+ "Only JPG, PNG or WebP images are accepted.": {
+  "plural": false
+ },
+ "Only JPG, PNG, WebP or PDF files are accepted.": {
+  "plural": false
+ },
+ "Only a finalised prescription can be cancelled.": {
+  "plural": false
+ },
+ "Only a waiting patient can be called in.": {
+  "plural": false
+ },
+ "Only drafts can be deleted. Cancel a finalised prescription instead.": {
+  "plural": false
+ },
+ "Only upcoming appointments can be changed.": {
+  "plural": false
+ },
+ "Order not found.": {
+  "plural": false
+ },
+ "Otp": {
+  "plural": false
+ },
+ "Paid amount cannot be more than the bill.": {
+  "plural": false
+ },
+ "Password": {
+  "plural": false
+ },
+ "Password updated. Please sign in with your new password.": {
+  "plural": false
+ },
+ "Patient not found.": {
+  "plural": false
+ },
+ "Phone": {
+  "plural": false
+ },
+ "Pincode": {
+  "plural": false
+ },
+ "Please choose a valid country code.": {
+  "plural": false
+ },
+ "Please enter a name (2–100 characters).": {
+  "plural": false
+ },
+ "Please enter a name.": {
+  "plural": false
+ },
+ "Please enter a valid mobile number.": {
+  "plural": false
+ },
+ "Please enter the clinic name.": {
+  "plural": false
+ },
+ "Please enter the patient’s name.": {
+  "plural": false
+ },
+ "Please enter your full name.": {
+  "plural": false
+ },
+ "Please keep this under {max} characters.": {
+  "plural": false
+ },
+ "Please verify your mobile number to continue.": {
+  "plural": false
+ },
+ "Please wait {n} seconds before requesting another code.": {
+  "plural": true,
+  "singular": "Please wait {n} second before requesting another code."
+ },
+ "Prescription not found for this patient.": {
+  "plural": false
+ },
+ "Prescription not found.": {
+  "plural": false
+ },
+ "Purpose": {
+  "plural": false
+ },
+ "Radiologist report": {
+  "plural": false
+ },
+ "Rate limit exceeded. Try again in {n} seconds.": {
+  "plural": false
+ },
+ "Reason": {
+  "plural": false
+ },
+ "Refresh token": {
+  "plural": false
+ },
+ "Registration is by invitation only right now. Please contact Prescription Rx to be onboarded.": {
+  "plural": false
+ },
+ "Registration no": {
+  "plural": false
+ },
+ "Reminders can be sent for follow-ups, refills and missed visits": {
+  "plural": false
+ },
+ "Report in, not yet reviewed": {
+  "plural": false
+ },
+ "Report pending for {n} days": {
+  "plural": true,
+  "singular": "Report pending for {n} day"
+ },
+ "Result in, not yet reviewed": {
+  "plural": false
+ },
+ "Result in: {n} abnormal": {
+  "plural": false
+ },
+ "Results must be a list.": {
+  "plural": false
+ },
+ "Save your clinic details first.": {
+  "plural": false
+ },
+ "Send up to 7 days.": {
+  "plural": false
+ },
+ "Session expired. Please sign in again.": {
+  "plural": false
+ },
+ "Sessions must not overlap.": {
+  "plural": false
+ },
+ "Sex": {
+  "plural": false
+ },
+ "Specialization": {
+  "plural": false
+ },
+ "Split a payment at most three ways.": {
+  "plural": false
+ },
+ "State": {
+  "plural": false
+ },
+ "Status": {
+  "plural": false
+ },
+ "Status must be draft or final.": {
+  "plural": false
+ },
+ "Strength": {
+  "plural": false
+ },
+ "Symptoms must be a list.": {
+  "plural": false
+ },
+ "That appointment is no longer open.": {
+  "plural": false
+ },
+ "That code is not valid. Please request a new one.": {
+  "plural": false
+ },
+ "That date is too far ahead.": {
+  "plural": false
+ },
+ "That follow-up date is too far away.": {
+  "plural": false
+ },
+ "That is more than the {amount} still due.": {
+  "plural": false
+ },
+ "That is too far ahead.": {
+  "plural": false
+ },
+ "That time has already passed.": {
+  "plural": false
+ },
+ "The attached file is missing.": {
+  "plural": false
+ },
+ "The date of birth is not valid, or is in the future.": {
+  "plural": false
+ },
+ "The file is too large (max 10 MB).": {
+  "plural": false
+ },
+ "The image is too large (max 2 MB).": {
+  "plural": false
+ },
+ "The logo file is missing.": {
+  "plural": false
+ },
+ "The scan data is not valid.": {
+  "plural": false
+ },
+ "The scan has too many rows.": {
+  "plural": false
+ },
+ "The scanned text is too long.": {
+  "plural": false
+ },
+ "The signature file is missing.": {
+  "plural": false
+ },
+ "The upload did not complete. Please try again.": {
+  "plural": false
+ },
+ "This account has been switched off. Please ask the doctor.": {
+  "plural": false
+ },
+ "This account is disabled. Please contact support.": {
+  "plural": false
+ },
+ "This account is no longer available. Please contact support.": {
+  "plural": false
+ },
+ "This bill is already cancelled.": {
+  "plural": false
+ },
+ "This bill is cancelled.": {
+  "plural": false
+ },
+ "This clinic already has {n} bills. Changing the currency does NOT convert their amounts: they keep the same numbers in the new currency.": {
+  "plural": true,
+  "singular": "This clinic already has {n} bill. Changing the currency does NOT convert its amount: it keeps the same number in the new currency."
+ },
+ "This code has expired. Please request a new one.": {
+  "plural": false
+ },
+ "This e-mail address is already used by another account.": {
+  "plural": false
+ },
+ "This is only available to the doctor.": {
+  "plural": false
+ },
+ "This mobile number is already registered.": {
+  "plural": false
+ },
+ "This mobile number is already registered. Please sign in.": {
+  "plural": false
+ },
+ "This number cannot be registered. Please contact support.": {
+  "plural": false
+ },
+ "This patient has no mobile number": {
+  "plural": false
+ },
+ "This prescription is already billed.": {
+  "plural": false
+ },
+ "This registration number is already used by another account.": {
+  "plural": false
+ },
+ "Times must look like 09:30.": {
+  "plural": false
+ },
+ "Timings": {
+  "plural": false
+ },
+ "Too many conditions selected.": {
+  "plural": false
+ },
+ "Too many items (max 20).": {
+  "plural": false
+ },
+ "Too many medicines (max 30).": {
+  "plural": false
+ },
+ "Too many symptoms.": {
+  "plural": false
+ },
+ "Too many wrong attempts. Please request a new code.": {
+  "plural": false
+ },
+ "Too much advice (max 30 lines).": {
+  "plural": false
+ },
+ "Unknown test in this order.": {
+  "plural": false
+ },
+ "Use 8–64 characters.": {
+  "plural": false
+ },
+ "Use at least one letter and one number.": {
+  "plural": false
+ },
+ "Visit date cannot be in the future.": {
+  "plural": false
+ },
+ "Whatsapp number": {
+  "plural": false
+ },
+ "You can add up to {n} staff members.": {
+  "plural": false
+ },
+ "You do not have permission to perform this action.": {
+  "plural": false
+ },
+ "Your current password is incorrect.": {
+  "plural": false
+ },
+ "Your current password is not correct.": {
+  "plural": false
+ },
+ "Your session is no longer valid. Please sign in again.": {
+  "plural": false
+ },
+ "Your session was ended by the clinic. Please sign in again.": {
+  "plural": false
+ },
+ "{label} confirmation does not match.": {
+  "plural": false
+ },
+ "{label} contains an invalid value.": {
+  "plural": false
+ },
+ "{label} format is invalid.": {
+  "plural": false
+ },
+ "{label} is required.": {
+  "plural": false
+ },
+ "{label} may not be greater than {param} characters.": {
+  "plural": false
+ },
+ "{label} may not be greater than {param}.": {
+  "plural": false
+ },
+ "{label} may only contain letters and numbers.": {
+  "plural": false
+ },
+ "{label} may only contain letters.": {
+  "plural": false
+ },
+ "{label} must be a boolean.": {
+  "plural": false
+ },
+ "{label} must be a string.": {
+  "plural": false
+ },
+ "{label} must be a valid URL.": {
+  "plural": false
+ },
+ "{label} must be a valid date.": {
+  "plural": false
+ },
+ "{label} must be a valid email address.": {
+  "plural": false
+ },
+ "{label} must be an array.": {
+  "plural": false
+ },
+ "{label} must be an integer.": {
+  "plural": false
+ },
+ "{label} must be at least {param} characters.": {
+  "plural": false
+ },
+ "{label} must be at least {param}.": {
+  "plural": false
+ },
+ "{label} must be numeric.": {
+  "plural": false
+ },
+ "{label} must be one of: {param}.": {
+  "plural": false
+ }
+}

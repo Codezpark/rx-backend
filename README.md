@@ -144,3 +144,17 @@ for everything that was found and changed.
 - Change `jwt.secret` and DB credentials in the `production` block, set `ENV = 'production'`.
 - Serve over HTTPS; `expose_dev_otp` must stay `false`.
 - Keep `.htaccess` in place — it blocks `config/ core/ logs/ tests/ *.sql *.md .git` from the web.
+
+
+## Messages in the clinic's language (G5)
+
+`core/Lang.php` translates the API's user-facing messages. The English sentence is the key (`Lang::t('Patient not found.')`);
+`lang/<code>.json` maps it to the language, and a message with no entry is sent in English. `Response::send()` runs the message and
+every field error through it, so most call sites need no change; messages with numbers use placeholders
+(`Lang::t('Wait {n} seconds.', ['n' => 5])`) or `Lang::n(singular, plural, count)`.
+
+The app sends `Accept-Language: <code>` (the clinic's language; English while that language is not signed off), so even sign-in errors
+come back right. To add or change messages: edit the code, run `python3 tools/extract_messages.py > lang/_keys.json`, translate the new
+keys and add them to `lang/<code>.json` (`python3 tools/merge_lang.py <dir> <codes>` merges numbered translation files), then run
+`python3 tests/api_lang_messages.py` (every key must exist in every language with the same placeholders).
+Calculator sentences (`PediatricDoseHelper`) stay English until a clinician has reviewed translations.

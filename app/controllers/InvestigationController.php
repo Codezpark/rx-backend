@@ -361,7 +361,7 @@ class InvestigationController extends BaseController
         $this->validate(['status' => 'required|in:' . $allowedList]);
         $next = (string) $this->request->get('status');
         if (!in_array($next, $flow[$current] ?? [], true)) {
-            Response::error("An order that is “{$current}” can’t be marked “{$next}”.", 409);
+            Response::error(Lang::t('An order that is “{current}” can’t be marked “{next}”.', ['current' => $current, 'next' => $next]), 409);
         }
         return $next;
     }

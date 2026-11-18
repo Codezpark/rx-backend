@@ -71,50 +71,50 @@ class Validator
 
     private function applyRule(string $field, mixed $value, string $rule, ?string $param): void
     {
-        $label = ucfirst(str_replace('_', ' ', $field));
+        $label = Lang::t(ucfirst(str_replace('_', ' ', $field)));  // a field's name, in the clinic's language when translated
 
         switch ($rule) {
             case 'required':
                 if ($value === null || $value === '' || (is_array($value) && count($value) === 0)) {
-                    $this->addError($field, "{$label} is required.");
+                    $this->addError($field, Lang::t('{label} is required.', ['label' => $label]));
                 }
                 break;
 
             case 'string':
                 if ($value !== null && !is_string($value)) {
-                    $this->addError($field, "{$label} must be a string.");
+                    $this->addError($field, Lang::t('{label} must be a string.', ['label' => $label]));
                 }
                 break;
 
             case 'integer':
             case 'int':
                 if ($value !== null && !filter_var($value, FILTER_VALIDATE_INT)) {
-                    $this->addError($field, "{$label} must be an integer.");
+                    $this->addError($field, Lang::t('{label} must be an integer.', ['label' => $label]));
                 }
                 break;
 
             case 'numeric':
                 if ($value !== null && !is_numeric($value)) {
-                    $this->addError($field, "{$label} must be numeric.");
+                    $this->addError($field, Lang::t('{label} must be numeric.', ['label' => $label]));
                 }
                 break;
 
             case 'boolean':
             case 'bool':
                 if ($value !== null && !in_array($value, [true, false, 1, 0, '1', '0'], true)) {
-                    $this->addError($field, "{$label} must be a boolean.");
+                    $this->addError($field, Lang::t('{label} must be a boolean.', ['label' => $label]));
                 }
                 break;
 
             case 'email':
                 if ($value !== null && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $this->addError($field, "{$label} must be a valid email address.");
+                    $this->addError($field, Lang::t('{label} must be a valid email address.', ['label' => $label]));
                 }
                 break;
 
             case 'url':
                 if ($value !== null && !filter_var($value, FILTER_VALIDATE_URL)) {
-                    $this->addError($field, "{$label} must be a valid URL.");
+                    $this->addError($field, Lang::t('{label} must be a valid URL.', ['label' => $label]));
                 }
                 break;
 
@@ -123,10 +123,10 @@ class Validator
                     if (is_string($value)) {
                         // Strings are measured by length, even digit-only ones (phone numbers).
                         if (mb_strlen($value) < (int) $param) {
-                            $this->addError($field, "{$label} must be at least {$param} characters.");
+                            $this->addError($field, Lang::t('{label} must be at least {param} characters.', ['label' => $label, 'param' => $param]));
                         }
                     } elseif (is_numeric($value) && (float) $value < (float) $param) {
-                        $this->addError($field, "{$label} must be at least {$param}.");
+                        $this->addError($field, Lang::t('{label} must be at least {param}.', ['label' => $label, 'param' => $param]));
                     }
                 }
                 break;
@@ -135,10 +135,10 @@ class Validator
                 if ($value !== null) {
                     if (is_string($value)) {
                         if (mb_strlen($value) > (int) $param) {
-                            $this->addError($field, "{$label} may not be greater than {$param} characters.");
+                            $this->addError($field, Lang::t('{label} may not be greater than {param} characters.', ['label' => $label, 'param' => $param]));
                         }
                     } elseif (is_numeric($value) && (float) $value > (float) $param) {
-                        $this->addError($field, "{$label} may not be greater than {$param}.");
+                        $this->addError($field, Lang::t('{label} may not be greater than {param}.', ['label' => $label, 'param' => $param]));
                     }
                 }
                 break;
@@ -147,7 +147,7 @@ class Validator
                 if ($value !== null) {
                     $allowed = explode(',', $param);
                     if (!in_array($value, $allowed, true)) {
-                        $this->addError($field, "{$label} must be one of: {$param}.");
+                        $this->addError($field, Lang::t('{label} must be one of: {param}.', ['label' => $label, 'param' => $param]));
                     }
                 }
                 break;
@@ -156,45 +156,45 @@ class Validator
                 if ($value !== null) {
                     $forbidden = explode(',', $param);
                     if (in_array($value, $forbidden, true)) {
-                        $this->addError($field, "{$label} contains an invalid value.");
+                        $this->addError($field, Lang::t('{label} contains an invalid value.', ['label' => $label]));
                     }
                 }
                 break;
 
             case 'regex':
                 if ($value !== null && !preg_match($param, (string) $value)) {
-                    $this->addError($field, "{$label} format is invalid.");
+                    $this->addError($field, Lang::t('{label} format is invalid.', ['label' => $label]));
                 }
                 break;
 
             case 'date':
                 if ($value !== null && strtotime((string) $value) === false) {
-                    $this->addError($field, "{$label} must be a valid date.");
+                    $this->addError($field, Lang::t('{label} must be a valid date.', ['label' => $label]));
                 }
                 break;
 
             case 'alpha':
                 if ($value !== null && !ctype_alpha((string) $value)) {
-                    $this->addError($field, "{$label} may only contain letters.");
+                    $this->addError($field, Lang::t('{label} may only contain letters.', ['label' => $label]));
                 }
                 break;
 
             case 'alpha_num':
                 if ($value !== null && !ctype_alnum((string) $value)) {
-                    $this->addError($field, "{$label} may only contain letters and numbers.");
+                    $this->addError($field, Lang::t('{label} may only contain letters and numbers.', ['label' => $label]));
                 }
                 break;
 
             case 'array':
                 if ($value !== null && !is_array($value)) {
-                    $this->addError($field, "{$label} must be an array.");
+                    $this->addError($field, Lang::t('{label} must be an array.', ['label' => $label]));
                 }
                 break;
 
             case 'confirmed':
                 $confirmation = $this->data[$field . '_confirmation'] ?? null;
                 if ($value !== $confirmation) {
-                    $this->addError($field, "{$label} confirmation does not match.");
+                    $this->addError($field, Lang::t('{label} confirmation does not match.', ['label' => $label]));
                 }
                 break;
         }

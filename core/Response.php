@@ -73,6 +73,9 @@ class Response
         if (empty($message)) {
             $message = self::$messages[$code] ?? 'Unknown';
         }
+        // The clinic's language: the message and every field error go through Lang (English if untranslated).
+        $message = Lang::t($message);
+        $errors  = self::translateErrors($errors);
 
         $body = [
             'status'  => $status,
@@ -107,6 +110,16 @@ class Response
 
         echo json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         exit();
+    }
+
+    /** Field errors are { field: [message, ...] } (or a plain message); translate every string leaf. */
+    private static function translateErrors(array $errors): array
+    {
+        foreach ($errors as $k => $v) {
+            if (is_string($v)) $errors[$k] = Lang::t($v);
+            elseif (is_array($v)) $errors[$k] = self::translateErrors($v);
+        }
+        return $errors;
     }
 
     // ── Convenience helpers ──────────────────────────────────────────────────

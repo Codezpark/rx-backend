@@ -52,7 +52,7 @@ class FollowupHelper
         foreach ($rows as $r) {
             $diff   = (int) round(($t - strtotime($r['followup_date'] . ' 00:00:00 UTC')) / 86400);  // >0 = overdue
             $followups[] = self::item('followup', (int) $r['id'], $r, [
-                'title'           => $diff > 0 ? "Follow-up was due " . self::ago($diff) : ($diff === 0 ? 'Follow-up due today' : 'Follow-up due in ' . (-$diff) . ' day' . ($diff === -1 ? '' : 's')),
+                'title'           => $diff > 0 ? self::agoFollowup($diff) : ($diff === 0 ? Lang::t('Follow-up due today') : Lang::n('Follow-up due in {n} day', 'Follow-up due in {n} days', -$diff)),
                 'detail'          => trim(($r['diagnosis'] ?? '') . (!empty($r['followup_note']) ? ' · ' . $r['followup_note'] : ''), ' ·'),
                 'due_date'        => $r['followup_date'],
                 'days'            => $diff,
@@ -89,7 +89,7 @@ class FollowupHelper
                 [':p' => $r['id']]
             ), 'medicine_name');
             $refills[] = self::item('refill', (int) $r['id'], $r, [
-                'title'           => $diff > 0 ? 'Medicines ran out ' . self::ago($diff) : ($diff === 0 ? 'Medicines run out today' : 'Medicines run out in ' . (-$diff) . ' day' . ($diff === -1 ? '' : 's')),
+                'title'           => $diff > 0 ? self::agoRefill($diff) : ($diff === 0 ? Lang::t('Medicines run out today') : Lang::n('Medicines run out in {n} day', 'Medicines run out in {n} days', -$diff)),
                 'detail'          => implode(', ', $names),
                 'due_date'        => $runOut,
                 'days'            => $diff,
@@ -113,8 +113,8 @@ class FollowupHelper
             $names = array_column($db->getRows('SELECT COALESCE(c.name, t.custom_test) n FROM lab_order_tests t LEFT JOIN lab_tests_catalog c ON c.id = t.test_id WHERE t.lab_order_id = :o ORDER BY t.id LIMIT 3', [':o' => $r['id']]), 'n');
             $when  = $r['result_date'] ?? $r['order_date'];
             $toReview[] = self::item('lab_review', (int) $r['id'], $r, [
-                'title' => $s['abnormal_count'] > 0 ? "Result in: {$s['abnormal_count']} abnormal" : 'Result in, not yet reviewed',
-                'detail' => implode(', ', $names) . ($s['tests_count'] > 3 ? ' +' . ($s['tests_count'] - 3) . ' more' : ''),
+                'title' => $s['abnormal_count'] > 0 ? Lang::t('Result in: {n} abnormal', ['n' => $s['abnormal_count']]) : Lang::t('Result in, not yet reviewed'),
+                'detail' => implode(', ', $names) . ($s['tests_count'] > 3 ? ' ' . Lang::t('+{n} more', ['n' => $s['tests_count'] - 3]) : ''),
                 'due_date' => substr($when, 0, 10), 'days' => (int) round(($t - strtotime(substr($when, 0, 10) . ' 00:00:00 UTC')) / 86400),
                 'bucket' => $s['abnormal_count'] > 0 ? 'overdue' : 'today', 'abnormal_count' => $s['abnormal_count'], 'order_kind' => 'lab',
             ]);
@@ -126,7 +126,7 @@ class FollowupHelper
              WHERE o.doctor_id = :d AND o.deleted_at IS NULL AND o.status = 'report_ready' ORDER BY o.result_date ASC LIMIT 100", [':d' => $doctorId]) as $r) {
             $when = $r['result_date'] ?? $r['created_at'];
             $toReview[] = self::item('imaging_review', (int) $r['id'], $r, [
-                'title' => 'Report in, not yet reviewed',
+                'title' => Lang::t('Report in, not yet reviewed'),
                 'detail' => trim((InvestigationHelper::MODALITY_LABELS[$r['modality']] ?? 'Imaging') . ' ' . ($r['body_part'] ?? '')),
                 'due_date' => substr($when, 0, 10), 'days' => (int) round(($t - strtotime(substr($when, 0, 10) . ' 00:00:00 UTC')) / 86400),
                 'bucket' => 'today', 'order_kind' => 'imaging',
@@ -148,7 +148,7 @@ class FollowupHelper
             $names = array_column($db->getRows('SELECT COALESCE(c.name, t.custom_test) n FROM lab_order_tests t LEFT JOIN lab_tests_catalog c ON c.id = t.test_id WHERE t.lab_order_id = :o ORDER BY t.id LIMIT 3', [':o' => $r['id']]), 'n');
             $days = (int) floor((time() - strtotime($r['order_date'] . ' UTC')) / 86400);
             $pending[] = self::item('lab_pending', (int) $r['id'], $r, [
-                'title' => "Lab result pending for $days day" . ($days === 1 ? '' : 's'), 'detail' => implode(', ', $names),
+                'title' => Lang::n('Lab result pending for {n} day', 'Lab result pending for {n} days', $days), 'detail' => implode(', ', $names),
                 'due_date' => substr($r['order_date'], 0, 10), 'days' => $days, 'bucket' => $r['urgency'] !== 'routine' ? 'overdue' : 'soon', 'order_kind' => 'lab', 'urgency' => $r['urgency'],
             ]);
         }
@@ -161,7 +161,7 @@ class FollowupHelper
             [':d' => $doctorId, ':rc' => $routineCut, ':uc' => $urgentCut, ':d_imaging_pending' => $doctorId, ':now_imaging_pending' => $now]) as $r) {
             $days = (int) floor((time() - strtotime($r['created_at'] . ' UTC')) / 86400);
             $pending[] = self::item('imaging_pending', (int) $r['id'], $r, [
-                'title' => "Report pending for $days day" . ($days === 1 ? '' : 's'),
+                'title' => Lang::n('Report pending for {n} day', 'Report pending for {n} days', $days),
                 'detail' => trim((InvestigationHelper::MODALITY_LABELS[$r['modality']] ?? 'Imaging') . ' ' . ($r['body_part'] ?? '')),
                 'due_date' => substr($r['created_at'], 0, 10), 'days' => $days, 'bucket' => $r['urgency'] !== 'routine' ? 'overdue' : 'soon', 'order_kind' => 'imaging', 'urgency' => $r['urgency'],
             ]);
@@ -186,7 +186,7 @@ class FollowupHelper
         foreach ($rows as $r) {
             $days = (int) floor((time() - strtotime($r['scheduled_at'] . ' UTC')) / 86400);
             $missed[] = self::item('missed', (int) $r['id'], $r, [
-                'title' => 'Missed appointment ' . ($days <= 0 ? 'today' : self::ago($days)), 'detail' => $r['reason'] ?? '',
+                'title' => $days <= 0 ? Lang::t('Missed appointment today') : self::agoMissed($days), 'detail' => $r['reason'] ?? '',
                 'due_date' => substr($r['scheduled_at'], 0, 10), 'days' => $days, 'bucket' => 'overdue', 'reminded_at' => $r['reminded_at'],
             ]);
         }
@@ -201,9 +201,26 @@ class FollowupHelper
         ];
     }
 
-    private static function ago(int $days): string
+    // "Follow-up was due 3 days ago" etc. Whole sentences, so every language can word them its own way.
+    private static function agoFollowup(int $d): string
     {
-        return $days === 1 ? 'yesterday' : ($days < 14 ? "$days days ago" : (int) round($days / 7) . ' weeks ago');
+        return $d === 1 ? Lang::t('Follow-up was due yesterday')
+            : ($d < 14 ? Lang::n('Follow-up was due {n} day ago', 'Follow-up was due {n} days ago', $d)
+            : Lang::n('Follow-up was due {n} week ago', 'Follow-up was due {n} weeks ago', (int) round($d / 7)));
+    }
+
+    private static function agoRefill(int $d): string
+    {
+        return $d === 1 ? Lang::t('Medicines ran out yesterday')
+            : ($d < 14 ? Lang::n('Medicines ran out {n} day ago', 'Medicines ran out {n} days ago', $d)
+            : Lang::n('Medicines ran out {n} week ago', 'Medicines ran out {n} weeks ago', (int) round($d / 7)));
+    }
+
+    private static function agoMissed(int $d): string
+    {
+        return $d === 1 ? Lang::t('Missed appointment yesterday')
+            : ($d < 14 ? Lang::n('Missed appointment {n} day ago', 'Missed appointment {n} days ago', $d)
+            : Lang::n('Missed appointment {n} week ago', 'Missed appointment {n} weeks ago', (int) round($d / 7)));
     }
 
     /** Common envelope: kind, id, patient, plus the item-specific fields. */

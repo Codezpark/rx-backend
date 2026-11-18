@@ -18,6 +18,8 @@ RewriteRule ^migrations/ - [F,L]
 RewriteRule ^storage/ - [F,L]
 RewriteRule ^tests/ - [F,L]
 RewriteRule ^docs/ - [F,L]
+RewriteRule ^lang/ - [F,L]
+RewriteRule ^tools/ - [F,L]
 RewriteRule (^|/)\.github(/|$) - [F,L]
 
 # Never serve repository metadata, database dumps, docs or scripts
