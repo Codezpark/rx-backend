@@ -32,8 +32,8 @@ class PatientController extends BaseController
 
         if ($q !== '') {
             $like = '%' . addcslashes($q, '%_\\') . '%';
-            $sql .= ' AND (name LIKE :q1 OR uhid LIKE :q2 OR mobile LIKE :q3 OR whatsapp_number LIKE :q4)';
-            $params += [':q1' => $like, ':q2' => $like, ':q3' => $like, ':q4' => $like];
+            $sql .= ' AND (name LIKE :q1 OR uhid LIKE :q2 OR mobile LIKE :q3 OR whatsapp_number LIKE :q4 OR national_id LIKE :q5)';
+            $params += [':q1' => $like, ':q2' => $like, ':q3' => $like, ':q4' => $like, ':q5' => $like];
         }
 
         // Most recently touched first: that is who the doctor is most likely to look for.
@@ -147,6 +147,7 @@ class PatientController extends BaseController
             'blood_group' => 'nullable|in:' . implode(',', self::BLOODS),
             'address'     => 'nullable|string|max:500',
             'occupation'  => 'nullable|string|max:150',
+            'national_id' => 'nullable|string|max:40',
             'known_allergies' => 'nullable|string|max:1000',
         ]);
 
@@ -198,6 +199,7 @@ class PatientController extends BaseController
                 'blood_group'     => ($blood === null || $blood === '') ? null : $blood,
                 'address'         => $text('address'),
                 'occupation'      => $text('occupation'),
+                'national_id'     => $text('national_id'),
                 'known_allergies' => $text('known_allergies'),
             ],
         ];
@@ -299,6 +301,7 @@ class PatientController extends BaseController
             'blood_group'     => $p['blood_group'],
             'address'         => $p['address'],
             'occupation'      => $p['occupation'],
+            'national_id'     => $p['national_id'] ?? null,
             'known_allergies' => $p['known_allergies'],
             'chronic_summary' => $p['chronic_conditions'],
             'created_at'      => $p['created_at'],

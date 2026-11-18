@@ -167,6 +167,7 @@ class DoctorController extends BaseController
             'landline'      => 'nullable|string|max:20',
             'mobile'        => 'nullable|string|max:20',
             'timings'       => 'nullable|string|max:500',
+            'tax_number'    => 'nullable|string|max:40',
         ]);
         $fee = $this->request->get('consultation_fee');
         if ($fee !== null && $fee !== '' && (!is_numeric($fee) || (float) $fee < 0 || (float) $fee > 1000000)) {
@@ -198,8 +199,9 @@ class DoctorController extends BaseController
         $mobile = $opt('mobile');
         if ($mobile !== null) {
             $mobile = preg_replace('/\D/', '', $mobile);
-            if (!preg_match('/^\d{10}$/', (string) $mobile)) {
-                Response::validationError(['mobile' => ['Enter a 10-digit mobile number.']]);
+            // The rule of the clinic's own country (10 digits in India, 9 in the UAE / Saudi Arabia, 8 in Oman ...).
+            if (!LocaleHelper::mobileOk(LocaleHelper::countryFor($d), (string) $mobile)) {
+                Response::validationError(['mobile' => ['Please enter a valid mobile number.']]);
             }
         }
         $landline = $opt('landline');  // landline may carry an STD code and separators
@@ -210,6 +212,7 @@ class DoctorController extends BaseController
         );
         // Keep the legacy single `phone` column in sync so older views still show a number.
         $data['phone'] = $mobile ?? $landline ?? $opt('phone');
+        $data['tax_number'] = $opt('tax_number');
         $dp = LocaleHelper::dpFor($d);
         $data['consultation_fee'] = ($fee === null || $fee === '') ? null : round((float) $fee, $dp);
         $data += $tiers;
@@ -249,6 +252,7 @@ class DoctorController extends BaseController
             'old_case_window_days' => isset($c['old_case_window_days']) ? (int) $c['old_case_window_days'] : 30,
             'free_next_day' => (bool) ($c['free_next_day'] ?? false),
             'has_logo' => !empty($c['logo_url']),
+            'tax_number' => $c['tax_number'] ?? null,
             'language' => $c['language'] ?? 'en', 'currency' => $c['currency'] ?? 'INR', 'country' => $c['country'] ?? 'IN',
         ];
     }

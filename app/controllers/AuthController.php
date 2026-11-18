@@ -416,6 +416,12 @@ class AuthController extends BaseController
         if ($cc === '91' && !preg_match('/^[6-9]\d{9}$/', $local)) {
             Response::validationError(['phone' => ['Enter a valid 10-digit Indian mobile number.']]);
         }
+        // Countries we know (Nepal 10 digits, UAE / Saudi 9, Oman / Qatar / Kuwait / Bahrain 8 ...) must match their own length.
+        foreach (LocaleHelper::PHONE_RULES as [$dial, $min, $max]) {
+            if ($dial === $cc && $cc !== '1' && $cc !== '91' && (strlen($local) < $min || strlen($local) > $max)) {
+                Response::validationError(['phone' => ['Please enter a valid mobile number.']]);
+            }
+        }
         return '+' . $cc . $local;
     }
 

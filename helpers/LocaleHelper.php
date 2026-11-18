@@ -25,6 +25,29 @@ final class LocaleHelper
         'KW' => ['KWD', 'ar'], 'BH' => ['BHD', 'ar'], 'BD' => ['BDT', 'bn'], 'PK' => ['PKR', 'ur'], 'US' => ['USD', 'en'], 'GB' => ['GBP', 'en'],
     ];
 
+    /** country => [dial code, shortest, longest national number WITHOUT the trunk 0]. Mirrors lib/core/locale_catalog.dart. */
+    public const PHONE_RULES = [
+        'IN' => ['91', 10, 10], 'NP' => ['977', 10, 10], 'LK' => ['94', 9, 9], 'NG' => ['234', 10, 10], 'EG' => ['20', 10, 10],
+        'GH' => ['233', 9, 9], 'AE' => ['971', 9, 9], 'SA' => ['966', 9, 9], 'OM' => ['968', 8, 8], 'QA' => ['974', 8, 8],
+        'KW' => ['965', 8, 8], 'BH' => ['973', 8, 8], 'BD' => ['880', 10, 10], 'PK' => ['92', 10, 10], 'US' => ['1', 10, 10], 'GB' => ['44', 10, 10],
+    ];
+
+    /** True when [$digits] (digits only, trunk 0 allowed) is a plausible mobile number in [$country]. */
+    public static function mobileOk(string $country, string $digits): bool
+    {
+        [, $min, $max] = self::PHONE_RULES[$country] ?? self::PHONE_RULES['IN'];
+        $digits = ltrim($digits, '0');
+        return strlen($digits) >= $min && strlen($digits) <= $max;
+    }
+
+    /** The country of the doctor's primary clinic (IN until they choose). */
+    public static function countryFor(int $doctorId): string
+    {
+        $row = Database::getInstance()->getRow('SELECT country FROM clinics WHERE doctor_id = :d AND deleted_at IS NULL ORDER BY is_primary DESC, id LIMIT 1', [':d' => $doctorId]);
+        $c = (string) ($row['country'] ?? 'IN');
+        return isset(self::PHONE_RULES[$c]) ? $c : 'IN';
+    }
+
     private static array $dpCache = [];
 
     public static function decimals(string $currency): int
