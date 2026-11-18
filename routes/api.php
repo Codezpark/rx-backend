@@ -80,6 +80,8 @@ $router->get('patients/{id}/prescriptions',    'Prescription', 'forPatient', ['a
 // ── Clinic (letterhead) ──────────────────────────────────────────────────────
 $router->get('doctor/clinic', 'Doctor', 'clinic',       ['auth' => true]);
 $router->put('doctor/clinic', 'Doctor', 'updateClinic', ['auth' => true]);
+$router->get('doctor/clinic-settings', 'Doctor', 'localeSettings',       ['auth' => true]);
+$router->put('doctor/clinic-settings', 'Doctor', 'updateLocaleSettings', ['auth' => true]);
 $router->get('doctor/consult-fee', 'Doctor', 'consultFee', ['auth' => true]);
 
 // ── Appointments / today's queue (JWT required) ──────────────────────────────

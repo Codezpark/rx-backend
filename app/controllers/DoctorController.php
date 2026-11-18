@@ -102,6 +102,57 @@ class DoctorController extends BaseController
         Response::success(['fee' => FeeHelper::suggest($d, $pid, null, $caseType)], 'Fee suggested');
     }
 
+    /** GET doctor/clinic-settings: the clinic's language, currency and country. Doctor and reception both read it. */
+    public function localeSettings(): void
+    {
+        $d = (int) $this->requireClinic()['id'];
+        Response::success(['settings' => $this->settingsPayload($this->primaryClinic($d))], 'Settings fetched');
+    }
+
+    /**
+     * PUT doctor/clinic-settings {language, currency, country}: the doctor sets how the whole clinic sees the app.
+     * Changing the currency does not convert any amount, so once the clinic has bills it needs `confirm_no_conversion`.
+     */
+    public function updateLocaleSettings(): void
+    {
+        $d = (int) $this->requireDoctor()['id'];
+        $c = $this->primaryClinic($d);
+        $cur = $c ? ($c['currency'] ?? 'INR') : 'INR';
+        $lang = strtolower(trim((string) ($this->request->get('language') ?? ($c['language'] ?? 'en'))));
+        $currency = strtoupper(trim((string) ($this->request->get('currency') ?? $cur)));
+        $country = strtoupper(trim((string) ($this->request->get('country') ?? ($c['country'] ?? 'IN'))));
+        $err = [];
+        if (!in_array($lang, LocaleHelper::LANGUAGES, true)) $err['language'] = ['Choose one of the supported languages.'];
+        if (!isset(LocaleHelper::CURRENCIES[$currency])) $err['currency'] = ['Choose one of the supported currencies.'];
+        if (!preg_match('/^[A-Z]{2}$/', $country)) $err['country'] = ['Choose a country.'];
+        if ($err) Response::validationError($err);
+
+        if ($currency !== $cur) {
+            $bills = (int) $this->db->getRow("SELECT COUNT(*) n FROM bills WHERE doctor_id = :d AND status <> 'cancelled'", [':d' => $d])['n'];
+            if ($bills > 0 && !filter_var($this->request->get('confirm_no_conversion'), FILTER_VALIDATE_BOOLEAN)) {
+                Response::error("This clinic already has $bills bill(s). Changing the currency does NOT convert their amounts: they keep the same numbers in the new currency.", 409, ['needs_confirmation' => ['yes'], 'bills' => [(string) $bills]]);
+            }
+        }
+        $data = ['language' => $lang, 'currency' => $currency, 'country' => $country];
+        if ($c) {
+            $this->db->update('clinics', $data, 'id = :id', [':id' => $c['id']]);
+        } else {
+            $doc = $this->db->getRow('SELECT name FROM doctors WHERE id = :i', [':i' => $d]);
+            $this->db->insert('clinics', $data + ['doctor_id' => $d, 'is_primary' => 1, 'name' => ($doc['name'] ?? 'My clinic')]);
+        }
+        LocaleHelper::forgetCache();
+        Response::success(['settings' => $this->settingsPayload($this->primaryClinic($d))], 'Settings saved');
+    }
+
+    private function settingsPayload(?array $c): array
+    {
+        $cur = $c['currency'] ?? 'INR';
+        return [
+            'language' => $c['language'] ?? 'en', 'currency' => $cur, 'country' => $c['country'] ?? 'IN',
+            'currency_decimals' => LocaleHelper::decimals($cur),
+        ];
+    }
+
     public function updateClinic(): void
     {
         $d = (int) $this->requireDoctor()['id'];
@@ -119,7 +170,7 @@ class DoctorController extends BaseController
         ]);
         $fee = $this->request->get('consultation_fee');
         if ($fee !== null && $fee !== '' && (!is_numeric($fee) || (float) $fee < 0 || (float) $fee > 1000000)) {
-            Response::validationError(['consultation_fee' => ['Enter a fee between 0 and 10,00,000.']]);
+            Response::validationError(['consultation_fee' => ['Enter a valid fee.']]);
         }
         // Fee tiers (Module 4.2): each optional; consultation_fee stays the fallback.
         $tiers = [];
@@ -127,9 +178,9 @@ class DoctorController extends BaseController
             $tv = $this->request->get($tk);
             if ($tv === null || $tv === '') { $tiers[$tk] = null; continue; }
             if (!is_numeric($tv) || (float) $tv < 0 || (float) $tv > 1000000) {
-                Response::validationError([$tk => ['Enter a fee between 0 and 10,00,000.']]);
+                Response::validationError([$tk => ['Enter a valid fee.']]);
             }
-            $tiers[$tk] = round((float) $tv, 2);
+            $tiers[$tk] = round((float) $tv, LocaleHelper::dpFor($d));
         }
         $window = $this->request->get('old_case_window_days');
         if ($window === null || $window === '') { $window = 30; }
@@ -159,7 +210,8 @@ class DoctorController extends BaseController
         );
         // Keep the legacy single `phone` column in sync so older views still show a number.
         $data['phone'] = $mobile ?? $landline ?? $opt('phone');
-        $data['consultation_fee'] = ($fee === null || $fee === '') ? null : round((float) $fee, 2);
+        $dp = LocaleHelper::dpFor($d);
+        $data['consultation_fee'] = ($fee === null || $fee === '') ? null : round((float) $fee, $dp);
         $data += $tiers;
         $data['old_case_window_days'] = $window;
         $data['free_next_day'] = $freeNext;
@@ -197,6 +249,7 @@ class DoctorController extends BaseController
             'old_case_window_days' => isset($c['old_case_window_days']) ? (int) $c['old_case_window_days'] : 30,
             'free_next_day' => (bool) ($c['free_next_day'] ?? false),
             'has_logo' => !empty($c['logo_url']),
+            'language' => $c['language'] ?? 'en', 'currency' => $c['currency'] ?? 'INR', 'country' => $c['country'] ?? 'IN',
         ];
     }
 

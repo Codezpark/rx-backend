@@ -164,7 +164,7 @@ class InvestigationController extends BaseController
             $cost = $this->request->get('actual_cost');
             if ($cost !== null && $cost !== '') {
                 if (!is_numeric($cost) || (float) $cost < 0 || (float) $cost > 999999) { $this->db->rollback(); Response::validationError(['actual_cost' => ['Enter a valid amount.']]); }
-                $data['actual_cost'] = round((float) $cost, 2);
+                $data['actual_cost'] = round((float) $cost, LocaleHelper::dpFor($d));
             }
             // All results in → report ready; some → processing; none → leave as it was.
             if ($in > 0 && in_array($o['status'], ['ordered', 'sample_collected', 'processing'], true)) {

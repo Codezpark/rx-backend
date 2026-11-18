@@ -9,5 +9,4 @@ s, r = call("POST", "auth/register-new", {"name": "Fake Doctor", "password": "Se
 check("registration is refused with 403", s == 403, (s, r))
 check("the message says invite-only", "invitation" in (r.get("message") or ""), r)
 check("no doctor was created (the number cannot sign in)", call("POST", "auth/login", {"identifier": "+91" + phone, "password": "Secret123"})[0] in (401, 404, 422), None)
-print("\nALL PASSED" if not fails else f"\n{fails} FAILED")
-sys.exit(1 if fails else 0)
+finish()

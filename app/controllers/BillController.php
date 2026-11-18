@@ -8,6 +8,12 @@ class BillController extends BaseController
     private const METHODS = ['cash', 'upi', 'card', 'other'];
     private const MAX     = 10000000;
 
+    /** Decimals of this clinic's currency (2 for most, 3 for OMR / KWD / BHD). */
+    private function dp(): int
+    {
+        return LocaleHelper::dpFor((int) $this->requireClinic()['id']);
+    }
+
     /** GET bills?from=&to=&status=unpaid|paid|all&patient_id=&page= (from/to are UTC) */
     public function index(): void
     {
@@ -69,7 +75,7 @@ class BillController extends BaseController
         [$items, $sub] = $this->items($err);
         $discount = $this->money($this->request->input('discount', 0), 'discount', $err);
         if ($discount > $sub) $err['discount'] = ['Discount cannot be more than the total.'];
-        $total = round($sub - $discount, 2);
+        $total = round($sub - $discount, $this->dp());
         $paid  = $this->money($this->request->input('paid', 0), 'paid', $err);
         if ($paid > $total) $err['paid'] = ['Paid amount cannot be more than the bill.'];
         $method = (string) $this->request->input('method', 'cash');
@@ -112,7 +118,7 @@ class BillController extends BaseController
         $b = $this->own((int) $params['id'], $d);
         if ($b['status'] === 'cancelled') Response::error('This bill is cancelled.', 409);
         $err  = [];
-        $owed = round((float) $b['total'] - (float) $b['paid'], 2);
+        $owed = round((float) $b['total'] - (float) $b['paid'], $this->dp());
         $rows = $this->paymentRows($err, $owed);
         if ($err) Response::validationError($err);
 
@@ -123,7 +129,7 @@ class BillController extends BaseController
                 $this->db->insert('bill_payments', ['bill_id' => $b['id'], 'doctor_id' => $d, 'amount' => $amt, 'method' => $method, 'paid_at' => gmdate('Y-m-d H:i:s')]);
                 $add += $amt;
             }
-            $paid = round((float) $b['paid'] + $add, 2);
+            $paid = round((float) $b['paid'] + $add, $this->dp());
             $this->db->update('bills', ['paid' => $paid, 'status' => self::statusFor((float) $b['total'], $paid)], 'id = :i', [':i' => $b['id']]);
             $this->db->commit();
         } catch (Throwable $e) {
@@ -172,7 +178,7 @@ class BillController extends BaseController
      */
     public static function consultationBill(int $doctorId, int $patientId, ?int $rxId, ?int $apId, float $fee, string $label = 'Consultation'): ?int
     {
-        $fee = round($fee, 2);
+        $fee = round($fee, LocaleHelper::dpFor($doctorId));
         if ($fee <= 0 || $fee > self::MAX) return null;
         $db = Database::getInstance();
         if ($rxId !== null && $db->getRow("SELECT id FROM bills WHERE doctor_id = :d AND prescription_id = :r AND status <> 'cancelled' LIMIT 1", [':d' => $doctorId, ':r' => $rxId])) {
@@ -229,8 +235,8 @@ class BillController extends BaseController
     private function money(mixed $v, string $field, array &$err): float
     {
         if ($v === null || $v === '') return 0.0;
-        if (!is_numeric($v) || (float) $v < 0 || (float) $v > self::MAX) { $err[$field] = ['Enter an amount between 0 and 1,00,00,000.']; return 0.0; }
-        return round((float) $v, 2);
+        if (!is_numeric($v) || (float) $v < 0 || (float) $v > self::MAX) { $err[$field] = ['Enter a valid amount.']; return 0.0; }
+        return round((float) $v, $this->dp());
     }
 
     /** @return array{0: list<array{0:string,1:float}>, 1: float} */
@@ -248,7 +254,7 @@ class BillController extends BaseController
             if ($e || !isset($it['amount']) || $it['amount'] === '') { $err["items.$i"] = ['Each item needs an amount.']; continue; }
             $out[] = [$desc, $amt]; $sum += $amt;
         }
-        return [$out, round($sum, 2)];
+        return [$out, round($sum, $this->dp())];
     }
 
     private function shape(array $b, bool $detail = false): array
@@ -256,7 +262,7 @@ class BillController extends BaseController
         $out = [
             'id' => (int) $b['id'], 'bill_no' => $b['bill_no'], 'bill_date' => $b['bill_date'], 'status' => $b['status'],
             'subtotal' => (float) $b['subtotal'], 'discount' => (float) $b['discount'], 'total' => (float) $b['total'], 'paid' => (float) $b['paid'],
-            'due' => $b['status'] === 'cancelled' ? 0.0 : round((float) $b['total'] - (float) $b['paid'], 2),
+            'due' => $b['status'] === 'cancelled' ? 0.0 : round((float) $b['total'] - (float) $b['paid'], $this->dp()),
             'prescription_id' => $b['prescription_id'] === null ? null : (int) $b['prescription_id'],
             'appointment_id' => $b['appointment_id'] === null ? null : (int) $b['appointment_id'],
             'notes' => $b['notes'],

@@ -95,5 +95,4 @@ check("weight 200 -> 422", get("generic=Cefixime&weight=200")[0] == 422)
 check("bad age -> 422", get("generic=Cefixime&weight=10&age_months=-3")[0] == 422)
 check("no drug -> 422", get("weight=10")[0] == 422)
 
-print("\nALL PASSED" if not fails else f"\n{fails} FAILED")
-sys.exit(1 if fails else 0)
+finish()

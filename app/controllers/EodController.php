@@ -118,7 +118,7 @@ class EodController extends BaseController
                 'age_label' => PatientController::ageLabel(['date_of_birth' => $p['date_of_birth'], 'age_years' => $p['age_years']]),
                 'status' => $r['status'], 'case_type' => $r['case_type'], 'time' => $r['time'], 'is_new' => $isNew,
                 'diagnosis' => $r['diagnosis'], 'prescription_id' => $r['prescription_id'], 'bill_no' => $r['bill_no'],
-                'billed' => round($r['billed'], 2), 'paid' => round($r['paid'], 2), 'due' => round($r['due'], 2),
+                'billed' => round($r['billed'], 3), 'paid' => round($r['paid'], 3), 'due' => round($r['due'], 3),
             ];
         }
         $order = ['seen' => 0, 'waiting' => 1, 'upcoming' => 2, 'missed' => 3, 'billing' => 4];
@@ -129,8 +129,8 @@ class EodController extends BaseController
             'totals' => ['patients' => $counts['seen'] + $counts['waiting'] + $counts['upcoming'], 'seen' => $counts['seen'], 'waiting' => $counts['waiting'], 'upcoming' => $counts['upcoming'], 'missed' => $counts['missed'], 'new_patients' => $new],
             'patients' => $list,
             'charges' => [
-                'collected' => round(array_sum($by), 2), 'by_method' => array_map(fn ($v) => round($v, 2), $by), 'payments' => $payN,
-                'from_earlier_bills' => round($earlier, 2), 'billed' => round($billed, 2), 'bills' => $billCount, 'due' => round($due, 2),
+                'collected' => round(array_sum($by), 3), 'by_method' => array_map(fn ($v) => round($v, 3), $by), 'payments' => $payN,
+                'from_earlier_bills' => round($earlier, 3), 'billed' => round($billed, 3), 'bills' => $billCount, 'due' => round($due, 3),
             ],
             'days' => $this->pastDays($d, $date, $off, $ok),
         ], 'End of day fetched');
@@ -155,7 +155,7 @@ class EodController extends BaseController
         }
         foreach ($seen as $k => $set) $out[$k]['patients'] = count($set);
         foreach ($this->db->getRows("SELECT DATE(DATE_ADD(bp.paid_at, INTERVAL :o MINUTE)) AS k, SUM(bp.amount) AS amt FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND b.status <> 'cancelled' AND bp.paid_at >= :f AND bp.paid_at < :t GROUP BY k", [':o' => $off, ':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
-            if (isset($out[$r['k']])) $out[$r['k']]['collected'] = round((float) $r['amt'], 2);
+            if (isset($out[$r['k']])) $out[$r['k']]['collected'] = round((float) $r['amt'], 3);
         }
         return array_values(array_reverse($out));   // newest first
     }
