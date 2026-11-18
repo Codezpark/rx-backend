@@ -29,6 +29,11 @@ class AuthController extends BaseController
     // ── POST /auth/register-new ──────────────────────────────────────────────
     public function register(): void
     {
+        // Invite-only: no new accounts through the public API unless ALLOW_SIGNUP is on.
+        if (!Config::get('app.allow_signup', false)) {
+            Response::error('Registration is by invitation only right now. Please contact Prescription Rx to be onboarded.', 403);
+        }
+
         $data = $this->validate([
             'name'        => 'required|string|min:2|max:100',
             'password'    => 'required|string|min:8|max:64',

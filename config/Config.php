@@ -120,6 +120,11 @@ class Config
                     // to end. MUST be false in production — defaults to false
                     // unless APP_ENV=local (or EXPOSE_DEV_OTP is explicitly set).
                     'expose_dev_otp' => self::envBool('EXPOSE_DEV_OTP', !$isProduction),
+
+                    // Self-service doctor registration (POST /auth/register-new). Closed in production so only
+                    // invited, verified doctors are onboarded; open locally so the test scripts can create doctors.
+                    // Set ALLOW_SIGNUP=true in .env to open it.
+                    'allow_signup' => self::envBool('ALLOW_SIGNUP', !$isProduction),
                 ],
                 'db' => [
                     'host'    => self::envVar('DB_HOST', 'localhost'),
@@ -145,7 +150,7 @@ class Config
                     'base_url'     => rtrim((string) $baseUrl, '/') . '/uploads/',
                 ],
                 'log' => [
-                    'dir'   => ROOT_PATH . '/logs/',
+                    'dir'   => self::envVar('LOG_DIR', ROOT_PATH . '/logs/'),
                     'level' => self::envVar('LOG_LEVEL', $isProduction ? 'error' : 'debug'),
                 ],
                 'rate_limit' => [
