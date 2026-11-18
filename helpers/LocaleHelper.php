@@ -15,8 +15,8 @@ final class LocaleHelper
         'BDT' => 2, 'PKR' => 2, 'USD' => 2, 'EUR' => 2, 'GBP' => 2,
     ];
 
-    /** The app languages. ur and ar are right-to-left. */
-    public const LANGUAGES = ['en', 'hi', 'gu', 'mr', 'ta', 'te', 'bn', 'kn', 'ml', 'pa', 'ur', 'ne', 'si', 'ar'];
+    /** The app languages. ur and ar are right-to-left. ha / yo / ig / tw are Hausa, Yoruba, Igbo and Twi (Akan). */
+    public const LANGUAGES = ['en', 'hi', 'gu', 'mr', 'ta', 'te', 'bn', 'kn', 'ml', 'pa', 'ur', 'ne', 'si', 'ar', 'ha', 'yo', 'ig', 'tw'];
 
     /** country => [default currency, default language] used when a clinic picks its country. */
     public const COUNTRY_DEFAULTS = [

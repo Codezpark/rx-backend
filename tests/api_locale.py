@@ -13,10 +13,10 @@ s, r = call("PUT", "doctor/clinic-settings", {"language": "ar", "currency": "OMR
 check("set Arabic / OMR / Oman (creates the clinic row if there is none)", s == 200 and r["data"]["settings"] == {"language": "ar", "currency": "OMR", "country": "OM", "currency_decimals": 3}, r)
 c = call("GET", "doctor/clinic", token=tok)[1]["data"]["clinic"]
 check("the clinic payload carries them too", c["language"] == "ar" and c["currency"] == "OMR" and c["country"] == "OM", c)
-for lang in ["en", "hi", "gu", "mr", "ta", "te", "bn", "kn", "ml", "pa", "ur", "ne", "si", "ar"]:
+for lang in ["en", "hi", "gu", "mr", "ta", "te", "bn", "kn", "ml", "pa", "ur", "ne", "si", "ar", "ha", "yo", "ig", "tw"]:
     s, _ = call("PUT", "doctor/clinic-settings", {"language": lang}, tok)
     if s != 200: check(f"language {lang} accepted", False, s)
-check("all 14 languages are accepted", fails == 0)
+check("all 18 languages are accepted", fails == 0)
 check("an unknown language is refused", call("PUT", "doctor/clinic-settings", {"language": "xx"}, tok)[0] == 422)
 check("an unknown currency is refused", call("PUT", "doctor/clinic-settings", {"currency": "ZZZ"}, tok)[0] == 422)
 check("a bad country is refused", call("PUT", "doctor/clinic-settings", {"country": "India"}, tok)[0] == 422)
