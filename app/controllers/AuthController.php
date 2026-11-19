@@ -22,6 +22,9 @@ require_once ROOT_PATH . '/app/controllers/BaseController.php';
  */
 class AuthController extends BaseController
 {
+    /** Length of the free trial. The clock starts when the account is created and restarts when the mobile number is verified (first use). */
+    public const TRIAL_DAYS = 90;
+
     private const OTP_TTL_SECONDS   = 300;
     private const OTP_RESEND_WAIT   = 30;
     private const OTP_MAX_ATTEMPTS  = 5;
@@ -75,7 +78,7 @@ class AuthController extends BaseController
                 'mobile'        => $mobile,
                 'password_hash' => CommonHelper::hashPassword($data['password']),
                 'plan'          => 'trial',
-                'plan_expires_at' => date('Y-m-d H:i:s', strtotime('+30 days')),
+                'plan_expires_at' => date('Y-m-d H:i:s', strtotime('+' . self::TRIAL_DAYS . ' days')),
                 'is_active'     => 0, // activated once the mobile number is verified
             ]);
         }
@@ -100,7 +103,7 @@ class AuthController extends BaseController
 
         $this->checkOtp((int) $doctor['id'], 'register', (string) $data['otp']);
 
-        $this->db->update('doctors', ['is_active' => 1], 'id = :id', [':id' => $doctor['id']]);
+        $this->db->update('doctors', ['is_active' => 1, 'plan_expires_at' => date('Y-m-d H:i:s', strtotime('+' . self::TRIAL_DAYS . ' days'))], 'id = :id', [':id' => $doctor['id']]);
         $this->db->delete('verification', "doctor_id = :id AND purpose = 'register'", [':id' => $doctor['id']]);
 
         $this->logger->info('Doctor verified', ['doctor_id' => $doctor['id']]);
