@@ -39,6 +39,26 @@ class AdminController extends BaseController
         Response::success(['admin' => ['id' => (int) $a['id'], 'name' => $a['name'], 'email' => $a['email']]]);
     }
 
+    /** POST admin/password {current, password} */
+    public function changePassword(): void
+    {
+        $a  = $this->requireAdmin();
+        $in = $this->request->all();
+        $cur = (string) ($in['current'] ?? '');
+        $new = (string) ($in['password'] ?? '');
+        if (!CommonHelper::verifyPassword($cur, $a['password_hash'])) {
+            Response::validationError(['current' => ['Your current password is not correct.']]);
+        }
+        if (strlen($new) < 10 || strlen($new) > 64) {
+            Response::validationError(['password' => ['Use 10 to 64 characters.']]);
+        }
+        if (!preg_match('/[A-Za-z]/', $new) || !preg_match('/\d/', $new)) {
+            Response::validationError(['password' => ['Use at least one letter and one number.']]);
+        }
+        $this->db->update('admins', ['password_hash' => CommonHelper::hashPassword($new)], 'id = :i', [':i' => $a['id']]);
+        Response::success([], 'Password changed.');
+    }
+
     private function requireAdmin(): array
     {
         $auth = $this->requireAuth();

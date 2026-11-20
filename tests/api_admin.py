@@ -16,6 +16,17 @@ s, r = call("POST", "admin/login", {"email": EMAIL, "password": "AdminPass123"})
 check("admin logs in", s == 200 and r["data"]["access_token"], r)
 tok = r["data"]["access_token"]
 
+s, r = call("POST", "admin/password", {"current": "nope", "password": "NewAdminPass1"}, tok)
+check("wrong current password refused", s == 422, r)
+s, r = call("POST", "admin/password", {"current": "AdminPass123", "password": "short1"}, tok)
+check("short new password refused", s == 422, r)
+s, r = call("POST", "admin/password", {"current": "AdminPass123", "password": "NewAdminPass1"}, tok)
+check("password changed", s == 200, r)
+check("old password no longer works", call("POST", "admin/login", {"email": EMAIL, "password": "AdminPass123"})[0] == 401)
+s, r = call("POST", "admin/login", {"email": EMAIL, "password": "NewAdminPass1"})
+check("new password works", s == 200, r)
+tok = r["data"]["access_token"]
+
 dtok, did = new_doctor("Dr Panel Probe")
 check("doctor token cannot use admin API", call("GET", "admin/dashboard", token=dtok)[0] == 403)
 check("no token cannot use admin API", call("GET", "admin/dashboard")[0] == 401)
