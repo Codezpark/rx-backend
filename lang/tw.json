@@ -253,5 +253,6 @@
  "{label} must be at least {param} characters.": "{label} nyɛ ntia sene nkyerɛwde {param}.",
  "{label} must be at least {param}.": "{label} nyɛ ntia sene {param}.",
  "{label} must be numeric.": "{label} yɛ nɔma.",
- "{label} must be one of: {param}.": "{label} yɛ baako wɔ eyinom mu: {param}."
+ "{label} must be one of: {param}.": "{label} yɛ baako wɔ eyinom mu: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "Wo nsɛnsɛm nkyerɛkyerɛ a ɛyɛ kyɛfa no awie. Wubetumi ahwɛ na woapue wo nkrataa no ara."
 }

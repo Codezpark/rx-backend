@@ -344,5 +344,6 @@
  "{label} must be at least {param} characters.": "يجب ألا يقل {label} عن {param} حرفًا.",
  "{label} must be at least {param}.": "يجب ألا يقل {label} عن {param}.",
  "{label} must be numeric.": "يجب أن يكون {label} رقمًا.",
- "{label} must be one of: {param}.": "يجب أن يكون {label} واحدًا من: {param}."
+ "{label} must be one of: {param}.": "يجب أن يكون {label} واحدًا من: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "انتهت تجربتك المجانية. ما زالت سجلاتك متاحة للعرض والتصدير."
 }

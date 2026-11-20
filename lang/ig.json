@@ -253,5 +253,6 @@
  "{label} must be at least {param} characters.": "{label} aghaghị inwe opekata mpe mkpụrụedemede {param}.",
  "{label} must be at least {param}.": "{label} aghaghị ịbụ opekata mpe {param}.",
  "{label} must be numeric.": "{label} aghaghị ịbụ ọnụọgụ.",
- "{label} must be one of: {param}.": "{label} aghaghị ịbụ otu n'ime ndị a: {param}."
+ "{label} must be one of: {param}.": "{label} aghaghị ịbụ otu n'ime ndị a: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "Ule efu gị agwụla. Ị ka nwere ike lee ma bupụ ndekọ gị."
 }

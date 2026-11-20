@@ -143,6 +143,11 @@ class Router
             }
         }
 
+        // ── Plan expiry: read-only once the trial / paid plan has ended ──────
+        if ($authUser && !in_array($method, ['GET', 'HEAD'], true)) {
+            $this->enforcePlan($uri, $authUser);
+        }
+
         // ── Resolve controller ───────────────────────────────────────────────
         $controllerName = $route['controller'] . 'Controller';
         $action         = $route['action'];
@@ -189,6 +194,26 @@ class Router
                 500,
                 $debug ? ['trace' => explode("\n", $e->getTraceAsString())] : []
             );
+        }
+    }
+
+    /** Routes that must keep working after the plan ends (sign-out, password, push token housekeeping). */
+    private const PLAN_EXEMPT = ['auth/logout', 'doctor/change-password', 'staff/password', 'device-tokens/remove'];
+
+    /**
+     * After plan_expires_at the account is read-only: every write is refused (HTTP 403, errors.code =
+     * plan_expired) while reads stay open, so records can still be viewed and exported. Staff share
+     * the clinic owner's plan. A NULL expiry never expires.
+     */
+    private function enforcePlan(string $uri, array $authUser): void
+    {
+        if (in_array($uri, self::PLAN_EXEMPT, true)) return;
+        $row = Database::getInstance()->getRow(
+            'SELECT plan_expires_at FROM doctors WHERE id = :id',
+            [':id' => (int) ($authUser['doctor_id'] ?? 0)]
+        );
+        if ($row && !empty($row['plan_expires_at']) && strtotime((string) $row['plan_expires_at']) < time()) {
+            Response::send(403, [], 'Your free trial has ended. Your records are still available to view and export.', false, ['code' => 'plan_expired']);
         }
     }
 

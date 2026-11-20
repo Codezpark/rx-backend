@@ -292,5 +292,6 @@
  "{label} must be at least {param} characters.": "{label} අවම වශයෙන් අක්ෂර {param} ක් විය යුතුය.",
  "{label} must be at least {param}.": "{label} අවම වශයෙන් {param} විය යුතුය.",
  "{label} must be numeric.": "{label} සංඛ්‍යාවක් විය යුතුය.",
- "{label} must be one of: {param}.": "{label} මේවායින් එකක් විය යුතුය: {param}."
+ "{label} must be one of: {param}.": "{label} මේවායින් එකක් විය යුතුය: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "ඔබගේ නොමිලේ අත්හදා බැලීම අවසන් විය. ඔබගේ වාර්තා තවමත් බැලීමට සහ අපනයනය කිරීමට හැකිය."
 }

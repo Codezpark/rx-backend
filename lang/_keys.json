@@ -776,5 +776,8 @@
  },
  "{label} must be one of: {param}.": {
   "plural": false
+ },
+ "Your free trial has ended. Your records are still available to view and export.": {
+  "plural": false
  }
 }

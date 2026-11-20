@@ -292,5 +292,6 @@
  "{label} must be at least {param} characters.": "{label} dole ne ya kasance aƙalla haruffa {param}.",
  "{label} must be at least {param}.": "{label} dole ne ya kasance aƙalla {param}.",
  "{label} must be numeric.": "{label} dole ne ya zama lamba.",
- "{label} must be one of: {param}.": "{label} dole ne ya zama ɗaya daga cikin: {param}."
+ "{label} must be one of: {param}.": "{label} dole ne ya zama ɗaya daga cikin: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "Gwajin kyauta ya ƙare. Har yanzu za ka iya duba da fitar da bayananka."
 }

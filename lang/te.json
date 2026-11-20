@@ -292,5 +292,6 @@
  "{label} must be at least {param} characters.": "{label} కనీసం {param} అక్షరాలు ఉండాలి.",
  "{label} must be at least {param}.": "{label} కనీసం {param} ఉండాలి.",
  "{label} must be numeric.": "{label} సంఖ్య అయి ఉండాలి.",
- "{label} must be one of: {param}.": "{label} వీటిలో ఒకటి అయి ఉండాలి: {param}."
+ "{label} must be one of: {param}.": "{label} వీటిలో ఒకటి అయి ఉండాలి: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "మీ ఉచిత ట్రయల్ ముగిసింది. మీ రికార్డులు ఇప్పటికీ చూడటానికి మరియు ఎగుమతి చేయడానికి అందుబాటులో ఉన్నాయి."
 }

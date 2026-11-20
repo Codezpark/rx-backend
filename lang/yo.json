@@ -253,5 +253,6 @@
  "{label} must be at least {param} characters.": "{label} gbọdọ̀ ní ó kéré tán ọ̀rọ̀ {param}.",
  "{label} must be at least {param}.": "{label} gbọdọ̀ jẹ́ ó kéré tán {param}.",
  "{label} must be numeric.": "{label} gbọdọ̀ jẹ́ nọ́mbà.",
- "{label} must be one of: {param}.": "{label} gbọdọ̀ jẹ́ ọ̀kan nínú: {param}."
+ "{label} must be one of: {param}.": "{label} gbọdọ̀ jẹ́ ọ̀kan nínú: {param}.",
+ "Your free trial has ended. Your records are still available to view and export.": "Ìdánwò ọ̀fẹ́ rẹ ti parí. Ó ṣì ṣeé ṣe láti wo àti kó àwọn ìwé rẹ jáde."
 }
