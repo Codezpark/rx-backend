@@ -122,3 +122,12 @@ $router->put('radiology-orders/{id}/report',      'Investigation', 'saveRadRepor
 $router->post('radiology-orders/{id}/status',     'Investigation', 'radStatus',       ['auth' => true]);
 $router->post('radiology-orders/{id}/file',       'Investigation', 'uploadRadFile',   ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
 $router->get('radiology-orders/{id}/file',        'Investigation', 'radFile',         ['auth' => true]);
+
+// ── Admin panel (admin JWT required; doctor / reception tokens are refused) ──────────────
+$router->post('admin/login',                'Admin', 'login',     ['rate_limit' => ['max' => 20, 'window' => 900]]);
+$router->get('admin/me',                    'Admin', 'me',        ['auth' => true]);
+$router->get('admin/dashboard',             'Admin', 'dashboard', ['auth' => true]);
+$router->get('admin/clinics',               'Admin', 'clinics',   ['auth' => true]);
+$router->post('admin/clinics',              'Admin', 'create',    ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
+$router->get('admin/clinics/{id}',          'Admin', 'clinic',    ['auth' => true]);
+$router->post('admin/clinics/{id}/action',  'Admin', 'action',    ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);

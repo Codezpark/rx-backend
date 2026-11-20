@@ -43,13 +43,13 @@ class Auth
      * Generate an access JWT.
      * @param  array $payload Extra claims to embed (e.g. ['user_id' => 1, 'role' => 'admin'])
      */
-    public function generateToken(array $payload): string
+    public function generateToken(array $payload, ?int $ttl = null): string
     {
         $now = time();
         $claims = array_merge($payload, [
             'iat' => $now,
             'nbf' => $now,
-            'exp' => $now + $this->expiry,
+            'exp' => $now + ($ttl ?? $this->expiry),
             'jti' => $this->generateJti(),
         ]);
 
@@ -183,6 +183,7 @@ class Auth
             if ((int) $st['s_active'] !== 1 || (int) $st['d_active'] !== 1) {
                 throw new RuntimeException('Account is not active', 403);
             }
+            $this->db->update('clinic_staff', ['last_login_at' => gmdate('Y-m-d H:i:s')], 'id = :i', [':i' => $st['staff_id']]);
             return [
                 'access_token' => $this->generateToken(['doctor_id' => (int) $st['doctor_id'], 'staff_id' => (int) $st['staff_id'], 'role' => 'receptionist']),
                 'token_type'   => 'Bearer',
@@ -197,6 +198,7 @@ class Auth
             throw new RuntimeException('Account is not active', 403);
         }
 
+        $this->db->update('doctors', ['last_login_at' => gmdate('Y-m-d H:i:s')], 'id = :i', [':i' => $row['doctor_id']]);
         $accessToken = $this->generateToken([
             'doctor_id' => (int) $row['doctor_id'],
             'role'      => 'doctor',

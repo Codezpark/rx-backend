@@ -78,6 +78,7 @@ class AuthController extends BaseController
                 'mobile'        => $mobile,
                 'password_hash' => CommonHelper::hashPassword($data['password']),
                 'plan'          => 'trial',
+                'plan_started_at' => date('Y-m-d H:i:s'),
                 'plan_expires_at' => date('Y-m-d H:i:s', strtotime('+' . self::TRIAL_DAYS . ' days')),
                 'is_active'     => 0, // activated once the mobile number is verified
             ]);
@@ -103,7 +104,7 @@ class AuthController extends BaseController
 
         $this->checkOtp((int) $doctor['id'], 'register', (string) $data['otp']);
 
-        $this->db->update('doctors', ['is_active' => 1, 'plan_expires_at' => date('Y-m-d H:i:s', strtotime('+' . self::TRIAL_DAYS . ' days'))], 'id = :id', [':id' => $doctor['id']]);
+        $this->db->update('doctors', ['is_active' => 1, 'plan_started_at' => date('Y-m-d H:i:s'), 'plan_expires_at' => date('Y-m-d H:i:s', strtotime('+' . self::TRIAL_DAYS . ' days'))], 'id = :id', [':id' => $doctor['id']]);
         $this->db->delete('verification', "doctor_id = :id AND purpose = 'register'", [':id' => $doctor['id']]);
 
         $this->logger->info('Doctor verified', ['doctor_id' => $doctor['id']]);
@@ -184,6 +185,7 @@ class AuthController extends BaseController
                 'Please verify your mobile number to continue.', false);
         }
 
+        $this->db->update('doctors', ['last_login_at' => gmdate('Y-m-d H:i:s')], 'id = :i', [':i' => $doctor['id']]);
         $this->logger->info('Doctor logged in', ['doctor_id' => $doctor['id']]);
 
         Response::success($this->sessionPayload((int) $doctor['id']), 'Login successful');
