@@ -132,3 +132,9 @@ $router->post('admin/clinics',              'Admin', 'create',    ['auth' => tru
 $router->get('admin/clinics/{id}',          'Admin', 'clinic',    ['auth' => true]);
 $router->post('admin/clinics/{id}/action',  'Admin', 'action',    ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);
 $router->post('admin/password',             'Admin', 'changePassword', ['auth' => true, 'rate_limit' => ['max' => 10, 'window' => 900]]);
+$router->get('admin/admins',                 'Admin', 'admins',      ['auth' => true]);
+$router->post('admin/admins',                'Admin', 'createAdmin', ['auth' => true, 'rate_limit' => ['max' => 30, 'window' => 3600]]);
+$router->post('admin/admins/{id}/action',    'Admin', 'adminAction', ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
+$router->get('admin/staff',                  'Admin', 'staffList',   ['auth' => true]);
+$router->post('admin/staff/{id}/action',     'Admin', 'staffAction', ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);
+$router->post('admin/clinics/{id}/staff',    'Admin', 'addStaff',    ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);

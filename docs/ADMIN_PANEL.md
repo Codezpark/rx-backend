@@ -6,7 +6,7 @@
 - **Last active** = latest sign-in or session refresh by the doctor or any receptionist (`doctors.last_login_at`, `clinic_staff.last_login_at`).
 
 ## Go live
-1. Apply `migrations/sql/021_admin_panel.sql` on production (SQL file directly, like 019/020).
+1. Apply `migrations/sql/021_admin_panel.sql` and `022_admin_sessions.sql` on production (SQL file directly, like 019/020).
 2. Deploy the backend, then `deploy_front.sh`.
 3. Create yourself an admin on the server: `php tools/create_admin.php you@example.com "Your Name"` (asks for the password).
 4. Open `/admin/` and use "Add to Home Screen".

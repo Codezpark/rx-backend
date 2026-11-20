@@ -74,6 +74,40 @@ sql(f"UPDATE doctors SET plan_expires_at = NOW() - INTERVAL 1 DAY WHERE id={cid}
 s, r = call("GET", "admin/clinics?status=expired", token=tok)
 check("expired filter", any(i["id"] == cid and i["state"] == "expired" for i in r["data"]["items"]), r)
 
+# staff management across clinics
+s, r = call("POST", f"admin/clinics/{cid}/staff", {"name": "Sam Desk", "phone": "97" + phone[2:]}, tok)
+check("admin adds a receptionist (generated password)", s == 201 and len(r["data"]["password"]) == 12, r)
+sid, smob, spw = r["data"]["id"], r["data"]["mobile"], r["data"]["password"]
+check("receptionist can sign in", call("POST", "auth/login-new", {"identifier": smob, "password": spw})[0] == 200)
+s, r = call("GET", "admin/staff?q=Sam%20Desk", token=tok)
+check("global staff list finds them with their clinic", r["data"]["total"] == 1 and r["data"]["items"][0]["clinic_id"] == cid, r)
+call("POST", f"admin/staff/{sid}/action", {"action": "disable"}, tok)
+check("disabled receptionist cannot sign in", call("POST", "auth/login-new", {"identifier": smob, "password": spw})[0] == 403)
+s, r = call("GET", "admin/staff?status=off&q=Sam", token=tok)
+check("off filter", r["data"]["total"] == 1, r)
+call("POST", f"admin/staff/{sid}/action", {"action": "enable"}, tok)
+s, r = call("POST", f"admin/staff/{sid}/action", {"action": "reset_password"}, tok)
+check("reset staff password", call("POST", "auth/login-new", {"identifier": smob, "password": r["data"]["password"]})[0] == 200, r)
+call("POST", f"admin/staff/{sid}/action", {"action": "remove"}, tok)
+check("removed receptionist is gone", call("GET", "admin/staff?q=Sam%20Desk", token=tok)[1]["data"]["total"] == 0)
+
+# admin management
+s, r = call("POST", "admin/admins", {"name": "Second", "email": "second-admin@example.com"}, tok)
+check("adds an admin", s == 201 and len(r["data"]["password"]) >= 10, r)
+aid, apw = r["data"]["id"], r["data"]["password"]
+s, r = call("POST", "admin/login", {"email": "second-admin@example.com", "password": apw})
+check("new admin signs in", s == 200, r)
+t2 = r["data"]["access_token"]
+check("duplicate admin email refused", call("POST", "admin/admins", {"name": "Xx", "email": "second-admin@example.com"}, tok)[0] == 409)
+call("POST", f"admin/admins/{aid}/action", {"action": "disable"}, tok)
+check("switched-off admin is signed out", call("GET", "admin/me", token=t2)[0] == 401)
+check("switched-off admin cannot sign in", call("POST", "admin/login", {"email": "second-admin@example.com", "password": apw})[0] == 401)
+me = call("GET", "admin/me", token=tok)[1]["data"]["admin"]["id"]
+check("cannot switch off yourself", call("POST", f"admin/admins/{me}/action", {"action": "disable"}, tok)[0] == 422)
+check("cannot remove yourself", call("POST", f"admin/admins/{me}/action", {"action": "delete"}, tok)[0] == 422)
+call("POST", f"admin/admins/{aid}/action", {"action": "delete"}, tok)
+check("admin list no longer has them", all(a["email"] != "second-admin@example.com" for a in call("GET", "admin/admins", token=tok)[1]["data"]["items"]))
+
 sql(f"DELETE FROM admins WHERE email='{EMAIL}'")
 sql("DELETE FROM clinic_staff WHERE doctor_id IN (SELECT id FROM doctors WHERE name='Dr Created'); DELETE FROM auth_tokens WHERE doctor_id IN (SELECT id FROM doctors WHERE name='Dr Created'); DELETE FROM clinics WHERE doctor_id IN (SELECT id FROM doctors WHERE name='Dr Created'); DELETE FROM doctors WHERE name='Dr Created'")
 finish()

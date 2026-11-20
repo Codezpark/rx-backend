@@ -69,7 +69,175 @@ class AdminController extends BaseController
         if (!$a) {
             Response::unauthorized('Your session is no longer valid. Please sign in again.');
         }
+        if (!empty($a['sessions_valid_from']) && (int) ($auth['iat'] ?? 0) < strtotime((string) $a['sessions_valid_from'])) {
+            Response::unauthorized('Your session was ended. Please sign in again.');
+        }
         return $a;
+    }
+
+    private static function shapeAdmin(array $a, int $me): array
+    {
+        return ['id' => (int) $a['id'], 'name' => $a['name'], 'email' => $a['email'], 'active' => (int) $a['is_active'] === 1,
+                'last_login_at' => $a['last_login_at'], 'created_at' => $a['created_at'], 'you' => (int) $a['id'] === $me];
+    }
+
+    // ── Admins ───────────────────────────────────────────────────────────────
+    /** GET admin/admins */
+    public function admins(): void
+    {
+        $me = $this->requireAdmin();
+        Response::success(['items' => array_map(fn ($a) => self::shapeAdmin($a, (int) $me['id']), $this->db->getRows('SELECT * FROM admins ORDER BY id'))]);
+    }
+
+    /** POST admin/admins {name, email, password?} */
+    public function createAdmin(): void
+    {
+        $this->requireAdmin();
+        $in    = $this->request->all();
+        $name  = self::clean((string) ($in['name'] ?? ''));
+        $email = strtolower(trim((string) ($in['email'] ?? '')));
+        if (mb_strlen($name) < 2) Response::validationError(['name' => ['Please enter a name.']]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) Response::validationError(['email' => ['Enter a valid email address.']]);
+        if ($this->db->getRow('SELECT id FROM admins WHERE email = :e', [':e' => $email])) {
+            Response::error('This email is already an admin.', 409, ['email' => ['This email is already an admin.']]);
+        }
+        $pw = trim((string) ($in['password'] ?? ''));
+        if ($pw === '') {
+            $pw = self::generatePassword();
+        } elseif (strlen($pw) < 10 || strlen($pw) > 64 || !preg_match('/[A-Za-z]/', $pw) || !preg_match('/\d/', $pw)) {
+            Response::validationError(['password' => ['Use 10 to 64 characters with a letter and a number.']]);
+        }
+        $id = $this->db->insert('admins', ['name' => mb_substr($name, 0, 100), 'email' => $email, 'password_hash' => CommonHelper::hashPassword($pw)]);
+        Response::created(['id' => $id, 'email' => $email, 'password' => $pw], 'Admin added.');
+    }
+
+    /** POST admin/admins/{id}/action {action: reset_password|disable|enable|delete} */
+    public function adminAction(array $params): void
+    {
+        $me = $this->requireAdmin();
+        $id = (int) ($params['id'] ?? 0);
+        $a  = $this->db->getRow('SELECT * FROM admins WHERE id = :i', [':i' => $id]);
+        if (!$a) Response::notFound('Admin not found.');
+        $act = (string) ($this->request->all()['action'] ?? '');
+        $self = $id === (int) $me['id'];
+        $now  = date('Y-m-d H:i:s');
+        switch ($act) {
+            case 'reset_password':
+                if ($self) Response::error('Use "Change password" for your own account.', 422);
+                $pw = self::generatePassword() . '-' . random_int(10, 99); // 15 chars: meets the 10+ admin rule
+                $this->db->update('admins', ['password_hash' => CommonHelper::hashPassword($pw), 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                Response::success(['email' => $a['email'], 'password' => $pw], 'New password set.');
+            case 'disable':
+                if ($self) Response::error('You cannot switch off your own account.', 422);
+                $this->db->update('admins', ['is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                Response::success([], 'Admin switched off.');
+            case 'enable':
+                $this->db->update('admins', ['is_active' => 1], 'id = :i', [':i' => $id]);
+                Response::success([], 'Admin switched on.');
+            case 'delete':
+                if ($self) Response::error('You cannot remove your own account.', 422);
+                $this->db->delete('admins', 'id = :i', [':i' => $id]);
+                Response::success([], 'Admin removed.');
+            default:
+                Response::validationError(['action' => ['Unknown action.']]);
+        }
+    }
+
+    // ── Staff (receptionists) across all clinics ─────────────────────────────
+    /** GET admin/staff?q=&status=all|on|off|quiet&page= */
+    public function staffList(): void
+    {
+        $this->requireAdmin();
+        $q = trim((string) $this->request->get('q', ''));
+        $status = (string) $this->request->get('status', 'all');
+        $page = max(1, (int) $this->request->get('page', 1));
+        $where = 's.deleted_at IS NULL AND d.deleted_at IS NULL';
+        $p = [];
+        if ($q !== '') {
+            $where .= ' AND (s.name LIKE :q1 OR s.mobile LIKE :q2 OR d.name LIKE :q3 OR EXISTS (SELECT 1 FROM clinics c WHERE c.doctor_id = d.id AND c.deleted_at IS NULL AND c.name LIKE :q4))';
+            $p = [':q1' => "%$q%", ':q2' => "%$q%", ':q3' => "%$q%", ':q4' => "%$q%"];
+        }
+        $where .= match ($status) {
+            'on'    => ' AND s.is_active = 1',
+            'off'   => ' AND s.is_active = 0',
+            'quiet' => ' AND s.is_active = 1 AND (s.last_login_at IS NULL OR s.last_login_at < NOW() - INTERVAL 7 DAY)',
+            default => '',
+        };
+        $from  = 'FROM clinic_staff s JOIN doctors d ON d.id = s.doctor_id WHERE ' . $where;
+        $total = $this->count('SELECT COUNT(*) AS n ' . $from, $p);
+        $rows  = $this->db->getRows('SELECT s.id, s.name, s.mobile, s.is_active, s.last_login_at, s.created_at, d.id AS clinic_id, d.name AS doctor,
+                (SELECT c.name FROM clinics c WHERE c.doctor_id = d.id AND c.deleted_at IS NULL ORDER BY c.is_primary DESC, c.id LIMIT 1) AS clinic
+            ' . $from . ' ORDER BY s.created_at DESC LIMIT ' . self::PAGE_SIZE . ' OFFSET ' . (($page - 1) * self::PAGE_SIZE), $p);
+        Response::success(['items' => array_map(fn ($r) => [
+            'id' => (int) $r['id'], 'name' => $r['name'], 'mobile' => $r['mobile'], 'active' => (int) $r['is_active'] === 1,
+            'last_login_at' => $r['last_login_at'], 'created_at' => $r['created_at'],
+            'clinic_id' => (int) $r['clinic_id'], 'clinic' => $r['clinic'] ?: null, 'doctor' => $r['doctor'],
+        ], $rows), 'page' => $page, 'per_page' => self::PAGE_SIZE, 'total' => $total]);
+    }
+
+    /** POST admin/staff/{id}/action {action: reset_password|enable|disable|remove|rename, name?} */
+    public function staffAction(array $params): void
+    {
+        $this->requireAdmin();
+        $id = (int) ($params['id'] ?? 0);
+        $s  = $this->db->getRow('SELECT * FROM clinic_staff WHERE id = :i AND deleted_at IS NULL', [':i' => $id]);
+        if (!$s) Response::notFound('Team member not found.');
+        $in = $this->request->all();
+        $now = date('Y-m-d H:i:s');
+        switch ((string) ($in['action'] ?? '')) {
+            case 'reset_password':
+                $pw = self::generatePassword();
+                $this->db->update('clinic_staff', ['password_hash' => CommonHelper::hashPassword($pw), 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                $this->auth->revokeAllForStaff($id);
+                Response::success(['password' => $pw, 'mobile' => $s['mobile']], 'New password set. Share it with the team member.');
+            case 'disable':
+                $this->db->update('clinic_staff', ['is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                $this->auth->revokeAllForStaff($id);
+                Response::success([], 'Switched off and signed out.');
+            case 'enable':
+                $this->db->update('clinic_staff', ['is_active' => 1], 'id = :i', [':i' => $id]);
+                Response::success([], 'Switched on.');
+            case 'remove':
+                $this->db->update('clinic_staff', ['deleted_at' => gmdate('Y-m-d H:i:s'), 'is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                $this->auth->revokeAllForStaff($id);
+                Response::success([], 'Removed.');
+            case 'rename':
+                $name = self::clean((string) ($in['name'] ?? ''));
+                if (mb_strlen($name) < 2 || mb_strlen($name) > 100) Response::validationError(['name' => ['Please enter a name (2-100 characters).']]);
+                $this->db->update('clinic_staff', ['name' => $name], 'id = :i', [':i' => $id]);
+                Response::success([], 'Renamed.');
+            default:
+                Response::validationError(['action' => ['Unknown action.']]);
+        }
+    }
+
+    /** POST admin/clinics/{id}/staff {name, countrycode?, phone, password?} adds a receptionist to a clinic. */
+    public function addStaff(array $params): void
+    {
+        $this->requireAdmin();
+        $id  = (int) ($params['id'] ?? 0);
+        if (!$this->db->getRow('SELECT id FROM doctors WHERE id = :i AND deleted_at IS NULL', [':i' => $id])) Response::notFound('Clinic not found.');
+        $in   = $this->request->all();
+        $name = self::clean((string) ($in['name'] ?? ''));
+        if (mb_strlen($name) < 2) Response::validationError(['name' => ['Please enter a name.']]);
+        $country = LocaleHelper::countryFor($id);
+        $mobile  = AuthController::normalizeMobile((string) ($in['countrycode'] ?? ('+' . (LocaleHelper::PHONE_RULES[$country][0] ?? '91'))), (string) ($in['phone'] ?? ''));
+        if ($this->db->getRow('SELECT id FROM doctors WHERE mobile = :m', [':m' => $mobile])
+            || $this->db->getRow('SELECT id FROM clinic_staff WHERE mobile = :m AND deleted_at IS NULL', [':m' => $mobile])) {
+            Response::error('This mobile number is already registered.', 409, ['phone' => ['This mobile number is already registered.']]);
+        }
+        if ($this->count('SELECT COUNT(*) AS n FROM clinic_staff WHERE doctor_id = :d AND deleted_at IS NULL', [':d' => $id]) >= 10) {
+            Response::error('A clinic can have up to 10 staff members.', 422);
+        }
+        $pw = trim((string) ($in['password'] ?? ''));
+        if ($pw === '') {
+            $pw = self::generatePassword();
+        } else {
+            if (strlen($pw) < 8 || strlen($pw) > 64) Response::validationError(['password' => ['Use 8 to 64 characters.']]);
+            AuthController::assertPasswordStrength($pw);
+        }
+        $sid = $this->db->insert('clinic_staff', ['doctor_id' => $id, 'name' => $name, 'mobile' => $mobile, 'role' => 'receptionist', 'is_active' => 1, 'password_hash' => CommonHelper::hashPassword($pw)]);
+        Response::created(['id' => $sid, 'mobile' => $mobile, 'password' => $pw, 'name' => $name], 'Team member added.');
     }
 
     // ── Shared SQL ───────────────────────────────────────────────────────────
