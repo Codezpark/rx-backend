@@ -293,5 +293,12 @@
  "{label} must be at least {param}.": "{label} किमान {param} असावे.",
  "{label} must be numeric.": "{label} संख्या असावी.",
  "{label} must be one of: {param}.": "{label} यापैकी एक असावे: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "तुमची मोफत चाचणी संपली आहे. तुमचे रेकॉर्ड अजूनही पाहण्यासाठी आणि निर्यात करण्यासाठी उपलब्ध आहेत."
+ "Your free trial has ended. Your records are still available to view and export.": "तुमची मोफत चाचणी संपली आहे. तुमचे रेकॉर्ड अजूनही पाहण्यासाठी आणि निर्यात करण्यासाठी उपलब्ध आहेत.",
+ "Your free trial ends in {n} days.": {
+  "one": "तुमची मोफत चाचणी {n} दिवसात संपेल.",
+  "other": "तुमची मोफत चाचणी {n} दिवसांत संपेल."
+ },
+ "Contact Prescription Rx to keep full access after that.": "त्यानंतर पूर्ण प्रवेश कायम ठेवण्यासाठी Prescription Rx शी संपर्क साधा.",
+ "Your free trial has ended.": "तुमची मोफत चाचणी संपली आहे.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "सुरू ठेवण्यासाठी Prescription Rx शी संपर्क साधा. तुमचे रेकॉर्ड पाहण्यासाठी आणि निर्यात करण्यासाठी उपलब्ध राहतील."
 }

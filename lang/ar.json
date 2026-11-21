@@ -345,5 +345,16 @@
  "{label} must be at least {param}.": "يجب ألا يقل {label} عن {param}.",
  "{label} must be numeric.": "يجب أن يكون {label} رقمًا.",
  "{label} must be one of: {param}.": "يجب أن يكون {label} واحدًا من: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "انتهت تجربتك المجانية. ما زالت سجلاتك متاحة للعرض والتصدير."
+ "Your free trial has ended. Your records are still available to view and export.": "انتهت تجربتك المجانية. ما زالت سجلاتك متاحة للعرض والتصدير.",
+ "Your free trial ends in {n} days.": {
+  "zero": "تنتهي تجربتك المجانية خلال {n} يوم.",
+  "one": "تنتهي تجربتك المجانية خلال يوم واحد.",
+  "two": "تنتهي تجربتك المجانية خلال يومين.",
+  "few": "تنتهي تجربتك المجانية خلال {n} أيام.",
+  "many": "تنتهي تجربتك المجانية خلال {n} يوماً.",
+  "other": "تنتهي تجربتك المجانية خلال {n} يوم."
+ },
+ "Contact Prescription Rx to keep full access after that.": "تواصل مع Prescription Rx للحفاظ على الوصول الكامل بعد ذلك.",
+ "Your free trial has ended.": "انتهت تجربتك المجانية.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "تواصل مع Prescription Rx للمتابعة. ستظل سجلاتك متاحة للعرض والتصدير."
 }

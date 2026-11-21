@@ -293,5 +293,12 @@
  "{label} must be at least {param}.": "{label} dole ne ya kasance aƙalla {param}.",
  "{label} must be numeric.": "{label} dole ne ya zama lamba.",
  "{label} must be one of: {param}.": "{label} dole ne ya zama ɗaya daga cikin: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "Gwajin kyauta ya ƙare. Har yanzu za ka iya duba da fitar da bayananka."
+ "Your free trial has ended. Your records are still available to view and export.": "Gwajin kyauta ya ƙare. Har yanzu za ka iya duba da fitar da bayananka.",
+ "Your free trial ends in {n} days.": {
+  "one": "Gwajin kyauta naka zai ƙare cikin kwana {n}.",
+  "other": "Gwajin kyauta naka zai ƙare cikin kwanaki {n}."
+ },
+ "Contact Prescription Rx to keep full access after that.": "Tuntuɓi Prescription Rx don ci gaba da samun cikakken damar amfani bayan haka.",
+ "Your free trial has ended.": "Gwajin kyauta ya ƙare.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "Tuntuɓi Prescription Rx don ci gaba. Bayananka za su ci gaba da kasancewa don dubawa da fitarwa."
 }

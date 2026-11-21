@@ -254,5 +254,12 @@
  "{label} must be at least {param}.": "{label} nyɛ ntia sene {param}.",
  "{label} must be numeric.": "{label} yɛ nɔma.",
  "{label} must be one of: {param}.": "{label} yɛ baako wɔ eyinom mu: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "Wo nsɛnsɛm nkyerɛkyerɛ a ɛyɛ kyɛfa no awie. Wubetumi ahwɛ na woapue wo nkrataa no ara."
+ "Your free trial has ended. Your records are still available to view and export.": "Wo nsɛnsɛm nkyerɛkyerɛ a ɛyɛ kyɛfa no awie. Wubetumi ahwɛ na woapue wo nkrataa no ara.",
+ "Your free trial ends in {n} days.": {
+  "one": "Wo sɔhwɛ a ɛyɛ kwa no bɛba awiei wɔ nna {n} mu.",
+  "other": "Wo sɔhwɛ a ɛyɛ kwa no bɛba awiei wɔ nna {n} mu."
+ },
+ "Contact Prescription Rx to keep full access after that.": "Fa wo ho bata Prescription Rx ho na woakɔ so anya hokwan ma biribiara akyi no.",
+ "Your free trial has ended.": "Wo sɔhwɛ a ɛyɛ kwa no aba awiei.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "Fa wo ho bata Prescription Rx ho na woakɔ so. Wo nkrataa no bɛkɔ so atena hɔ ama wo ahwɛ na woapue."
 }

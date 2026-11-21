@@ -254,5 +254,12 @@
  "{label} must be at least {param}.": "{label} gbọdọ̀ jẹ́ ó kéré tán {param}.",
  "{label} must be numeric.": "{label} gbọdọ̀ jẹ́ nọ́mbà.",
  "{label} must be one of: {param}.": "{label} gbọdọ̀ jẹ́ ọ̀kan nínú: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "Ìdánwò ọ̀fẹ́ rẹ ti parí. Ó ṣì ṣeé ṣe láti wo àti kó àwọn ìwé rẹ jáde."
+ "Your free trial has ended. Your records are still available to view and export.": "Ìdánwò ọ̀fẹ́ rẹ ti parí. Ó ṣì ṣeé ṣe láti wo àti kó àwọn ìwé rẹ jáde.",
+ "Your free trial ends in {n} days.": {
+  "one": "Ìdánwò ọ̀fẹ́ rẹ yóò parí láàrin ọjọ́ {n}.",
+  "other": "Ìdánwò ọ̀fẹ́ rẹ yóò parí láàrin ọjọ́ {n}."
+ },
+ "Contact Prescription Rx to keep full access after that.": "Kàn sí Prescription Rx láti máa ní àǹfààní kíkún lẹ́yìn náà.",
+ "Your free trial has ended.": "Ìdánwò ọ̀fẹ́ rẹ ti parí.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "Kàn sí Prescription Rx láti tẹ̀síwájú. Àwọn ìwé rẹ yóò wà fún wíwò àti kíkó jáde."
 }

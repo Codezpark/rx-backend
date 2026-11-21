@@ -293,5 +293,12 @@
  "{label} must be at least {param}.": "{label} కనీసం {param} ఉండాలి.",
  "{label} must be numeric.": "{label} సంఖ్య అయి ఉండాలి.",
  "{label} must be one of: {param}.": "{label} వీటిలో ఒకటి అయి ఉండాలి: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "మీ ఉచిత ట్రయల్ ముగిసింది. మీ రికార్డులు ఇప్పటికీ చూడటానికి మరియు ఎగుమతి చేయడానికి అందుబాటులో ఉన్నాయి."
+ "Your free trial has ended. Your records are still available to view and export.": "మీ ఉచిత ట్రయల్ ముగిసింది. మీ రికార్డులు ఇప్పటికీ చూడటానికి మరియు ఎగుమతి చేయడానికి అందుబాటులో ఉన్నాయి.",
+ "Your free trial ends in {n} days.": {
+  "one": "మీ ఉచిత ట్రయల్ {n} రోజులో ముగుస్తుంది.",
+  "other": "మీ ఉచిత ట్రయల్ {n} రోజుల్లో ముగుస్తుంది."
+ },
+ "Contact Prescription Rx to keep full access after that.": "ఆ తర్వాత పూర్తి యాక్సెస్ కొనసాగించడానికి Prescription Rx ను సంప్రదించండి.",
+ "Your free trial has ended.": "మీ ఉచిత ట్రయల్ ముగిసింది.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "కొనసాగించడానికి Prescription Rx ను సంప్రదించండి. మీ రికార్డులు చూడటానికి మరియు ఎగుమతి చేయడానికి అందుబాటులో ఉంటాయి."
 }

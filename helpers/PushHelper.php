@@ -90,14 +90,16 @@ class PushHelper
      * Send one notification (title/body) plus a data map to each token. Shows a
      * heads-up on the high-importance "call_in" channel. Returns #sent.
      */
-    public static function sendToTokens(array $tokens, string $title, string $body, array $data = []): int
+    public static function sendToTokens(array $tokens, string $title, string $body, array $data = [], ?string $channel = 'call_in'): int
     {
+        // $channel null = the phone's default channel (ordinary notification, no call-in heads-up).
+        $note = ['sound' => 'default', 'default_sound' => true] + ($channel !== null ? ['channel_id' => $channel] : []);
         return self::deliver($tokens, static fn (string $t): array => [
             'message' => [
                 'token'        => $t,
                 'notification' => ['title' => $title, 'body' => $body],
                 'data'         => array_map('strval', $data),
-                'android'      => ['priority' => 'high', 'notification' => ['sound' => 'default', 'default_sound' => true, 'channel_id' => 'call_in']],
+                'android'      => ['priority' => $channel !== null ? 'high' : 'normal', 'notification' => $note],
             ],
         ]);
     }

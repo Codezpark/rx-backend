@@ -254,5 +254,12 @@
  "{label} must be at least {param}.": "{label} aghaghị ịbụ opekata mpe {param}.",
  "{label} must be numeric.": "{label} aghaghị ịbụ ọnụọgụ.",
  "{label} must be one of: {param}.": "{label} aghaghị ịbụ otu n'ime ndị a: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "Ule efu gị agwụla. Ị ka nwere ike lee ma bupụ ndekọ gị."
+ "Your free trial has ended. Your records are still available to view and export.": "Ule efu gị agwụla. Ị ka nwere ike lee ma bupụ ndekọ gị.",
+ "Your free trial ends in {n} days.": {
+  "one": "Ule efu gị ga-agwụ n'ime ụbọchị {n}.",
+  "other": "Ule efu gị ga-agwụ n'ime ụbọchị {n}."
+ },
+ "Contact Prescription Rx to keep full access after that.": "Kpọtụrụ Prescription Rx ka ị nọgide na-enweta ohere zuru ezu mgbe nke ahụ gasịrị.",
+ "Your free trial has ended.": "Ule efu gị agwụla.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "Kpọtụrụ Prescription Rx ka ị gaa n'ihu. Ndekọ gị ga-anọgide ịdị maka ilele na ibupụ."
 }

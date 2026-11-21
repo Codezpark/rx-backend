@@ -392,6 +392,7 @@ class AdminController extends BaseController
             'clinic' => $c,
             'profile' => $loc + ['degree' => $doc['degree'], 'specialization' => $doc['specialization'], 'registration_no' => $doc['registration_no'], 'doctor_last_login' => $doc['last_login_at']],
             'staff' => $staff,
+            'reminders' => $this->db->getRows('SELECT kind, sent_at, pushed FROM plan_reminders WHERE doctor_id = :d ORDER BY sent_at', [':d' => $id]),
             'counts' => [
                 'patients'      => $c['patients'],
                 'prescriptions' => $c['prescriptions'],

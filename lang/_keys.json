@@ -779,5 +779,18 @@
  },
  "Your free trial has ended. Your records are still available to view and export.": {
   "plural": false
+ },
+ "Your free trial ends in {n} days.": {
+  "plural": true,
+  "singular": "Your free trial ends in {n} day."
+ },
+ "Contact Prescription Rx to keep full access after that.": {
+  "plural": false
+ },
+ "Your free trial has ended.": {
+  "plural": false
+ },
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": {
+  "plural": false
  }
 }

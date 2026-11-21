@@ -7,9 +7,14 @@
 declare(strict_types=1);
 if (PHP_SAPI !== 'cli') { exit(1); }
 define('ROOT_PATH', dirname(__DIR__));
-foreach (['core', 'helpers', 'config'] as $d) {
-    foreach (glob(ROOT_PATH . "/$d/*.php") as $f) require_once $f;
-}
+spl_autoload_register(function (string $class): void {
+    foreach (['core', 'helpers', 'app/controllers', 'config'] as $dir) {
+        $f = ROOT_PATH . "/$dir/$class.php";
+        if (is_file($f)) { require_once $f; return; }
+    }
+});
+require_once ROOT_PATH . '/config/Config.php';
+date_default_timezone_set(Config::get('app.timezone', 'UTC'));
 $email = strtolower(trim($argv[1] ?? ''));
 $name  = trim($argv[2] ?? 'Admin');
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { fwrite(STDERR, "Usage: php tools/create_admin.php email \"Name\"\n"); exit(1); }

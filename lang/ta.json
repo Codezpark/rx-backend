@@ -293,5 +293,12 @@
  "{label} must be at least {param}.": "{label} குறைந்தது {param} ஆக இருக்க வேண்டும்.",
  "{label} must be numeric.": "{label} எண்ணாக இருக்க வேண்டும்.",
  "{label} must be one of: {param}.": "{label} இவற்றில் ஒன்றாக இருக்க வேண்டும்: {param}.",
- "Your free trial has ended. Your records are still available to view and export.": "உங்கள் இலவச சோதனை முடிந்துவிட்டது. உங்கள் பதிவுகளை இன்னும் பார்க்கவும் ஏற்றுமதி செய்யவும் முடியும்."
+ "Your free trial has ended. Your records are still available to view and export.": "உங்கள் இலவச சோதனை முடிந்துவிட்டது. உங்கள் பதிவுகளை இன்னும் பார்க்கவும் ஏற்றுமதி செய்யவும் முடியும்.",
+ "Your free trial ends in {n} days.": {
+  "one": "உங்கள் இலவச சோதனை {n} நாளில் முடிவடைகிறது.",
+  "other": "உங்கள் இலவச சோதனை {n} நாட்களில் முடிவடைகிறது."
+ },
+ "Contact Prescription Rx to keep full access after that.": "அதன் பிறகும் முழு அணுகலைத் தொடர Prescription Rx ஐத் தொடர்பு கொள்ளுங்கள்.",
+ "Your free trial has ended.": "உங்கள் இலவச சோதனை முடிந்துவிட்டது.",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "தொடர Prescription Rx ஐத் தொடர்பு கொள்ளுங்கள். உங்கள் பதிவுகளைப் பார்க்கவும் ஏற்றுமதி செய்யவும் முடியும்."
 }

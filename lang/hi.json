@@ -293,5 +293,12 @@
  "{label} must be at least {param}.": "{label} कम से कम {param} होना चाहिए।",
  "{label} must be numeric.": "{label} एक संख्या होनी चाहिए।",
  "{label} must be one of: {param}.": "{label} इनमें से एक होना चाहिए: {param}।",
- "Your free trial has ended. Your records are still available to view and export.": "आपका निःशुल्क परीक्षण समाप्त हो गया है। आपके रिकॉर्ड अभी भी देखने और निर्यात करने के लिए उपलब्ध हैं।"
+ "Your free trial has ended. Your records are still available to view and export.": "आपका निःशुल्क परीक्षण समाप्त हो गया है। आपके रिकॉर्ड अभी भी देखने और निर्यात करने के लिए उपलब्ध हैं।",
+ "Your free trial ends in {n} days.": {
+  "one": "आपका निःशुल्क परीक्षण {n} दिन में समाप्त हो रहा है।",
+  "other": "आपका निःशुल्क परीक्षण {n} दिन में समाप्त हो रहा है।"
+ },
+ "Contact Prescription Rx to keep full access after that.": "इसके बाद पूर्ण पहुँच बनाए रखने के लिए Prescription Rx से संपर्क करें।",
+ "Your free trial has ended.": "आपका निःशुल्क परीक्षण समाप्त हो गया है।",
+ "Contact Prescription Rx to continue. Your records stay available to view and export.": "जारी रखने के लिए Prescription Rx से संपर्क करें। आपके रिकॉर्ड देखने और निर्यात करने के लिए उपलब्ध रहेंगे।"
 }
