@@ -94,7 +94,7 @@ class FileUploadHelper
             throw new RuntimeException('Failed to save uploaded file.', 500);
         }
 
-        chmod($destPath, 0644);
+        @chmod($destPath, 0644);
 
         $this->logger->info('File uploaded', ['path' => $relativePath, 'size' => $file['size']]);
 

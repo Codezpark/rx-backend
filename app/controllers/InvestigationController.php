@@ -170,6 +170,11 @@ class InvestigationController extends BaseController
             if ($in > 0 && in_array($o['status'], ['ordered', 'sample_collected', 'processing'], true)) {
                 $data['status'] = $in >= $total ? 'report_ready' : 'processing';
             }
+            // Results cleared after the report was marked ready: step back so it isn't "ready" with nothing in it.
+            if ($o['status'] === 'report_ready' && $in < $total) {
+                $data['status'] = $in > 0 ? 'processing' : 'sample_collected';
+                $data['result_date'] = null;
+            }
             if ($in >= $total && $total > 0 && empty($o['result_date'])) $data['result_date'] = CommonHelper::now();
             $this->db->update('lab_orders', $data, 'id = :id', [':id' => $o['id']]);
             $this->db->commit();

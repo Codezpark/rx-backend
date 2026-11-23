@@ -139,7 +139,7 @@ abstract class BaseController
     /** Doctor row safe to send to the app (no password hash) plus derived fields. */
     protected static function publicDoctor(array $doctor): array
     {
-        $fields   = ['email', 'degree', 'specialization', 'registration_no', 'experience_yrs'];
+        $fields   = ['degree', 'specialization', 'registration_no', 'experience_yrs'];
         $filled   = count(array_filter($fields, fn ($f) => $doctor[$f] !== null && $doctor[$f] !== ''));
         $expires  = $doctor['plan_expires_at'];
 

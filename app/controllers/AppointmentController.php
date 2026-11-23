@@ -145,6 +145,7 @@ class AppointmentController extends BaseController
             'reason'       => $in['reason'],
             'notes'        => $in['notes'],
             'status'       => $walkIn ? 'arrived' : 'scheduled',
+            'arrived_at'   => $walkIn ? gmdate('Y-m-d H:i:s') : null,
             'case_type'    => $caseType,
         ]);
         $this->db->update('patients', ['updated_at' => CommonHelper::now()], 'id = :id', [':id' => $patient['id']]);
@@ -192,6 +193,9 @@ class AppointmentController extends BaseController
         }
 
         $data = ['status' => $next];
+        if ($next === 'arrived' && empty($appt['arrived_at'])) {
+            $data['arrived_at'] = gmdate('Y-m-d H:i:s');   // keep the original arrival across step-out / call-in
+        }
         if ($next === 'cancelled') {
             $reason = self::clean((string) ($this->request->get('cancel_reason') ?? ''));
             $data['cancelled_by'] = in_array($this->request->get('cancelled_by'), ['doctor', 'patient'], true) ? $this->request->get('cancelled_by') : 'doctor';
@@ -380,7 +384,7 @@ class AppointmentController extends BaseController
             'status'          => $r['status'],
             'scheduled_at'    => $r['scheduled_at'],
             // When they checked in (the row's last change): drives "waiting 12 min".
-            'arrived_at'      => $r['status'] === 'arrived' ? $r['updated_at'] : null,
+            'arrived_at'      => $r['status'] === 'arrived' ? ($r['arrived_at'] ?? $r['updated_at']) : null,
             'called_at'       => $r['called_at'] ?? null,
             'case_type'       => $r['case_type'] ?? null,
             'duration_min'    => (int) $r['duration_min'],

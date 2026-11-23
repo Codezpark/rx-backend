@@ -207,7 +207,7 @@ class BillController extends BaseController
         $d = (int) $this->requireDoctor()['id'];
         $b = $this->own((int) $params['id'], $d);
         if ($b['status'] === 'cancelled') Response::error('This bill is already cancelled.', 409);
-        $this->db->update('bills', ['status' => 'cancelled'], 'id = :i', [':i' => $b['id']]);
+        $this->db->update('bills', ['status' => 'cancelled', 'paid' => 0], 'id = :i', [':i' => $b['id']]);
         // Refunded money is no longer collection.
         $this->db->delete('bill_payments', 'bill_id = :i', [':i' => $b['id']]);
         Response::success(['bill' => $this->shape($this->own((int) $b['id'], $d), true)], 'Bill cancelled');

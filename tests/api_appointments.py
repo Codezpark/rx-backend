@@ -27,6 +27,11 @@ check("same patient twice in the queue -> 409 with existing", s == 409 and r["da
 s, r = call("POST", "appointments", {"patient_id": p1, "walk_in": True, "force": True}, tok)
 check("force=true adds anyway", s == 201, r); extra = r["data"]["appointment"]["id"]
 
+# arrival time is stable: calling the patient in must not reset the waiting timer
+import time; time.sleep(2)
+s, r = call("POST", "appointments/%d/call" % w1["id"], None, tok)
+check("call-in keeps the original arrived_at", s == 200 and r["data"]["appointment"]["arrived_at"] == w1["arrived_at"], r)
+
 # booking
 soon = now + dt.timedelta(hours=3)
 s, r = call("POST", "appointments", {"patient_id": p2, "scheduled_at": iso(soon), "duration_min": 20, "reason": "BP check"}, tok)

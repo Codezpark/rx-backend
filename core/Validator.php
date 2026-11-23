@@ -88,7 +88,7 @@ class Validator
 
             case 'integer':
             case 'int':
-                if ($value !== null && !filter_var($value, FILTER_VALIDATE_INT)) {
+                if ($value !== null && filter_var($value, FILTER_VALIDATE_INT) === false) {
                     $this->addError($field, Lang::t('{label} must be an integer.', ['label' => $label]));
                 }
                 break;
