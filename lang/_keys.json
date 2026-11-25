@@ -792,5 +792,203 @@
  },
  "Contact Prescription Rx to continue. Your records stay available to view and export.": {
   "plural": false
+ },
+ "A clinic can have up to 10 staff members.": {
+  "plural": false
+ },
+ "A clinic can have up to 31 doctors.": {
+  "plural": false
+ },
+ "Admin added.": {
+  "plural": false
+ },
+ "Admin not found.": {
+  "plural": false
+ },
+ "Admin removed.": {
+  "plural": false
+ },
+ "Admin switched off.": {
+  "plural": false
+ },
+ "Admin switched on.": {
+  "plural": false
+ },
+ "Admins only.": {
+  "plural": false
+ },
+ "All user data was erased.": {
+  "plural": false
+ },
+ "Choose a doctor from this clinic.": {
+  "plural": false
+ },
+ "Choose a number of days between -365 and 730.": {
+  "plural": false
+ },
+ "Choose a supported country.": {
+  "plural": false
+ },
+ "Choose a valid plan.": {
+  "plural": false
+ },
+ "Choose between 1 and 730 days.": {
+  "plural": false
+ },
+ "Clinic created.": {
+  "plural": false
+ },
+ "Clinic not found.": {
+  "plural": false
+ },
+ "Clinic switched off. Its doctors and reception are signed out.": {
+  "plural": false
+ },
+ "Clinic switched on.": {
+  "plural": false
+ },
+ "Days added to the plan: {n}.": {
+  "plural": false
+ },
+ "Doctor added to the clinic.": {
+  "plural": false
+ },
+ "Doctor not found.": {
+  "plural": false
+ },
+ "Doctor updated.": {
+  "plural": false
+ },
+ "Enter a valid date.": {
+  "plural": false
+ },
+ "Enter a valid email address.": {
+  "plural": false
+ },
+ "Enter a valid email or leave it empty.": {
+  "plural": false
+ },
+ "Erasing data is switched off on this server.": {
+  "plural": false
+ },
+ "Incorrect email or password.": {
+  "plural": false
+ },
+ "National id": {
+  "plural": false
+ },
+ "New password set.": {
+  "plural": false
+ },
+ "New password set. Share it with the doctor.": {
+  "plural": false
+ },
+ "New password set. Share it with the team member.": {
+  "plural": false
+ },
+ "No doctor account has this number.": {
+  "plural": false
+ },
+ "Note saved.": {
+  "plural": false
+ },
+ "Nothing was removed: the erase could not be completed.": {
+  "plural": false
+ },
+ "Nothing was removed: these database tables are not classified yet: {tables}": {
+  "plural": false
+ },
+ "Only the clinic owner can do this.": {
+  "plural": false
+ },
+ "Only the doctor who wrote this can change it.": {
+  "plural": false
+ },
+ "Password changed.": {
+  "plural": false
+ },
+ "Plan updated.": {
+  "plural": false
+ },
+ "Please enter a name (2-100 characters).": {
+  "plural": false
+ },
+ "Please enter the doctor's name.": {
+  "plural": false
+ },
+ "Removed. Their records stay with the clinic.": {
+  "plural": false
+ },
+ "Switched off and signed out.": {
+  "plural": false
+ },
+ "Switched on.": {
+  "plural": false
+ },
+ "Tax number": {
+  "plural": false
+ },
+ "Team member added.": {
+  "plural": false
+ },
+ "Team member not found.": {
+  "plural": false
+ },
+ "The plan was shortened.": {
+  "plural": false
+ },
+ "This account already belongs to a clinic.": {
+  "plural": false
+ },
+ "This account already has patients or staff of its own, so it can’t be moved into another clinic.": {
+  "plural": false
+ },
+ "This doctor owns the clinic. Switch off the whole clinic instead.": {
+  "plural": false
+ },
+ "This email is already an admin.": {
+  "plural": false
+ },
+ "This email is already registered.": {
+  "plural": false
+ },
+ "This registration number is already registered.": {
+  "plural": false
+ },
+ "Type {phrase} exactly.": {
+  "plural": false
+ },
+ "Unknown action.": {
+  "plural": false
+ },
+ "Use \"Change password\" for your own account.": {
+  "plural": false
+ },
+ "Use 10 to 64 characters with a letter and a number.": {
+  "plural": false
+ },
+ "Use 10 to 64 characters.": {
+  "plural": false
+ },
+ "Use 8 to 64 characters.": {
+  "plural": false
+ },
+ "You cannot remove your own account.": {
+  "plural": false
+ },
+ "You cannot switch off your own account.": {
+  "plural": false
+ },
+ "Your password is not correct.": {
+  "plural": false
+ },
+ "Your session was ended. Please sign in again.": {
+  "plural": false
+ },
+ "{name} already has an appointment around that time.": {
+  "plural": false
+ },
+ "{name} is already waiting in the queue.": {
+  "plural": false
  }
 }

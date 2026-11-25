@@ -22,7 +22,7 @@ class FollowupHelper
     public const LOOKBACK_DAYS       = 45;
 
     /** @param string $today doctor's local date (Y-m-d) @return array<string,array> */
-    public static function compute(int $doctorId, string $today): array
+    public static function compute(int $doctorId, string $today, ?int $by = null): array
     {
         $db   = Database::getInstance();
         $now  = gmdate('Y-m-d H:i:s');
@@ -43,7 +43,7 @@ class FollowupHelper
                     (SELECT MIN(a.scheduled_at) FROM appointments a WHERE a.doctor_id = p.doctor_id AND a.patient_id = p.patient_id
                        AND a.status IN ('scheduled','confirmed','arrived') AND a.scheduled_at >= p.visit_date) AS booked_at
              FROM prescriptions p JOIN patients pt ON pt.id = p.patient_id AND pt.deleted_at IS NULL
-             WHERE p.doctor_id = :d AND p.status = 'final' AND p.deleted_at IS NULL AND p.followup_date IS NOT NULL
+             WHERE p.doctor_id = :d AND p.status = 'final' AND p.deleted_at IS NULL" . ($by === null ? '' : ' AND p.consultant_id = ' . $by) . " AND p.followup_date IS NOT NULL
                AND p.followup_date BETWEEN :from AND :to AND $laterVisit AND " . $notSnoozed('followup', 'p.id') . "
              ORDER BY p.followup_date ASC LIMIT 100",
             [':d' => $doctorId, ':from' => $day(-self::LOOKBACK_DAYS), ':to' => $day(7), ':d_followup' => $doctorId, ':now_followup' => $now]
@@ -73,7 +73,7 @@ class FollowupHelper
                     (SELECT MIN(a.scheduled_at) FROM appointments a WHERE a.doctor_id = p.doctor_id AND a.patient_id = p.patient_id
                        AND a.status IN ('scheduled','confirmed','arrived') AND a.scheduled_at >= p.visit_date) AS booked_at
              FROM prescriptions p JOIN patients pt ON pt.id = p.patient_id AND pt.deleted_at IS NULL
-             WHERE p.doctor_id = :d AND p.status = 'final' AND p.deleted_at IS NULL AND p.visit_date >= :since
+             WHERE p.doctor_id = :d AND p.status = 'final' AND p.deleted_at IS NULL" . ($by === null ? '' : ' AND p.consultant_id = ' . $by) . " AND p.visit_date >= :since
                AND pt.chronic_conditions IS NOT NULL AND pt.chronic_conditions <> '' AND $laterVisit AND " . $notSnoozed('refill', 'p.id') . "
              ORDER BY p.visit_date ASC LIMIT 300",
             [':d' => $doctorId, ':since' => $day(-150) . ' 00:00:00', ':d_refill' => $doctorId, ':now_refill' => $now]
@@ -108,7 +108,7 @@ class FollowupHelper
             "SELECT o.id, o.patient_id, o.result_date, o.order_date, $patientCols FROM lab_orders o
              JOIN prescriptions p ON p.id = o.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
              JOIN patients pt ON pt.id = o.patient_id AND pt.deleted_at IS NULL
-             WHERE o.doctor_id = :d AND o.deleted_at IS NULL AND o.status = 'report_ready' ORDER BY o.result_date ASC LIMIT 100", [':d' => $doctorId]) as $r) {
+             WHERE o.doctor_id = :d AND o.deleted_at IS NULL" . ($by === null ? '' : ' AND o.consultant_id = ' . $by) . " AND o.status = 'report_ready' ORDER BY o.result_date ASC LIMIT 100", [':d' => $doctorId]) as $r) {
             $s     = InvestigationHelper::shapeLab(['id' => $r['id']] + $db->getRow('SELECT * FROM lab_orders WHERE id = :i', [':i' => $r['id']]));
             $names = array_column($db->getRows('SELECT COALESCE(c.name, t.custom_test) n FROM lab_order_tests t LEFT JOIN lab_tests_catalog c ON c.id = t.test_id WHERE t.lab_order_id = :o ORDER BY t.id LIMIT 3', [':o' => $r['id']]), 'n');
             $when  = $r['result_date'] ?? $r['order_date'];
@@ -123,7 +123,7 @@ class FollowupHelper
             "SELECT o.id, o.patient_id, o.result_date, o.created_at, o.modality, o.body_part, $patientCols FROM radiology_orders o
              JOIN prescriptions p ON p.id = o.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
              JOIN patients pt ON pt.id = o.patient_id AND pt.deleted_at IS NULL
-             WHERE o.doctor_id = :d AND o.deleted_at IS NULL AND o.status = 'report_ready' ORDER BY o.result_date ASC LIMIT 100", [':d' => $doctorId]) as $r) {
+             WHERE o.doctor_id = :d AND o.deleted_at IS NULL" . ($by === null ? '' : ' AND o.consultant_id = ' . $by) . " AND o.status = 'report_ready' ORDER BY o.result_date ASC LIMIT 100", [':d' => $doctorId]) as $r) {
             $when = $r['result_date'] ?? $r['created_at'];
             $toReview[] = self::item('imaging_review', (int) $r['id'], $r, [
                 'title' => Lang::t('Report in, not yet reviewed'),
@@ -142,7 +142,7 @@ class FollowupHelper
             "SELECT o.id, o.patient_id, o.order_date, o.urgency, $patientCols FROM lab_orders o
              JOIN prescriptions p ON p.id = o.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
              JOIN patients pt ON pt.id = o.patient_id AND pt.deleted_at IS NULL
-             WHERE o.doctor_id = :d AND o.deleted_at IS NULL AND o.status IN ('ordered','sample_collected','processing')
+             WHERE o.doctor_id = :d AND o.deleted_at IS NULL" . ($by === null ? '' : ' AND o.consultant_id = ' . $by) . " AND o.status IN ('ordered','sample_collected','processing')
                AND o.order_date <= IF(o.urgency = 'routine', :rc, :uc) AND " . $notSnoozed('lab_pending', 'o.id') . " ORDER BY o.order_date ASC LIMIT 100",
             [':d' => $doctorId, ':rc' => $routineCut, ':uc' => $urgentCut, ':d_lab_pending' => $doctorId, ':now_lab_pending' => $now]) as $r) {
             $names = array_column($db->getRows('SELECT COALESCE(c.name, t.custom_test) n FROM lab_order_tests t LEFT JOIN lab_tests_catalog c ON c.id = t.test_id WHERE t.lab_order_id = :o ORDER BY t.id LIMIT 3', [':o' => $r['id']]), 'n');
@@ -156,7 +156,7 @@ class FollowupHelper
             "SELECT o.id, o.patient_id, o.created_at, o.urgency, o.modality, o.body_part, $patientCols FROM radiology_orders o
              JOIN prescriptions p ON p.id = o.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
              JOIN patients pt ON pt.id = o.patient_id AND pt.deleted_at IS NULL
-             WHERE o.doctor_id = :d AND o.deleted_at IS NULL AND o.status = 'ordered'
+             WHERE o.doctor_id = :d AND o.deleted_at IS NULL" . ($by === null ? '' : ' AND o.consultant_id = ' . $by) . " AND o.status = 'ordered'
                AND o.created_at <= IF(o.urgency = 'routine', :rc, :uc) AND " . $notSnoozed('imaging_pending', 'o.id') . " ORDER BY o.created_at ASC LIMIT 100",
             [':d' => $doctorId, ':rc' => $routineCut, ':uc' => $urgentCut, ':d_imaging_pending' => $doctorId, ':now_imaging_pending' => $now]) as $r) {
             $days = (int) floor((time() - strtotime($r['created_at'] . ' UTC')) / 86400);
@@ -174,7 +174,7 @@ class FollowupHelper
                     (SELECT MAX(w.sent_at) FROM wa_notifications w WHERE w.doctor_id = a.doctor_id AND w.reference_type = 'appointment'
                        AND w.reference_id = a.id AND w.template_name = 'missed') AS reminded_at
              FROM appointments a JOIN patients pt ON pt.id = a.patient_id AND pt.deleted_at IS NULL
-             WHERE a.doctor_id = :d AND a.status = 'no_show' AND a.scheduled_at >= :since
+             WHERE a.doctor_id = :d AND a.status = 'no_show'" . ($by === null ? '' : ' AND a.consultant_id = ' . $by) . " AND a.scheduled_at >= :since
                AND NOT EXISTS (SELECT 1 FROM appointments b WHERE b.doctor_id = a.doctor_id AND b.patient_id = a.patient_id AND b.id <> a.id
                                AND b.status IN ('scheduled','confirmed','arrived','completed') AND b.scheduled_at > a.scheduled_at)
                AND NOT EXISTS (SELECT 1 FROM prescriptions q WHERE q.doctor_id = a.doctor_id AND q.patient_id = a.patient_id AND q.status = 'final'

@@ -17,7 +17,7 @@ class FollowupController extends BaseController
     public function index(): void
     {
         $d = (int) $this->requireDoctor()['id'];
-        Response::success(FollowupHelper::compute($d, $this->today()), 'Follow-ups fetched');
+        Response::success(FollowupHelper::compute($d, $this->today(), $this->viewScope()), 'Follow-ups fetched');
     }
 
     /** POST followups/dismiss {kind, ref_id, days?} — hide an item (days omitted = for good). */

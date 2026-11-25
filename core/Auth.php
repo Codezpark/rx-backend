@@ -163,7 +163,8 @@ class Auth
             'SELECT t.expires_at, d.id AS doctor_id, d.is_active
              FROM auth_tokens t
              JOIN doctors d ON d.id = t.doctor_id AND d.deleted_at IS NULL
-             WHERE t.refresh_token = :token AND t.revoked_at IS NULL',
+             WHERE t.refresh_token = :token AND t.revoked_at IS NULL
+               AND (d.clinic_owner_id IS NULL OR EXISTS (SELECT 1 FROM doctors o WHERE o.id = d.clinic_owner_id AND o.deleted_at IS NULL AND o.is_active = 1))',
             [':token' => hash('sha256', $refreshToken)]
         );
 

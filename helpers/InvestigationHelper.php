@@ -104,7 +104,7 @@ class InvestigationHelper
 
     // ── Writing ──────────────────────────────────────────────────────────────
     /** Replace every order of this prescription with the given set (drafts and new prescriptions only). */
-    public static function save(int $rxId, int $doctorId, int $patientId, array $inv): void
+    public static function save(int $rxId, int $doctorId, int $patientId, array $inv, ?int $consultantId = null): void
     {
         $db = Database::getInstance();
         self::wipe($rxId);
@@ -113,7 +113,7 @@ class InvestigationHelper
         if (!empty($inv['lab'])) {
             $lab   = $inv['lab'];
             $orderId = $db->insert('lab_orders', [
-                'prescription_id' => $rxId, 'doctor_id' => $doctorId, 'patient_id' => $patientId,
+                'prescription_id' => $rxId, 'doctor_id' => $doctorId, 'consultant_id' => $consultantId ?? $doctorId, 'patient_id' => $patientId,
                 'lab_name' => $lab['lab_name'], 'order_date' => $now, 'urgency' => $lab['urgency'],
                 'clinical_notes' => $lab['notes'], 'status' => 'ordered',
             ]);
@@ -123,7 +123,7 @@ class InvestigationHelper
         }
         foreach ($inv['imaging'] as $i) {
             $db->insert('radiology_orders', [
-                'prescription_id' => $rxId, 'doctor_id' => $doctorId, 'patient_id' => $patientId, 'status' => 'ordered',
+                'prescription_id' => $rxId, 'doctor_id' => $doctorId, 'consultant_id' => $consultantId ?? $doctorId, 'patient_id' => $patientId, 'status' => 'ordered',
             ] + $i);
         }
     }
@@ -186,6 +186,7 @@ class InvestigationHelper
         $out = [
             'id'              => (int) $o['id'],
             'prescription_id' => (int) $o['prescription_id'],
+            'consultant_id' => (int) ($o['consultant_id'] ?? $o['doctor_id'] ?? 0),
             'status'          => $o['status'],
             'urgency'         => $o['urgency'],
             'order_date'      => $o['order_date'],
@@ -207,6 +208,7 @@ class InvestigationHelper
         return [
             'id'                  => (int) $o['id'],
             'prescription_id'     => (int) $o['prescription_id'],
+            'consultant_id'       => (int) ($o['consultant_id'] ?? $o['doctor_id'] ?? 0),
             'status'              => $o['status'],
             'urgency'             => $o['urgency'],
             'modality'            => $o['modality'],

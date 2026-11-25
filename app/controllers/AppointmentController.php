@@ -44,12 +44,18 @@ class AppointmentController extends BaseController
     public function list(): void
     {
         $doctor = $this->requireClinic();
-        $this->autoCloseStale((int) $doctor['id']);
-        $sql    = $this->baseSelect() . ' WHERE a.doctor_id = :d';
-        $params = [':d' => $doctor['id']];
-
         $from = $this->utc($this->request->get('from'));
         $to   = $this->utc($this->request->get('to'));
+        $this->autoCloseStale((int) $doctor['id'], $from, $to);
+        $sql    = $this->baseSelect() . ' WHERE a.doctor_id = :d';
+        $params = [':d' => $doctor['id']];
+        // ?consultant_id=7 one doctor's queue, 'all' the whole clinic. Default: a doctor sees their own,
+        // reception sees everyone's. A patient's own history is always the whole clinic's.
+        $asked = (string) $this->request->get('consultant_id', '');
+        $who   = $asked === 'all' ? null : ((int) $asked > 0 ? (int) $asked : $this->actorId);
+        if ($asked === '' && (int) $this->request->get('patient_id', 0) > 0) $who = null;
+        $sql  .= self::byDoctor('a.consultant_id', $who);
+
         if ($from) { $sql .= ' AND a.scheduled_at >= :from'; $params[':from'] = $from; }
         if ($to)   { $sql .= ' AND a.scheduled_at < :to';    $params[':to']   = $to; }
 
@@ -71,12 +77,20 @@ class AppointmentController extends BaseController
      * Lazy end-of-day cleanup (Module 4.4, no cron): any still-active appointment
      * from a previous day is auto-cancelled on the next queue load.
      */
-    private function autoCloseStale(int $doctorId): void
+    private function autoCloseStale(int $doctorId, ?string $from = null, ?string $to = null): void
     {
+        // The clinic's "today" is what the app asks for (its local midnight to midnight); without that,
+        // fall back to the UTC day.
+        $cut = gmdate('Y-m-d 00:00:00');
+        if ($from !== null && $to !== null) {
+            $f = strtotime($from . ' UTC');
+            $t = strtotime($to . ' UTC');
+            if ($f <= time() && time() < $t && $t - $f <= 26 * 3600) $cut = $from;
+        }
         $this->db->update('appointments',
             ['status' => 'cancelled', 'cancelled_by' => 'system', 'cancel_reason' => 'Auto-closed at day end'],
             "doctor_id = :d AND scheduled_at < :today AND status IN ('scheduled','confirmed','arrived','not_available')",
-            [':d' => $doctorId, ':today' => gmdate('Y-m-d 00:00:00')]
+            [':d' => $doctorId, ':today' => $cut]
         );
     }
 
@@ -117,17 +131,20 @@ class AppointmentController extends BaseController
         $when = $walkIn ? time() : $in['ts'];
         $when = $walkIn ? gmdate('Y-m-d H:i:s', $when) : gmdate('Y-m-d H:i:s', $when);
 
-        // The same person twice in one day is almost always a slip.
+        // Which doctor the patient is going to.
+        $consultant = $this->consultantFor((int) $doctor['id'], $this->request->get('consultant_id'));
+
+        // The same person twice in one day (for the same doctor) is almost always a slip.
         if (!filter_var($this->request->get('force'), FILTER_VALIDATE_BOOLEAN)) {
             $dup = $this->db->getRow(
-                $this->baseSelect() . " WHERE a.doctor_id = :d AND a.patient_id = :p AND a.status IN ('scheduled','confirmed','arrived')
+                $this->baseSelect() . " WHERE a.doctor_id = :d AND a.patient_id = :p AND a.status IN ('scheduled','confirmed','arrived','not_available')" . self::byDoctor('a.consultant_id', $consultant) . "
                    AND ABS(TIMESTAMPDIFF(HOUR, a.scheduled_at, :w)) < 12 ORDER BY a.scheduled_at LIMIT 1",
                 [':d' => $doctor['id'], ':p' => $patient['id'], ':w' => $when]
             );
             if ($dup) {
-                $msg = $dup['status'] === 'arrived'
-                    ? $patient['name'] . ' is already waiting in the queue.'
-                    : $patient['name'] . ' already has an appointment around that time.';
+                $msg = in_array($dup['status'], ['arrived', 'not_available'], true)
+                    ? Lang::t('{name} is already waiting in the queue.', ['name' => $patient['name']])
+                    : Lang::t('{name} already has an appointment around that time.', ['name' => $patient['name']]);
                 Response::send(409, ['existing' => self::shape($dup)], $msg, false);
             }
         }
@@ -138,6 +155,7 @@ class AppointmentController extends BaseController
         $clinic = $this->db->getRow('SELECT id FROM clinics WHERE doctor_id = :d AND deleted_at IS NULL ORDER BY is_primary DESC, id LIMIT 1', [':d' => $doctor['id']]);
         $id = $this->db->insert('appointments', [
             'doctor_id'    => $doctor['id'],
+            'consultant_id' => $consultant,
             'clinic_id'    => $clinic['id'] ?? null,
             'patient_id'   => $patient['id'],
             'scheduled_at' => $when,
@@ -164,7 +182,10 @@ class AppointmentController extends BaseController
         }
         $in = $this->parse(false);
 
-        $this->db->update('appointments', [
+        $asked = $this->request->get('consultant_id');
+        $move  = $asked === null || $asked === '' ? [] : ['consultant_id' => $this->consultantFor((int) $doctor['id'], $asked)];
+
+        $this->db->update('appointments', $move + [
             'scheduled_at' => gmdate('Y-m-d H:i:s', $in['ts']),
             'duration_min' => $in['duration'],
             'reason'       => $in['reason'],
@@ -235,13 +256,24 @@ class AppointmentController extends BaseController
     private function notifyCallIn(int $clinicDoctorId, int $apptId, string $calledAt): void
     {
         try {
-            $row  = $this->db->getRow('SELECT p.name FROM appointments a JOIN patients p ON p.id = a.patient_id WHERE a.id = :i', [':i' => $apptId]);
+            $row  = $this->db->getRow(
+                'SELECT p.name, d.id AS doctor_id, d.name AS doctor_name FROM appointments a JOIN patients p ON p.id = a.patient_id
+                 LEFT JOIN doctors d ON d.id = a.consultant_id WHERE a.id = :i', [':i' => $apptId]);
             $name = trim((string) ($row['name'] ?? '')) ?: 'The next patient';
-            $tokens = PushHelper::callInTokens($this->db->getRows('SELECT token, owner_type FROM device_tokens WHERE doctor_id = :d', [':d' => $clinicDoctorId]));
+            $devices = $this->db->getRows('SELECT token, owner_type, owner_id FROM device_tokens WHERE doctor_id = :d', [':d' => $clinicDoctorId]);
+            // Reception announces. A clinic with no reception device falls back to the consulting doctor's.
+            if (!array_filter($devices, fn ($t) => $t['owner_type'] === 'staff')) {
+                $own = array_values(array_filter($devices, fn ($t) => (int) $t['owner_id'] === (int) ($row['doctor_id'] ?? 0)));
+                $devices = $own ?: $devices;
+            }
+            $tokens = PushHelper::callInTokens($devices);
+            $many = (int) $this->db->getRow('SELECT COUNT(*) AS n FROM doctors WHERE (id = :a OR clinic_owner_id = :b) AND deleted_at IS NULL AND is_active = 1', [':a' => $clinicDoctorId, ':b' => $clinicDoctorId])['n'] > 1;
             if ($tokens) {
                 PushHelper::sendDataToTokens($tokens, [
                     'type'           => 'call_in',
                     'name'           => $name,
+                    // Said aloud only when the clinic has more than one doctor.
+                    'doctor'         => $many ? (string) ($row['doctor_name'] ?? '') : '',
                     'appointment_id' => (string) $apptId,
                     // Same id on every device and in the poll, so one call is spoken once.
                     'call_id'        => $apptId . '@' . strtotime($calledAt . ' UTC'),
@@ -357,6 +389,21 @@ class AppointmentController extends BaseController
         return $p;
     }
 
+    /**
+     * The doctor a visit is for: the one asked for, else the signed-in doctor, else (reception, or an
+     * older app) the clinic owner.
+     */
+    private function consultantFor(int $tenant, mixed $asked): int
+    {
+        if ($asked !== null && $asked !== '') {
+            if (!$this->clinicDoctor($tenant, (int) $asked)) {
+                Response::validationError(['consultant_id' => ['Choose a doctor from this clinic.']]);
+            }
+            return (int) $asked;
+        }
+        return $this->actorId ?? $tenant;
+    }
+
     private function rowOrFail(int $id, int $doctorId): array
     {
         $r = $this->db->getRow('SELECT * FROM appointments WHERE id = :i AND doctor_id = :d', [':i' => $id, ':d' => $doctorId]);
@@ -367,8 +414,8 @@ class AppointmentController extends BaseController
     private function baseSelect(): string
     {
         return 'SELECT a.*, p.name AS patient_name, p.sex AS patient_sex, p.mobile AS patient_mobile, p.uhid AS patient_uhid,
-                       p.age_years, p.date_of_birth, p.known_allergies
-                FROM appointments a JOIN patients p ON p.id = a.patient_id';
+                       p.age_years, p.date_of_birth, p.known_allergies, c.name AS consultant_name
+                FROM appointments a JOIN patients p ON p.id = a.patient_id LEFT JOIN doctors c ON c.id = a.consultant_id';
     }
 
     private function load(int $id, int $doctorId): array
@@ -382,6 +429,7 @@ class AppointmentController extends BaseController
         return [
             'id'              => (int) $r['id'],
             'status'          => $r['status'],
+            'consultant'      => ['id' => (int) ($r['consultant_id'] ?? $r['doctor_id']), 'name' => $r['consultant_name'] ?? null],
             'scheduled_at'    => $r['scheduled_at'],
             // When they checked in (the row's last change): drives "waiting 12 min".
             'arrived_at'      => $r['status'] === 'arrived' ? ($r['arrived_at'] ?? $r['updated_at']) : null,

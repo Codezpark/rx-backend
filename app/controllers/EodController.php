@@ -19,6 +19,7 @@ class EodController extends BaseController
     public function index(): void
     {
         $d   = (int) $this->requireDoctor()['id'];
+        $who = $this->viewScope();   // a second doctor closes their own day; the owner the clinic's
         $off = max(-840, min(840, (int) $this->request->get('tz_offset', 0)));
         $ok  = fn (string $s): bool => preg_match('/^\d{4}-\d{2}-\d{2}$/', $s) === 1 && strtotime($s . ' UTC') !== false;
         $t   = (string) $this->request->get('today', '');
@@ -44,7 +45,7 @@ class EodController extends BaseController
         };
 
         // The queue: everyone booked or walked in that day.
-        foreach ($this->db->getRows('SELECT patient_id, status, case_type, scheduled_at AS ts FROM appointments WHERE doctor_id = :d AND scheduled_at >= :f AND scheduled_at < :t', [':d' => $d, ':f' => $from, ':t' => $to]) as $a) {
+        foreach ($this->db->getRows('SELECT patient_id, status, case_type, scheduled_at AS ts FROM appointments WHERE doctor_id = :d AND scheduled_at >= :f AND scheduled_at < :t' . self::byDoctor('consultant_id', $who), [':d' => $d, ':f' => $from, ':t' => $to]) as $a) {
             $pid = (int) $a['patient_id'];
             $touch($pid);
             $promote($pid, match ($a['status']) {
@@ -59,7 +60,7 @@ class EodController extends BaseController
         }
 
         // Finished prescriptions count as "seen" even when the visit never went through the queue.
-        foreach ($this->db->getRows("SELECT id, patient_id, visit_date, diagnosis, chief_complaint FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t ORDER BY visit_date ASC", [':d' => $d, ':f' => $from, ':t' => $to]) as $p) {
+        foreach ($this->db->getRows("SELECT id, patient_id, visit_date, diagnosis, chief_complaint FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t" . self::byDoctor('consultant_id', $who) . " ORDER BY visit_date ASC", [':d' => $d, ':f' => $from, ':t' => $to]) as $p) {
             $pid = (int) $p['patient_id'];
             $touch($pid);
             $promote($pid, 'seen');
@@ -72,7 +73,7 @@ class EodController extends BaseController
 
         // Bills raised that day (cancelled ones never count).
         $billed = 0.0; $billCount = 0; $due = 0.0;
-        foreach ($this->db->getRows("SELECT patient_id, bill_no, total, paid FROM bills WHERE doctor_id = :d AND status <> 'cancelled' AND bill_date >= :f AND bill_date < :t ORDER BY id ASC", [':d' => $d, ':f' => $from, ':t' => $to]) as $b) {
+        foreach ($this->db->getRows("SELECT patient_id, bill_no, total, paid FROM bills WHERE doctor_id = :d AND status <> 'cancelled' AND bill_date >= :f AND bill_date < :t" . self::byDoctor('consultant_id', $who) . " ORDER BY id ASC", [':d' => $d, ':f' => $from, ':t' => $to]) as $b) {
             $pid = (int) $b['patient_id'];
             $touch($pid);
             $owed = max(0.0, (float) $b['total'] - (float) $b['paid']);
@@ -85,7 +86,7 @@ class EodController extends BaseController
         // Money actually received that day, by payment time (a payment on an older bill still counts today).
         $by = array_fill_keys(self::METHODS, 0.0);
         $payN = 0; $earlier = 0.0;
-        foreach ($this->db->getRows("SELECT bp.amount, bp.method, b.patient_id, b.bill_date FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND b.status <> 'cancelled' AND bp.paid_at >= :f AND bp.paid_at < :t", [':d' => $d, ':f' => $from, ':t' => $to]) as $p) {
+        foreach ($this->db->getRows("SELECT bp.amount, bp.method, b.patient_id, b.bill_date FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND b.status <> 'cancelled' AND bp.paid_at >= :f AND bp.paid_at < :t" . self::byDoctor('b.consultant_id', $who), [':d' => $d, ':f' => $from, ':t' => $to]) as $p) {
             $amt = (float) $p['amount'];
             $by[$p['method']] = ($by[$p['method']] ?? 0.0) + $amt;
             $payN++;
@@ -132,12 +133,12 @@ class EodController extends BaseController
                 'collected' => round(array_sum($by), 3), 'by_method' => array_map(fn ($v) => round($v, 3), $by), 'payments' => $payN,
                 'from_earlier_bills' => round($earlier, 3), 'billed' => round($billed, 3), 'bills' => $billCount, 'due' => round($due, 3),
             ],
-            'days' => $this->pastDays($d, $date, $off, $ok),
+            'days' => $this->pastDays($d, $date, $off, $ok, $who),
         ], 'End of day fetched');
     }
 
     /** The last PAST_DAYS local days up to and including $date: patients seen and money taken, for the "Past" view. */
-    private function pastDays(int $d, string $date, int $off, callable $ok): array
+    private function pastDays(int $d, string $date, int $off, callable $ok, ?int $who = null): array
     {
         $first = gmdate('Y-m-d', strtotime($date . ' UTC') - (self::PAST_DAYS - 1) * 86400);
         $from  = gmdate('Y-m-d H:i:s', strtotime($first . ' 00:00:00 UTC') - $off * 60);
@@ -148,13 +149,13 @@ class EodController extends BaseController
             $out[$k] = ['date' => $k, 'patients' => 0, 'prescriptions' => 0, 'collected' => 0.0];
         }
         $seen = [];
-        foreach ($this->db->getRows("SELECT patient_id, DATE(DATE_ADD(visit_date, INTERVAL :o MINUTE)) AS k FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t", [':o' => $off, ':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
+        foreach ($this->db->getRows("SELECT patient_id, DATE(DATE_ADD(visit_date, INTERVAL :o MINUTE)) AS k FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t" . self::byDoctor('consultant_id', $who), [':o' => $off, ':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
             if (!isset($out[$r['k']])) continue;
             $out[$r['k']]['prescriptions']++;
             $seen[$r['k']][(int) $r['patient_id']] = true;
         }
         foreach ($seen as $k => $set) $out[$k]['patients'] = count($set);
-        foreach ($this->db->getRows("SELECT DATE(DATE_ADD(bp.paid_at, INTERVAL :o MINUTE)) AS k, SUM(bp.amount) AS amt FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND b.status <> 'cancelled' AND bp.paid_at >= :f AND bp.paid_at < :t GROUP BY k", [':o' => $off, ':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
+        foreach ($this->db->getRows("SELECT DATE(DATE_ADD(bp.paid_at, INTERVAL :o MINUTE)) AS k, SUM(bp.amount) AS amt FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND b.status <> 'cancelled' AND bp.paid_at >= :f AND bp.paid_at < :t" . self::byDoctor('b.consultant_id', $who) . " GROUP BY k", [':o' => $off, ':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
             if (isset($out[$r['k']])) $out[$r['k']]['collected'] = round((float) $r['amt'], 3);
         }
         return array_values(array_reverse($out));   // newest first

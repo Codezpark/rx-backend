@@ -46,7 +46,7 @@ class TrialReminderHelper
             "SELECT d.id, d.plan_expires_at,
                     COALESCE((SELECT c.language FROM clinics c WHERE c.doctor_id = d.id AND c.deleted_at IS NULL ORDER BY c.is_primary DESC, c.id LIMIT 1), 'en') AS lang
              FROM doctors d
-             WHERE d.deleted_at IS NULL AND d.is_active = 1 AND d.plan = 'trial' AND d.plan_expires_at IS NOT NULL
+             WHERE d.deleted_at IS NULL AND d.is_active = 1 AND d.clinic_owner_id IS NULL AND d.plan = 'trial' AND d.plan_expires_at IS NOT NULL
                AND d.plan_expires_at < NOW() + INTERVAL 15 DAY AND d.plan_expires_at > NOW() - INTERVAL 30 DAY"
         );
         $out = [];

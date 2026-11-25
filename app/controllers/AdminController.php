@@ -79,11 +79,11 @@ class AdminController extends BaseController
             Response::validationError(['password' => ['Your password is not correct.']]);
         }
         if (trim((string) ($in['confirm'] ?? '')) !== self::WIPE_PHRASE) {
-            Response::validationError(['confirm' => ['Type ' . self::WIPE_PHRASE . ' exactly.']]);
+            Response::validationError(['confirm' => [Lang::t('Type {phrase} exactly.', ['phrase' => self::WIPE_PHRASE])]]);
         }
         $helper = new DataWipeHelper($this->db);
         if ($unknown = $helper->unknownTables()) {
-            Response::error('Nothing was removed: these database tables are not classified yet: ' . implode(', ', $unknown), 409);
+            Response::error(Lang::t('Nothing was removed: these database tables are not classified yet: {tables}', ['tables' => implode(', ', $unknown)]), 409);
         }
         @set_time_limit(300);
         ignore_user_abort(true);
@@ -240,6 +240,7 @@ class AdminController extends BaseController
             case 'disable':
                 $this->db->update('clinic_staff', ['is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
                 $this->auth->revokeAllForStaff($id);
+                $this->dropDevices('staff', $id);
                 Response::success([], 'Switched off and signed out.');
             case 'enable':
                 $this->db->update('clinic_staff', ['is_active' => 1], 'id = :i', [':i' => $id]);
@@ -247,6 +248,7 @@ class AdminController extends BaseController
             case 'remove':
                 $this->db->update('clinic_staff', ['deleted_at' => gmdate('Y-m-d H:i:s'), 'is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
                 $this->auth->revokeAllForStaff($id);
+                $this->dropDevices('staff', $id);
                 Response::success([], 'Removed.');
             case 'rename':
                 $name = self::clean((string) ($in['name'] ?? ''));
@@ -263,7 +265,7 @@ class AdminController extends BaseController
     {
         $this->requireAdmin();
         $id  = (int) ($params['id'] ?? 0);
-        if (!$this->db->getRow('SELECT id FROM doctors WHERE id = :i AND deleted_at IS NULL', [':i' => $id])) Response::notFound('Clinic not found.');
+        if (!$this->db->getRow('SELECT id FROM doctors WHERE id = :i AND deleted_at IS NULL AND clinic_owner_id IS NULL', [':i' => $id])) Response::notFound('Clinic not found.');
         $in   = $this->request->all();
         $name = self::clean((string) ($in['name'] ?? ''));
         if (mb_strlen($name) < 2) Response::validationError(['name' => ['Please enter a name.']]);
@@ -290,9 +292,9 @@ class AdminController extends BaseController
     // ── Shared SQL ───────────────────────────────────────────────────────────
     /** Most recent sign-in / session refresh by the doctor or any receptionist of the clinic. */
     private const LAST_ACTIVE = "GREATEST(
-        COALESCE(d.last_login_at, '1970-01-01'),
+        COALESCE((SELECT MAX(m.last_login_at) FROM doctors m WHERE (m.id = d.id OR m.clinic_owner_id = d.id) AND m.deleted_at IS NULL), '1970-01-01'),
         COALESCE((SELECT MAX(s.last_login_at) FROM clinic_staff s WHERE s.doctor_id = d.id AND s.deleted_at IS NULL), '1970-01-01'),
-        COALESCE((SELECT t.created_at FROM auth_tokens t WHERE t.doctor_id = d.id), '1970-01-01'))";
+        COALESCE((SELECT MAX(t.created_at) FROM auth_tokens t JOIN doctors m2 ON m2.id = t.doctor_id WHERE m2.id = d.id OR m2.clinic_owner_id = d.id), '1970-01-01'))";
 
     private function clinicRows(string $where, array $params, string $order, int $limit, int $offset = 0): array
     {
@@ -302,9 +304,10 @@ class AdminController extends BaseController
                     (SELECT c.country FROM clinics c WHERE c.doctor_id = d.id AND c.deleted_at IS NULL ORDER BY c.is_primary DESC, c.id LIMIT 1) AS country,
                     (SELECT COUNT(*) FROM verification v WHERE v.doctor_id = d.id) AS pending_v,
                     (SELECT COUNT(*) FROM clinic_staff s WHERE s.doctor_id = d.id AND s.deleted_at IS NULL) AS staff_count,
+                    (SELECT COUNT(*) FROM doctors m WHERE m.clinic_owner_id = d.id AND m.deleted_at IS NULL) AS member_count,
                     (SELECT COUNT(*) FROM patients p WHERE p.doctor_id = d.id AND p.deleted_at IS NULL) AS patients,
                     (SELECT COUNT(*) FROM prescriptions r WHERE r.doctor_id = d.id AND r.deleted_at IS NULL) AS prescriptions
-                FROM doctors d WHERE d.deleted_at IS NULL AND ' . $where . ' ORDER BY ' . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+                FROM doctors d WHERE d.deleted_at IS NULL AND d.clinic_owner_id IS NULL AND ' . $where . ' ORDER BY ' . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
         return array_map([self::class, 'shapeClinic'], $this->db->getRows($sql, $params));
     }
 
@@ -321,7 +324,7 @@ class AdminController extends BaseController
             'started_at' => $r['plan_started_at'] ?: $r['created_at'], 'expires_at' => $exp,
             'days_left' => $left === null ? null : max(0, $left),
             'joined_at' => $r['created_at'], 'last_active' => $last,
-            'staff' => (int) $r['staff_count'], 'patients' => (int) $r['patients'], 'prescriptions' => (int) $r['prescriptions'],
+            'doctors' => 1 + (int) $r['member_count'], 'staff' => (int) $r['staff_count'], 'patients' => (int) $r['patients'], 'prescriptions' => (int) $r['prescriptions'],
             'note' => $r['admin_note'],
         ];
     }
@@ -335,13 +338,14 @@ class AdminController extends BaseController
     public function dashboard(): void
     {
         $this->requireAdmin();
-        $live = 'd.deleted_at IS NULL AND d.is_active = 1';
+        // One clinic = one owner account, however many doctors it has.
+        $live = 'd.deleted_at IS NULL AND d.is_active = 1 AND d.clinic_owner_id IS NULL';
         $now  = date('Y-m-d H:i:s');
         $c = fn (string $w, array $p = []) => $this->count("SELECT COUNT(*) AS n FROM doctors d WHERE $live AND $w", $p);
         $act = fn (int $days) => $this->count('SELECT COUNT(*) AS n FROM doctors d WHERE ' . $live . ' AND ' . self::LAST_ACTIVE . ' >= :t', [':t' => gmdate('Y-m-d H:i:s', time() - $days * 86400)]);
 
         $series = [];
-        foreach ($this->db->getRows('SELECT DATE(created_at) AS day, COUNT(*) AS n FROM doctors WHERE deleted_at IS NULL AND created_at >= :t GROUP BY DATE(created_at)', [':t' => date('Y-m-d', strtotime('-29 days'))]) as $r) {
+        foreach ($this->db->getRows('SELECT DATE(created_at) AS day, COUNT(*) AS n FROM doctors WHERE deleted_at IS NULL AND clinic_owner_id IS NULL AND created_at >= :t GROUP BY DATE(created_at)', [':t' => date('Y-m-d', strtotime('-29 days'))]) as $r) {
             $series[$r['day']] = (int) $r['n'];
         }
         $signups = [];
@@ -361,12 +365,13 @@ class AdminController extends BaseController
                 'paid'       => $c("d.plan <> 'trial' AND (d.plan_expires_at IS NULL OR d.plan_expires_at > :n)", [':n' => $now]),
                 'expired'    => $c('d.plan_expires_at IS NOT NULL AND d.plan_expires_at <= :n', [':n' => $now]),
                 'expiring_7' => $c('d.plan_expires_at > :n AND d.plan_expires_at <= :e', [':n' => $now, ':e' => date('Y-m-d H:i:s', strtotime('+7 days'))]),
-                'disabled'   => $this->count('SELECT COUNT(*) AS n FROM doctors d WHERE d.deleted_at IS NULL AND d.is_active = 0 AND NOT EXISTS (SELECT 1 FROM verification v WHERE v.doctor_id = d.id)'),
+                'disabled'   => $this->count('SELECT COUNT(*) AS n FROM doctors d WHERE d.deleted_at IS NULL AND d.clinic_owner_id IS NULL AND d.is_active = 0 AND NOT EXISTS (SELECT 1 FROM verification v WHERE v.doctor_id = d.id)'),
                 'new_7'      => $c('d.created_at >= :t', [':t' => date('Y-m-d H:i:s', strtotime('-7 days'))]),
                 'new_30'     => $c('d.created_at >= :t', [':t' => date('Y-m-d H:i:s', strtotime('-30 days'))]),
             ],
             'activity' => ['active_24h' => $act(1), 'active_7d' => $act(7), 'active_30d' => $act(30)],
             'totals'   => [
+                'doctors'       => $this->count('SELECT COUNT(*) AS n FROM doctors WHERE deleted_at IS NULL'),
                 'staff'         => $this->count('SELECT COUNT(*) AS n FROM clinic_staff WHERE deleted_at IS NULL'),
                 'patients'      => $this->count('SELECT COUNT(*) AS n FROM patients WHERE deleted_at IS NULL'),
                 'prescriptions' => $this->count('SELECT COUNT(*) AS n FROM prescriptions WHERE deleted_at IS NULL'),
@@ -392,8 +397,9 @@ class AdminController extends BaseController
         $where  = '1=1';
         $p      = [];
         if ($q !== '') {
-            $where .= ' AND (d.name LIKE :q1 OR d.mobile LIKE :q2 OR d.email LIKE :q3 OR EXISTS (SELECT 1 FROM clinics c WHERE c.doctor_id = d.id AND c.deleted_at IS NULL AND c.name LIKE :q4))';
-            $p = [':q1' => '%' . $q . '%', ':q2' => '%' . $q . '%', ':q3' => '%' . $q . '%', ':q4' => '%' . $q . '%'];
+            $where .= ' AND (d.name LIKE :q1 OR d.mobile LIKE :q2 OR d.email LIKE :q3 OR EXISTS (SELECT 1 FROM clinics c WHERE c.doctor_id = d.id AND c.deleted_at IS NULL AND c.name LIKE :q4)
+                         OR EXISTS (SELECT 1 FROM doctors m WHERE m.clinic_owner_id = d.id AND m.deleted_at IS NULL AND (m.name LIKE :q5 OR m.mobile LIKE :q6)))';
+            $p = [':q1' => '%' . $q . '%', ':q2' => '%' . $q . '%', ':q3' => '%' . $q . '%', ':q4' => '%' . $q . '%', ':q5' => '%' . $q . '%', ':q6' => '%' . $q . '%'];
         }
         $where .= match ($status) {
             'trial'    => " AND d.is_active = 1 AND d.plan = 'trial' AND (d.plan_expires_at IS NULL OR d.plan_expires_at > NOW())",
@@ -410,7 +416,7 @@ class AdminController extends BaseController
             'name'    => 'd.name ASC',
             default   => 'd.created_at DESC',
         };
-        $total = $this->count('SELECT COUNT(*) AS n FROM doctors d WHERE d.deleted_at IS NULL AND ' . $where, $p);
+        $total = $this->count('SELECT COUNT(*) AS n FROM doctors d WHERE d.deleted_at IS NULL AND d.clinic_owner_id IS NULL AND ' . $where, $p);
         Response::success([
             'items' => $this->clinicRows($where, $p, $order, self::PAGE_SIZE, ($page - 1) * self::PAGE_SIZE),
             'page' => $page, 'per_page' => self::PAGE_SIZE, 'total' => $total,
@@ -435,8 +441,16 @@ class AdminController extends BaseController
         $doc = $this->db->getRow('SELECT degree, specialization, registration_no, last_login_at FROM doctors WHERE id = :d', [':d' => $id]);
         $n   = fn (string $sql) => $this->count($sql, [':d' => $id]);
         $since = date('Y-m-d H:i:s', strtotime('-30 days'));
+        $doctors = array_map(fn ($m) => [
+            'id' => (int) $m['id'], 'name' => $m['name'], 'mobile' => $m['mobile'], 'email' => $m['email'], 'degree' => $m['degree'],
+            'specialization' => $m['specialization'], 'registration_no' => $m['registration_no'],
+            'experience_yrs' => $m['experience_yrs'] === null ? null : (int) $m['experience_yrs'], 'is_owner' => $m['clinic_owner_id'] === null,
+            'active' => (int) $m['is_active'] === 1, 'last_login_at' => $m['last_login_at'], 'created_at' => $m['created_at'],
+            'prescriptions' => $this->count('SELECT COUNT(*) AS n FROM prescriptions WHERE consultant_id = :d AND deleted_at IS NULL', [':d' => $m['id']]),
+        ], $this->db->getRows('SELECT * FROM doctors WHERE (id = :a OR clinic_owner_id = :b) AND deleted_at IS NULL ORDER BY clinic_owner_id IS NOT NULL, name', [':a' => $id, ':b' => $id]));
         Response::success([
             'clinic' => $c,
+            'doctors' => $doctors,
             'profile' => $loc + ['degree' => $doc['degree'], 'specialization' => $doc['specialization'], 'registration_no' => $doc['registration_no'], 'doctor_last_login' => $doc['last_login_at']],
             'staff' => $staff,
             'reminders' => $this->db->getRows('SELECT kind, sent_at, pushed FROM plan_reminders WHERE doctor_id = :d ORDER BY sent_at', [':d' => $id]),
@@ -518,7 +532,7 @@ class AdminController extends BaseController
     {
         $this->requireAdmin();
         $id  = (int) ($params['id'] ?? 0);
-        $doc = $this->db->getRow('SELECT * FROM doctors WHERE id = :i AND deleted_at IS NULL', [':i' => $id]);
+        $doc = $this->db->getRow('SELECT * FROM doctors WHERE id = :i AND deleted_at IS NULL AND clinic_owner_id IS NULL', [':i' => $id]);
         if (!$doc) Response::notFound('Clinic not found.');
         $in  = $this->request->all();
         $act = (string) ($in['action'] ?? '');
@@ -530,7 +544,7 @@ class AdminController extends BaseController
                 // Extend from today if the plan already ended, otherwise from its current end date.
                 $base = ($doc['plan_expires_at'] && strtotime($doc['plan_expires_at']) > time()) ? strtotime($doc['plan_expires_at']) : time();
                 $this->db->update('doctors', ['plan_expires_at' => date('Y-m-d H:i:s', strtotime(($days > 0 ? '+' : '') . $days . ' days', $base))], 'id = :i', [':i' => $id]);
-                Response::success([], $days > 0 ? "Added $days days." : 'Shortened the plan.');
+                Response::success([], $days > 0 ? Lang::t('Days added to the plan: {n}.', ['n' => $days]) : Lang::t('The plan was shortened.'));
             case 'set_plan':
                 $plan = (string) ($in['plan'] ?? '');
                 if (!in_array($plan, self::PLANS, true)) Response::validationError(['plan' => ['Choose a valid plan.']]);
@@ -543,14 +557,16 @@ class AdminController extends BaseController
                 Response::success([], 'Plan updated.');
             case 'disable':
                 $this->db->update('doctors', ['is_active' => 0], 'id = :i', [':i' => $id]);
-                $this->auth->revokeAllForDoctor($id);
-                Response::success([], 'Clinic switched off. Its doctor and reception are signed out.');
+                foreach ($this->db->getRows('SELECT id FROM doctors WHERE id = :a OR clinic_owner_id = :b', [':a' => $id, ':b' => $id]) as $m) {
+                    $this->auth->revokeAllForDoctor((int) $m['id']);
+                }
+                Response::success([], 'Clinic switched off. Its doctors and reception are signed out.');
             case 'enable':
                 $this->db->update('doctors', ['is_active' => 1], 'id = :i', [':i' => $id]);
                 Response::success([], 'Clinic switched on.');
             case 'reset_password':
                 $pw = self::generatePassword();
-                $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($pw)], 'id = :i', [':i' => $id]);
+                $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($pw), 'sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :i', [':i' => $id]);
                 $this->auth->revokeAllForDoctor($id);
                 Response::success(['password' => $pw, 'mobile' => $doc['mobile']], 'New password set. Share it with the doctor.');
             case 'reset_staff_password':
@@ -559,6 +575,7 @@ class AdminController extends BaseController
                 $pw = self::generatePassword();
                 $this->db->update('clinic_staff', ['password_hash' => CommonHelper::hashPassword($pw), 'sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :i', [':i' => $s['id']]);
                 $this->auth->revokeAllForStaff((int) $s['id']);
+                $this->dropDevices('staff', (int) $s['id']);
                 Response::success(['password' => $pw, 'mobile' => $s['mobile']], 'New password set. Share it with the team member.');
             case 'note':
                 $n = self::clean((string) ($in['note'] ?? ''));
@@ -567,6 +584,144 @@ class AdminController extends BaseController
             default:
                 Response::validationError(['action' => ['Unknown action.']]);
         }
+    }
+
+    // ── Doctors of a clinic ──────────────────────────────────────────────────
+    /**
+     * POST admin/clinics/{id}/doctors
+     *   {name, countrycode?, phone, email?, password?, degree?, specialization?, registration_no?, experience_yrs?}
+     *     creates a doctor in the clinic (a removed doctor of this clinic with that number is brought back);
+     *   {existing_mobile} moves an existing, empty doctor account into the clinic.
+     */
+    public function addDoctor(array $params): void
+    {
+        $this->requireAdmin();
+        $id = (int) ($params['id'] ?? 0);
+        if (!$this->db->getRow('SELECT id FROM doctors WHERE id = :i AND deleted_at IS NULL AND clinic_owner_id IS NULL', [':i' => $id])) Response::notFound('Clinic not found.');
+        $in = $this->request->all();
+        if ($this->count('SELECT COUNT(*) AS n FROM doctors WHERE clinic_owner_id = :d AND deleted_at IS NULL', [':d' => $id]) >= 30) {
+            Response::error('A clinic can have up to 31 doctors.', 422);
+        }
+
+        if (trim((string) ($in['existing_mobile'] ?? '')) !== '') {
+            $m = preg_replace('/[^\d+]/', '', (string) $in['existing_mobile']);
+            $d = $this->db->getRow('SELECT * FROM doctors WHERE mobile = :m AND deleted_at IS NULL', [':m' => $m]);
+            if (!$d) Response::validationError(['existing_mobile' => ['No doctor account has this number.']]);
+            if ((int) $d['id'] === $id || !empty($d['clinic_owner_id'])) Response::validationError(['existing_mobile' => ['This account already belongs to a clinic.']]);
+            // Joining would hide anything this account already holds, so only an empty one may move.
+            foreach (['patients' => 'doctor_id', 'clinic_staff' => 'doctor_id', 'bills' => 'doctor_id', 'appointments' => 'doctor_id', 'doctors' => 'clinic_owner_id'] as $table => $column) {
+                if ($this->count("SELECT COUNT(*) AS n FROM {$table} WHERE {$column} = :d", [':d' => $d['id']]) > 0) {
+                    Response::validationError(['existing_mobile' => ['This account already has patients or staff of its own, so it can’t be moved into another clinic.']]);
+                }
+            }
+            $this->db->update('doctors', ['clinic_owner_id' => $id, 'sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :i', [':i' => $d['id']]);
+            $this->auth->revokeAllForDoctor((int) $d['id']);
+            $this->db->delete('device_tokens', 'doctor_id = :d', [':d' => $d['id']]);
+            Response::created(['id' => (int) $d['id'], 'mobile' => $d['mobile'], 'password' => null], 'Doctor added to the clinic.');
+        }
+
+        $data    = $this->doctorInput($in);
+        $country = LocaleHelper::countryFor($id);
+        $mobile  = AuthController::normalizeMobile((string) ($in['countrycode'] ?? ('+' . (LocaleHelper::PHONE_RULES[$country][0] ?? '91'))), (string) ($in['phone'] ?? ''));
+        $old     = $this->db->getRow('SELECT * FROM doctors WHERE mobile = :m', [':m' => $mobile]);
+        $returning = $old && $old['deleted_at'] !== null && (int) $old['clinic_owner_id'] === $id;
+        if (($old && !$returning) || $this->db->getRow('SELECT id FROM clinic_staff WHERE mobile = :m AND deleted_at IS NULL', [':m' => $mobile])) {
+            Response::error('This mobile number is already registered.', 409, ['phone' => ['This mobile number is already registered.']]);
+        }
+        $this->uniqueDoctorFields($data, $returning ? (int) $old['id'] : 0);
+        $pw = trim((string) ($in['password'] ?? ''));
+        if ($pw === '') {
+            $pw = self::generatePassword();
+        } else {
+            if (strlen($pw) < 8 || strlen($pw) > 64) Response::validationError(['password' => ['Use 8 to 64 characters.']]);
+            AuthController::assertPasswordStrength($pw);
+        }
+        $row = $data + ['mobile' => $mobile, 'password_hash' => CommonHelper::hashPassword($pw), 'is_active' => 1, 'clinic_owner_id' => $id, 'deleted_at' => null];
+        if ($returning) {
+            $this->db->update('doctors', $row + ['sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :i', [':i' => $old['id']]);
+            $new = (int) $old['id'];
+        } else {
+            $new = $this->db->insert('doctors', $row);
+        }
+        $this->logger->info('Admin added doctor', ['clinic' => $id, 'doctor_id' => $new]);
+        Response::created(['id' => $new, 'mobile' => $mobile, 'password' => $pw], 'Doctor added to the clinic.');
+    }
+
+    /** POST admin/doctors/{id}/action {action: update|reset_password|disable|enable|remove} */
+    public function doctorAction(array $params): void
+    {
+        $this->requireAdmin();
+        $id = (int) ($params['id'] ?? 0);
+        $d  = $this->db->getRow('SELECT * FROM doctors WHERE id = :i AND deleted_at IS NULL', [':i' => $id]);
+        if (!$d) Response::notFound('Doctor not found.');
+        $in    = $this->request->all();
+        $act   = (string) ($in['action'] ?? '');
+        $owner = empty($d['clinic_owner_id']);
+        $now   = date('Y-m-d H:i:s');
+        if ($owner && in_array($act, ['disable', 'enable', 'remove'], true)) {
+            Response::error('This doctor owns the clinic. Switch off the whole clinic instead.', 422);
+        }
+        switch ($act) {
+            case 'update':
+                $data = $this->doctorInput($in);
+                $this->uniqueDoctorFields($data, $id);
+                $this->db->update('doctors', $data, 'id = :i', [':i' => $id]);
+                Response::success([], 'Doctor updated.');
+            case 'reset_password':
+                $pw = self::generatePassword();
+                $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($pw), 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                $this->auth->revokeAllForDoctor($id);
+                Response::success(['password' => $pw, 'mobile' => $d['mobile']], 'New password set. Share it with the doctor.');
+            case 'disable':
+                $this->db->update('doctors', ['is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                $this->auth->revokeAllForDoctor($id);
+                $this->dropDevices('doctor', $id);
+                Response::success([], 'Switched off and signed out.');
+            case 'enable':
+                $this->db->update('doctors', ['is_active' => 1], 'id = :i', [':i' => $id]);
+                Response::success([], 'Switched on.');
+            case 'remove':
+                // Their visits and prescriptions stay in the clinic, under their name.
+                $this->db->update('doctors', ['deleted_at' => gmdate('Y-m-d H:i:s'), 'is_active' => 0, 'sessions_valid_from' => $now], 'id = :i', [':i' => $id]);
+                $this->auth->revokeAllForDoctor($id);
+                $this->dropDevices('doctor', $id);
+                Response::success([], 'Removed. Their records stay with the clinic.');
+            default:
+                Response::validationError(['action' => ['Unknown action.']]);
+        }
+    }
+
+    /** Profile fields an admin may set on a doctor. */
+    private function doctorInput(array $in): array
+    {
+        $text = fn (string $k, int $max) => ($v = mb_substr(self::clean((string) ($in[$k] ?? '')), 0, $max)) === '' ? null : $v;
+        $name = self::clean((string) ($in['name'] ?? ''));
+        if (mb_strlen($name) < 2 || mb_strlen($name) > 100) Response::validationError(['name' => ['Please enter the doctor\'s name.']]);
+        $email = strtolower(trim((string) ($in['email'] ?? '')));
+        if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) Response::validationError(['email' => ['Enter a valid email or leave it empty.']]);
+        $years = trim((string) ($in['experience_yrs'] ?? ''));
+        if ($years !== '' && (!preg_match('/^\d{1,3}$/', $years) || (int) $years < 1 || (int) $years > 70)) {
+            Response::validationError(['experience_yrs' => ['Experience must be between 1 and 70 years.']]);
+        }
+        return [
+            'name' => $name, 'email' => $email === '' ? null : $email, 'degree' => $text('degree', 255), 'specialization' => $text('specialization', 255),
+            'registration_no' => $text('registration_no', 100), 'experience_yrs' => $years === '' ? null : (int) $years,
+        ];
+    }
+
+    private function uniqueDoctorFields(array $data, int $selfId): void
+    {
+        foreach (['email' => 'This email is already registered.', 'registration_no' => 'This registration number is already registered.'] as $col => $msg) {
+            if ($data[$col] !== null && $this->db->getRow("SELECT id FROM doctors WHERE {$col} = :v AND id <> :i", [':v' => $data[$col], ':i' => $selfId])) {
+                Response::error($msg, 409, [$col => [$msg]]);
+            }
+        }
+    }
+
+    /** A signed-out person's phone must stop receiving the clinic's notifications. */
+    private function dropDevices(string $ownerType, int $ownerId): void
+    {
+        $this->db->delete('device_tokens', 'owner_type = :t AND owner_id = :o', [':t' => $ownerType, ':o' => $ownerId]);
     }
 
     /** 12 characters, always at least one letter and one digit, no look-alike characters. */

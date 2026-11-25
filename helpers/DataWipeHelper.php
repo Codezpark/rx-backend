@@ -71,7 +71,8 @@ class DataWipeHelper
 
         return [
             'remove' => [
-                'clinics' => $n('doctors'), 'staff' => $n('clinic_staff'), 'patients' => $n('patients'),
+                'clinics' => in_array('doctors', $have, true) ? $this->count('doctors', 'clinic_owner_id IS NULL') : 0,
+                'doctors' => $n('doctors'), 'staff' => $n('clinic_staff'), 'patients' => $n('patients'),
                 'appointments' => $n('appointments'), 'prescriptions' => $n('prescriptions'), 'bills' => $n('bills'),
                 'files' => count($this->userFiles()), 'rows' => $total,
             ],

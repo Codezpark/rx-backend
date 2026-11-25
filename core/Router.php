@@ -208,8 +208,10 @@ class Router
     private function enforcePlan(string $uri, array $authUser): void
     {
         if (in_array($uri, self::PLAN_EXEMPT, true)) return;
+        // The plan is the clinic's: for a second doctor it is the owner's.
         $row = Database::getInstance()->getRow(
-            'SELECT plan_expires_at FROM doctors WHERE id = :id',
+            'SELECT CASE WHEN d.clinic_owner_id IS NULL THEN d.plan_expires_at ELSE o.plan_expires_at END AS plan_expires_at
+             FROM doctors d LEFT JOIN doctors o ON o.id = d.clinic_owner_id WHERE d.id = :id',
             [':id' => (int) ($authUser['doctor_id'] ?? 0)]
         );
         if ($row && !empty($row['plan_expires_at']) && strtotime((string) $row['plan_expires_at']) < time()) {

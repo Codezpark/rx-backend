@@ -15,6 +15,9 @@ class InsightsController extends BaseController
     public function index(): void
     {
         $d    = (int) $this->requireDoctor()['id'];
+        $who  = $this->viewScope();   // a second doctor sees their own work; the owner the clinic's or one doctor's
+        $rxBy = self::byDoctor('consultant_id', $who);
+        $paid = 'bill_payments WHERE doctor_id = :d' . ($who === null ? '' : ' AND bill_id IN (SELECT id FROM bills WHERE consultant_id = ' . $who . ')');
         $days = (int) $this->request->get('days', 30);
         if (!in_array($days, self::PERIODS, true)) $days = 30;
         $off  = max(-840, min(840, (int) $this->request->get('tz_offset', 0)));
@@ -29,8 +32,8 @@ class InsightsController extends BaseController
         $to    = $utc($day(1));
         $pFrom = $utc($pStart);
 
-        $cur  = $this->totals($d, $from, $to);
-        $prev = $this->totals($d, $pFrom, $from);
+        $cur  = $this->totals($d, $from, $to, $who);
+        $prev = $this->totals($d, $pFrom, $from, $who);
 
         // Eight local weeks (Mon–Sun) ending with the current one, for the trend bars.
         $dow      = (int) gmdate('N', strtotime($today . ' UTC'));            // 1 = Monday
@@ -47,30 +50,30 @@ class InsightsController extends BaseController
             $mon   = gmdate('Y-m-d', $local - ((int) gmdate('N', $local) - 1) * 86400);
             return isset($buckets[$mon]) ? $mon : null;
         };
-        foreach ($this->db->getRows("SELECT visit_date AS ts FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t", [':d' => $d, ':f' => $wFrom, ':t' => $to]) as $r) {
+        foreach ($this->db->getRows("SELECT visit_date AS ts FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t" . $rxBy, [':d' => $d, ':f' => $wFrom, ':t' => $to]) as $r) {
             if (($k = $bucketOf($r['ts'])) !== null) $buckets[$k]['visits']++;
         }
         foreach ($this->db->getRows('SELECT created_at AS ts FROM patients WHERE doctor_id = :d AND deleted_at IS NULL AND created_at >= :f AND created_at < :t', [':d' => $d, ':f' => $wFrom, ':t' => $to]) as $r) {
             if (($k = $bucketOf($r['ts'])) !== null) $buckets[$k]['new_patients']++;
         }
-        foreach ($this->db->getRows('SELECT paid_at AS ts, amount FROM bill_payments WHERE doctor_id = :d AND paid_at >= :f AND paid_at < :t', [':d' => $d, ':f' => $wFrom, ':t' => $to]) as $r) {
+        foreach ($this->db->getRows('SELECT paid_at AS ts, amount FROM ' . $paid . ' AND paid_at >= :f AND paid_at < :t', [':d' => $d, ':f' => $wFrom, ':t' => $to]) as $r) {
             if (($k = $bucketOf($r['ts'])) !== null) $buckets[$k]['collected'] += (float) $r['amount'];
         }
 
         // What the practice treats: the doctor's own wording, folded by case and spacing.
         $diag = $this->db->getRows(
             "SELECT MIN(TRIM(diagnosis)) AS name, COUNT(*) AS n FROM prescriptions
-             WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t AND diagnosis IS NOT NULL AND TRIM(diagnosis) <> ''
+             WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t AND diagnosis IS NOT NULL AND TRIM(diagnosis) <> ''" . $rxBy . "
              GROUP BY LOWER(TRIM(diagnosis)) ORDER BY n DESC, name LIMIT 6", [':d' => $d, ':f' => $from, ':t' => $to]);
         $meds = $this->db->getRows(
             "SELECT MIN(m.medicine_name) AS name, COUNT(DISTINCT m.prescription_id) AS n FROM prescription_medicines m
              JOIN prescriptions p ON p.id = m.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
-             WHERE p.doctor_id = :d AND m.deleted_at IS NULL AND p.visit_date >= :f AND p.visit_date < :t
+             WHERE p.doctor_id = :d AND m.deleted_at IS NULL AND p.visit_date >= :f AND p.visit_date < :t" . self::byDoctor('p.consultant_id', $who) . "
              GROUP BY LOWER(m.medicine_name) ORDER BY n DESC, name LIMIT 6", [':d' => $d, ':f' => $from, ':t' => $to]);
 
         // Busiest weekdays (local) over the period.
         $wd = array_fill(0, 7, 0);   // 0 = Sunday
-        foreach ($this->db->getRows("SELECT visit_date AS ts FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t", [':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
+        foreach ($this->db->getRows("SELECT visit_date AS ts FROM prescriptions WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t" . $rxBy, [':d' => $d, ':f' => $from, ':t' => $to]) as $r) {
             $wd[(int) gmdate('w', strtotime($r['ts'] . ' UTC') + $off * 60)]++;
         }
 
@@ -111,16 +114,17 @@ class InsightsController extends BaseController
     }
 
     /** Headline numbers for [from, to) in UTC. */
-    private function totals(int $d, string $from, string $to): array
+    private function totals(int $d, string $from, string $to, ?int $who = null): array
     {
+        $by = self::byDoctor('consultant_id', $who);
         $rx = $this->db->getRow(
             "SELECT COUNT(*) AS visits, COUNT(DISTINCT patient_id) AS patients FROM prescriptions
-             WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t", [':d' => $d, ':f' => $from, ':t' => $to]);
+             WHERE doctor_id = :d AND status = 'final' AND deleted_at IS NULL AND visit_date >= :f AND visit_date < :t" . $by, [':d' => $d, ':f' => $from, ':t' => $to]);
         $np = $this->db->getRow('SELECT COUNT(*) AS n FROM patients WHERE doctor_id = :d AND deleted_at IS NULL AND created_at >= :f AND created_at < :t', [':d' => $d, ':f' => $from, ':t' => $to]);
         $ap = $this->db->getRow(
             "SELECT COALESCE(SUM(status = 'no_show'), 0) AS missed, COALESCE(SUM(status IN ('completed','no_show')), 0) AS due FROM appointments
-             WHERE doctor_id = :d AND scheduled_at >= :f AND scheduled_at < :t", [':d' => $d, ':f' => $from, ':t' => $to]);
-        $col = $this->db->getRow('SELECT COALESCE(SUM(amount), 0) AS n FROM bill_payments WHERE doctor_id = :d AND paid_at >= :f AND paid_at < :t', [':d' => $d, ':f' => $from, ':t' => $to]);
+             WHERE doctor_id = :d AND scheduled_at >= :f AND scheduled_at < :t" . $by, [':d' => $d, ':f' => $from, ':t' => $to]);
+        $col = $this->db->getRow('SELECT COALESCE(SUM(amount), 0) AS n FROM bill_payments WHERE doctor_id = :d AND paid_at >= :f AND paid_at < :t' . ($who === null ? '' : ' AND bill_id IN (SELECT id FROM bills WHERE consultant_id = ' . $who . ')'), [':d' => $d, ':f' => $from, ':t' => $to]);
         $due = (int) $ap['due'];
         return [
             'visits'       => (int) $rx['visits'],

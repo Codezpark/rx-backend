@@ -20,6 +20,7 @@ class BillController extends BaseController
         $d   = (int) $this->requireClinic()['id'];
         $sql = "SELECT b.*, pt.name AS pt_name, pt.mobile AS pt_mobile, pt.uhid AS pt_uhid FROM bills b JOIN patients pt ON pt.id = b.patient_id WHERE b.doctor_id = :d";
         $p   = [':d' => $d];
+        $sql .= self::byDoctor('b.consultant_id', $this->viewScope());
         if (($from = $this->utc('from')) !== null) { $sql .= ' AND b.bill_date >= :f'; $p[':f'] = $from; }
         if (($to = $this->utc('to')) !== null)     { $sql .= ' AND b.bill_date < :t';  $p[':t'] = $to; }
         $status = (string) $this->request->get('status', 'all');
@@ -37,9 +38,10 @@ class BillController extends BaseController
         $d = (int) $this->requireClinic()['id'];
         $f = $this->utc('from') ?? gmdate('Y-m-d 00:00:00');
         $t = $this->utc('to') ?? gmdate('Y-m-d H:i:s', strtotime($f . ' UTC') + 86400);
-        $by = $this->db->getRows('SELECT method, SUM(amount) AS amt, COUNT(*) AS n FROM bill_payments WHERE doctor_id = :d AND paid_at >= :f AND paid_at < :t GROUP BY method', [':d' => $d, ':f' => $f, ':t' => $t]);
-        $bl = $this->db->getRow("SELECT COUNT(*) AS n, COALESCE(SUM(total),0) AS billed FROM bills WHERE doctor_id = :d AND status <> 'cancelled' AND bill_date >= :f AND bill_date < :t", [':d' => $d, ':f' => $f, ':t' => $t]);
-        $due = $this->db->getRow("SELECT COUNT(*) AS n, COALESCE(SUM(total - paid),0) AS owed FROM bills WHERE doctor_id = :d AND status IN ('unpaid','partial')", [':d' => $d]);
+        $who = $this->viewScope();
+        $by = $this->db->getRows('SELECT bp.method, SUM(bp.amount) AS amt, COUNT(*) AS n FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND bp.paid_at >= :f AND bp.paid_at < :t' . self::byDoctor('b.consultant_id', $who) . ' GROUP BY bp.method', [':d' => $d, ':f' => $f, ':t' => $t]);
+        $bl = $this->db->getRow("SELECT COUNT(*) AS n, COALESCE(SUM(total),0) AS billed FROM bills WHERE doctor_id = :d AND status <> 'cancelled' AND bill_date >= :f AND bill_date < :t" . self::byDoctor('consultant_id', $who), [':d' => $d, ':f' => $f, ':t' => $t]);
+        $due = $this->db->getRow("SELECT COUNT(*) AS n, COALESCE(SUM(total - paid),0) AS owed FROM bills WHERE doctor_id = :d AND status IN ('unpaid','partial')" . self::byDoctor('consultant_id', $who), [':d' => $d]);
         $methods = array_fill_keys(self::METHODS, 0.0);
         foreach ($by as $r) $methods[$r['method']] = (float) $r['amt'];
         Response::success([
@@ -72,6 +74,12 @@ class BillController extends BaseController
             if (!$this->db->getRow('SELECT id FROM appointments WHERE id = :i AND doctor_id = :d AND patient_id = :p', [':i' => (int) $apId, ':d' => $d, ':p' => $pid])) $err['appointment_id'] = ['Appointment not found for this patient.'];
         } else $apId = null;
 
+        // Whose bill: the visit's or prescription's doctor, else the doctor raising it, else the owner.
+        $from = $rxId !== null ? $this->db->getRow('SELECT consultant_id FROM prescriptions WHERE id = :i AND doctor_id = :d', [':i' => (int) $rxId, ':d' => $d]) : null;
+        $from = $from ?: ($apId !== null ? $this->db->getRow('SELECT consultant_id FROM appointments WHERE id = :i AND doctor_id = :d', [':i' => (int) $apId, ':d' => $d]) : null);
+        $asked = (int) $this->request->input('consultant_id', 0);
+        $consultant = (int) ($from['consultant_id'] ?? 0) ?: ($this->ownScope() ?? ($this->clinicDoctor($d, $asked) ? $asked : ($this->actorId ?? $d)));
+
         [$items, $sub] = $this->items($err);
         $discount = $this->money($this->request->input('discount', 0), 'discount', $err);
         if ($discount > $sub) $err['discount'] = ['Discount cannot be more than the total.'];
@@ -92,7 +100,7 @@ class BillController extends BaseController
         try {
             $n = (int) $this->db->getRow('SELECT COALESCE(MAX(CAST(SUBSTRING(bill_no, 3) AS UNSIGNED)), 0) AS n FROM bills WHERE doctor_id = :d FOR UPDATE', [':d' => $d])['n'] + 1;
             $id = $this->db->insert('bills', [
-                'doctor_id' => $d, 'patient_id' => $pid, 'prescription_id' => $rxId === null ? null : (int) $rxId, 'appointment_id' => $apId === null ? null : (int) $apId,
+                'doctor_id' => $d, 'consultant_id' => $consultant, 'patient_id' => $pid, 'prescription_id' => $rxId === null ? null : (int) $rxId, 'appointment_id' => $apId === null ? null : (int) $apId,
                 'bill_no' => sprintf('R-%04d', $n), 'bill_date' => gmdate('Y-m-d H:i:s'), 'subtotal' => $sub, 'discount' => $discount, 'total' => $total,
                 'paid' => $paid, 'status' => self::statusFor($total, $paid), 'notes' => $notes === '' ? null : $notes,
             ]);
@@ -176,7 +184,7 @@ class BillController extends BaseController
      * Returns the new bill id, or null when the fee is 0 / already billed.
      * Runs in its own transaction, so call it outside one.
      */
-    public static function consultationBill(int $doctorId, int $patientId, ?int $rxId, ?int $apId, float $fee, string $label = 'Consultation'): ?int
+    public static function consultationBill(int $doctorId, int $patientId, ?int $rxId, ?int $apId, float $fee, string $label = 'Consultation', ?int $consultantId = null): ?int
     {
         $fee = round($fee, LocaleHelper::dpFor($doctorId));
         if ($fee <= 0 || $fee > self::MAX) return null;
@@ -188,7 +196,7 @@ class BillController extends BaseController
         try {
             $n  = (int) $db->getRow('SELECT COALESCE(MAX(CAST(SUBSTRING(bill_no, 3) AS UNSIGNED)), 0) AS n FROM bills WHERE doctor_id = :d FOR UPDATE', [':d' => $doctorId])['n'] + 1;
             $id = $db->insert('bills', [
-                'doctor_id' => $doctorId, 'patient_id' => $patientId, 'prescription_id' => $rxId, 'appointment_id' => $apId,
+                'doctor_id' => $doctorId, 'consultant_id' => $consultantId ?? $doctorId, 'patient_id' => $patientId, 'prescription_id' => $rxId, 'appointment_id' => $apId,
                 'bill_no' => sprintf('R-%04d', $n), 'bill_date' => gmdate('Y-m-d H:i:s'),
                 'subtotal' => $fee, 'discount' => 0, 'total' => $fee, 'paid' => 0, 'status' => 'unpaid',
             ]);
@@ -220,7 +228,7 @@ class BillController extends BaseController
 
     private function own(int $id, int $d): array
     {
-        $b = $this->db->getRow('SELECT b.*, pt.name AS pt_name, pt.mobile AS pt_mobile, pt.uhid AS pt_uhid FROM bills b JOIN patients pt ON pt.id = b.patient_id WHERE b.id = :i AND b.doctor_id = :d', [':i' => $id, ':d' => $d]);
+        $b = $this->db->getRow('SELECT b.*, pt.name AS pt_name, pt.mobile AS pt_mobile, pt.uhid AS pt_uhid FROM bills b JOIN patients pt ON pt.id = b.patient_id WHERE b.id = :i AND b.doctor_id = :d' . self::byDoctor('b.consultant_id', $this->ownScope()), [':i' => $id, ':d' => $d]);
         if (!$b) Response::error('Not found', 404);
         return $b;
     }
@@ -260,7 +268,7 @@ class BillController extends BaseController
     private function shape(array $b, bool $detail = false): array
     {
         $out = [
-            'id' => (int) $b['id'], 'bill_no' => $b['bill_no'], 'bill_date' => $b['bill_date'], 'status' => $b['status'],
+            'id' => (int) $b['id'], 'consultant_id' => (int) ($b['consultant_id'] ?? $b['doctor_id']), 'bill_no' => $b['bill_no'], 'bill_date' => $b['bill_date'], 'status' => $b['status'],
             'subtotal' => (float) $b['subtotal'], 'discount' => (float) $b['discount'], 'total' => (float) $b['total'], 'paid' => (float) $b['paid'],
             'due' => $b['status'] === 'cancelled' ? 0.0 : round((float) $b['total'] - (float) $b['paid'], $this->dp()),
             'prescription_id' => $b['prescription_id'] === null ? null : (int) $b['prescription_id'],

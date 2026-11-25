@@ -59,7 +59,8 @@ class InvestigationController extends BaseController
             'done'    => "o.status IN ('report_ready','delivered')",
             default   => '1=1',
         };
-        $pf = $pid > 0 ? ' AND o.patient_id = ' . $pid : '';
+        // A patient's history shows the whole clinic's orders; the work list shows a doctor's own.
+        $pf = $pid > 0 ? ' AND o.patient_id = ' . $pid : self::byDoctor('o.consultant_id', $this->viewScope());
 
         $items = [];
         if ($kind !== 'imaging') {
@@ -123,6 +124,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->lab((int) $p['id'], $d);
+        $this->assertAuthor($o);
         if ($o['status'] === 'cancelled') Response::error('A cancelled order can’t take results.', 409);
 
         $raw = $this->request->get('tests', []);
@@ -189,6 +191,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->lab((int) $p['id'], $d);
+        $this->assertAuthor($o);
         $next = $this->nextStatus($o['status'], self::LAB_FLOW, 'sample_collected,processing,report_ready,delivered,cancelled');
         $data = ['status' => $next];
         if ($next === 'report_ready' && empty($o['result_date'])) $data['result_date'] = CommonHelper::now();
@@ -200,6 +203,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->lab((int) $p['id'], $d);
+        $this->assertAuthor($o);
         if ($o['status'] === 'cancelled') Response::error('A cancelled order can’t take a report.', 409);
         $path = $this->storeFile($d, $o['result_file_url']);
         // A new file makes any earlier scan of the old one meaningless. Having the report in hand
@@ -215,6 +219,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->lab((int) $p['id'], $d);
+        $this->assertAuthor($o);
         if (empty($o['result_file_url'])) Response::error('Attach the report before saving its scan.', 409);
 
         $text = $this->request->get('text', '');
@@ -278,6 +283,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->rad((int) $p['id'], $d);
+        $this->assertAuthor($o);
         if ($o['status'] === 'cancelled') Response::error('A cancelled order can’t take a report.', 409);
 
         $this->validate(['impression' => 'nullable|string|max:2000', 'radiologist_report' => 'nullable|string|max:8000']);
@@ -298,6 +304,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->rad((int) $p['id'], $d);
+        $this->assertAuthor($o);
         $next = $this->nextStatus($o['status'], self::RAD_FLOW, 'ordered,report_ready,delivered,cancelled');
         $data = ['status' => $next];
         if ($next === 'report_ready' && empty($o['result_date'])) $data['result_date'] = CommonHelper::now();
@@ -309,6 +316,7 @@ class InvestigationController extends BaseController
     {
         $d = (int) $this->requireDoctor()['id'];
         $o = $this->rad((int) $p['id'], $d);
+        $this->assertAuthor($o);
         $path = $this->storeFile($d, $o['report_file_url']);
         $this->db->update('radiology_orders', ['report_file_url' => $path], 'id = :id', [':id' => $o['id']]);
         Response::success(['order' => $this->radPayload($this->rad((int) $p['id'], $d))], 'Report attached');

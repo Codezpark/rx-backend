@@ -70,6 +70,7 @@ $router->get('catalog/radiology',      'Catalog', 'radiology',     ['auth' => tr
 // ── Prescriptions (JWT required) ─────────────────────────────────────────────
 $router->post('prescriptions',                 'Prescription', 'create',   ['auth' => true]);
 $router->get('prescriptions',                  'Prescription', 'list',     ['auth' => true]);
+$router->get('prescriptions/{id}/signature',  'Prescription', 'signature', ['auth' => true]);
 $router->get('prescriptions/{id}',             'Prescription', 'detail',   ['auth' => true]);
 $router->put('prescriptions/{id}',             'Prescription', 'update',   ['auth' => true]);
 $router->delete('prescriptions/{id}',          'Prescription', 'delete',   ['auth' => true]);
@@ -97,6 +98,7 @@ $router->post('appointments/{id}/intake',    'Appointment', 'saveIntake',['auth'
 $router->get('followups',           'Followup', 'index',   ['auth' => true]);
 $router->post('followups/dismiss',  'Followup', 'dismiss', ['auth' => true]);
 $router->post('reminders',          'Followup', 'remind',  ['auth' => true]);
+$router->get('clinic/doctors',          'Clinic', 'doctors',       ['auth' => true]);
 $router->get('doctor/hours',            'Clinic', 'hours',         ['auth' => true]);
 $router->put('doctor/hours',            'Clinic', 'saveHours',     ['auth' => true]);
 $router->post('doctor/holidays',        'Clinic', 'addHoliday',    ['auth' => true]);
@@ -139,4 +141,6 @@ $router->post('admin/admins',                'Admin', 'createAdmin', ['auth' => 
 $router->post('admin/admins/{id}/action',    'Admin', 'adminAction', ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
 $router->get('admin/staff',                  'Admin', 'staffList',   ['auth' => true]);
 $router->post('admin/staff/{id}/action',     'Admin', 'staffAction', ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);
+$router->post('admin/clinics/{id}/doctors',  'Admin', 'addDoctor',    ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
+$router->post('admin/doctors/{id}/action',   'Admin', 'doctorAction', ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);
 $router->post('admin/clinics/{id}/staff',    'Admin', 'addStaff',    ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);

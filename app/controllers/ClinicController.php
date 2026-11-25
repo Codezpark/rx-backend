@@ -8,6 +8,23 @@ class ClinicController extends BaseController
     private const SHIFTS = ['morning', 'evening'];
 
     /** GET doctor/hours */
+    /** GET clinic/doctors — who a visit can be given to (doctors and reception). */
+    public function doctors(): void
+    {
+        $d    = (int) $this->requireClinic()['id'];
+        $rows = $this->db->getRows(
+            'SELECT id, name, degree, specialization, clinic_owner_id FROM doctors
+             WHERE (id = :a OR clinic_owner_id = :b) AND deleted_at IS NULL AND is_active = 1 ORDER BY clinic_owner_id IS NOT NULL, name, id',
+            [':a' => $d, ':b' => $d]
+        );
+        Response::success([
+            'items' => array_map(fn ($r) => [
+                'id' => (int) $r['id'], 'name' => $r['name'], 'degree' => $r['degree'], 'specialization' => $r['specialization'],
+                'is_owner' => $r['clinic_owner_id'] === null, 'me' => $this->actorId === (int) $r['id'],
+            ], $rows),
+        ], 'Doctors fetched');
+    }
+
     public function hours(): void
     {
         $d = (int) $this->requireClinic()['id'];
@@ -17,7 +34,7 @@ class ClinicController extends BaseController
     /** PUT doctor/hours {days:[{day:0-6 (0=Sun), sessions:[{open:"09:00",close:"13:00"}]}]} — replaces the week; a day without sessions is closed. */
     public function saveHours(): void
     {
-        $d      = (int) $this->requireDoctor()['id'];
+        $d      = (int) $this->requireOwner()['id'];
         $clinic = $this->db->getRow('SELECT id FROM clinics WHERE doctor_id = :d AND deleted_at IS NULL ORDER BY is_primary DESC, id LIMIT 1', [':d' => $d]);
         if (!$clinic) Response::error('Save your clinic details first.', 422);
 
@@ -63,7 +80,7 @@ class ClinicController extends BaseController
     /** POST doctor/holidays {date, reason?} */
     public function addHoliday(): void
     {
-        $d    = (int) $this->requireDoctor()['id'];
+        $d    = (int) $this->requireOwner()['id'];
         $date = (string) $this->request->input('date', '');
         $why  = self::clean((string) $this->request->input('reason', ''));
         $ts   = preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) ? strtotime($date . ' UTC') : false;
@@ -80,7 +97,7 @@ class ClinicController extends BaseController
     /** DELETE doctor/holidays/{id} */
     public function deleteHoliday(array $params): void
     {
-        $d = (int) $this->requireDoctor()['id'];
+        $d = (int) $this->requireOwner()['id'];
         $n = $this->db->delete('clinic_holidays', 'id = :i AND doctor_id = :d', [':i' => (int) $params['id'], ':d' => $d]);
         if ($n === 0) Response::error('Not found', 404);
         Response::success(['hours' => $this->payload($d)], 'Holiday removed');

@@ -20,7 +20,7 @@ class DeviceController extends BaseController
         }
         $platform  = substr((string) $this->request->input('platform', 'android'), 0, 16);
         $ownerType = $this->isStaff() ? 'staff' : 'doctor';
-        $ownerId   = $this->isStaff() ? (int) ($this->staff['id'] ?? 0) : $did;
+        $ownerId   = $this->isStaff() ? (int) ($this->staff['id'] ?? 0) : (int) $this->actorId;
 
         // One row per token: re-point it to this owner/clinic if already seen.
         $existing = $this->db->getRow('SELECT id FROM device_tokens WHERE token = :t', [':t' => $token]);

@@ -13,7 +13,7 @@ class StaffController extends BaseController
     /** GET staff */
     public function index(): void
     {
-        $d = (int) $this->requireDoctor()['id'];
+        $d = (int) $this->requireOwner()['id'];
         $rows = $this->db->getRows('SELECT * FROM clinic_staff WHERE doctor_id = :d AND deleted_at IS NULL ORDER BY name', [':d' => $d]);
         Response::success(['items' => array_map([self::class, 'shape'], $rows)], 'Staff fetched');
     }
@@ -21,7 +21,7 @@ class StaffController extends BaseController
     /** POST staff {name, countrycode, phone, password} */
     public function create(): void
     {
-        $d = (int) $this->requireDoctor()['id'];
+        $d = (int) $this->requireOwner()['id'];
         $this->validate([
             'name'        => 'required|string|min:2|max:100',
             'countrycode' => 'required|string',
@@ -50,7 +50,7 @@ class StaffController extends BaseController
     /** PUT staff/{id} {name?, is_active?, password?} */
     public function update(array $params): void
     {
-        $d  = (int) $this->requireDoctor()['id'];
+        $d  = (int) $this->requireOwner()['id'];
         $s  = $this->own((int) $params['id'], $d);
         $up = [];
         if ($this->request->input('name') !== null) {
@@ -81,7 +81,7 @@ class StaffController extends BaseController
     /** DELETE staff/{id} */
     public function delete(array $params): void
     {
-        $d = (int) $this->requireDoctor()['id'];
+        $d = (int) $this->requireOwner()['id'];
         $s = $this->own((int) $params['id'], $d);
         $this->db->update('clinic_staff', ['deleted_at' => gmdate('Y-m-d H:i:s'), 'is_active' => 0], 'id = :i', [':i' => $s['id']]);
         $this->auth->revokeAllForStaff((int) $s['id']);

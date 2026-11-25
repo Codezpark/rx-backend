@@ -177,7 +177,7 @@ class CatalogController extends BaseController
         // Blank: what this doctor orders most, padded with the everyday basics.
         $top  = $this->db->getRows(
             "SELECT t.test_id, COUNT(*) c FROM lab_order_tests t JOIN lab_orders o ON o.id = t.lab_order_id
-             WHERE o.doctor_id = :d AND t.test_id IS NOT NULL GROUP BY t.test_id ORDER BY c DESC LIMIT 12", [':d' => $d]);
+             WHERE o.doctor_id = :d AND t.test_id IS NOT NULL" . self::byDoctor('o.consultant_id', $this->actorId) . " GROUP BY t.test_id ORDER BY c DESC LIMIT 12", [':d' => $d]);
         $ids  = array_map('intval', array_column($top, 'test_id'));
         $basic = ['CBC', 'FBS', 'PPBS', 'HBA1C', 'LIPID', 'LFT', 'CR', 'TSH', 'URINE_RE', 'MALARIA', 'DENGUE_NS1', 'CRP'];
         $in   = implode(',', array_fill(0, count($basic), '?'));
@@ -231,7 +231,7 @@ class CatalogController extends BaseController
         // Most used by this doctor first, so their own top complaints sit at the front.
         $used = $this->db->getRows(
             'SELECT ps.symptom_id, COUNT(*) c FROM prescription_symptoms ps JOIN prescriptions p ON p.id = ps.prescription_id
-             WHERE p.doctor_id = :d AND ps.symptom_id IS NOT NULL AND ps.deleted_at IS NULL GROUP BY ps.symptom_id',
+             WHERE p.doctor_id = :d AND ps.symptom_id IS NOT NULL AND ps.deleted_at IS NULL' . self::byDoctor('p.consultant_id', $this->actorId) . ' GROUP BY ps.symptom_id',
             [':d' => $d]
         );
         $count = array_column($used, 'c', 'symptom_id');
@@ -254,7 +254,7 @@ class CatalogController extends BaseController
         $d = (int) $this->requireDoctor()['id'];
         $rows = $this->db->getRows(
             "SELECT diagnosis, COUNT(*) c FROM prescriptions
-             WHERE doctor_id = :d AND deleted_at IS NULL AND status <> 'cancelled' AND diagnosis IS NOT NULL AND diagnosis <> ''
+             WHERE doctor_id = :d AND deleted_at IS NULL AND status <> 'cancelled' AND diagnosis IS NOT NULL AND diagnosis <> ''" . self::byDoctor('consultant_id', $this->actorId) . "
              GROUP BY diagnosis ORDER BY c DESC, MAX(visit_date) DESC LIMIT 15",
             [':d' => $d]
         );
@@ -407,7 +407,7 @@ class CatalogController extends BaseController
         $top = $this->db->getRows(
             "SELECT LOWER(pm.medicine_name) AS k, COUNT(*) c, MAX(p.visit_date) last_at
              FROM prescription_medicines pm JOIN prescriptions p ON p.id = pm.prescription_id
-             WHERE p.doctor_id = :d AND p.deleted_at IS NULL AND p.status = 'final' AND pm.deleted_at IS NULL
+             WHERE p.doctor_id = :d AND p.deleted_at IS NULL AND p.status = 'final' AND pm.deleted_at IS NULL" . self::byDoctor('p.consultant_id', $this->actorId) . "
              GROUP BY LOWER(pm.medicine_name) ORDER BY c DESC, last_at DESC LIMIT " . (int) $limit,
             [':d' => $doctorId]
         );
@@ -447,7 +447,7 @@ class CatalogController extends BaseController
         $rows = $this->db->getRows(
             "SELECT pm.* FROM prescription_medicines pm
              JOIN prescriptions p ON p.id = pm.prescription_id
-             WHERE p.doctor_id = ? AND p.deleted_at IS NULL AND p.status = 'final' AND pm.deleted_at IS NULL
+             WHERE p.doctor_id = ? AND p.deleted_at IS NULL AND p.status = 'final' AND pm.deleted_at IS NULL" . self::byDoctor('p.consultant_id', $this->actorId) . "
                AND LOWER(pm.medicine_name) IN ($in)
              ORDER BY p.visit_date DESC, pm.id DESC",
             array_merge([$doctorId], $names)

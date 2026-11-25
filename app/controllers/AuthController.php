@@ -185,6 +185,11 @@ class AuthController extends BaseController
                 'Please verify your mobile number to continue.', false);
         }
 
+        // A second doctor signs in only while the clinic itself is active.
+        if (!empty($doctor['clinic_owner_id']) && !$this->db->getRow('SELECT id FROM doctors WHERE id = :i AND deleted_at IS NULL AND is_active = 1', [':i' => $doctor['clinic_owner_id']])) {
+            Response::error('This account is disabled. Please contact support.', 403);
+        }
+
         $this->db->update('doctors', ['last_login_at' => gmdate('Y-m-d H:i:s')], 'id = :i', [':i' => $doctor['id']]);
         $this->logger->info('Doctor logged in', ['doctor_id' => $doctor['id']]);
 
@@ -216,7 +221,7 @@ class AuthController extends BaseController
 
         $this->checkOtp((int) $doctor['id'], 'reset', (string) $data['otp']);
 
-        $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($data['password'])], 'id = :id', [':id' => $doctor['id']]);
+        $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($data['password']), 'sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :id', [':id' => $doctor['id']]);
         $this->db->delete('verification', "doctor_id = :id AND purpose = 'reset'", [':id' => $doctor['id']]);
         $this->auth->revokeAllForDoctor((int) $doctor['id']);
 
@@ -255,7 +260,7 @@ class AuthController extends BaseController
             $this->requireClinic();
             Response::success(['user' => self::publicStaff($this->staff)], 'Profile fetched');
         }
-        $doctor = $this->requireDoctor();
+        $doctor = $this->requireSelf();
         Response::success(['user' => self::publicDoctor($doctor)], 'Profile fetched');
     }
 

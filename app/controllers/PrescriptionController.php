@@ -60,13 +60,14 @@ class PrescriptionController extends BaseController
         try {
             $id = $this->db->insert('prescriptions', [
                 'doctor_id'  => $doctor['id'],
+                'consultant_id' => $this->actorId,
                 'clinic_id'  => $clinic['id'] ?? null,
                 'patient_id' => $patient['id'],
                 'visit_date' => $in['visit_date'],
                 'status'     => $status,
             ] + $in['row']);
             $this->writeChildren($id, $in);
-            InvestigationHelper::save($id, (int) $doctor['id'], (int) $patient['id'], $in['investigations']);
+            InvestigationHelper::save($id, (int) $doctor['id'], (int) $patient['id'], $in['investigations'], (int) $this->actorId);
             $this->touchPatient((int) $patient['id']);
             if ($appointment) {
                 $this->db->update('appointments', ['prescription_id' => $id], 'id = :a', [':a' => $appointment['id']]);
@@ -88,6 +89,7 @@ class PrescriptionController extends BaseController
         $doctor = $this->requireDoctor();
         $id     = (int) $params['id'];
         $rx     = $this->rowOrFail($id, (int) $doctor['id']);
+        $this->assertAuthor($rx);
         $this->assertDraft($rx);
 
         $in = $this->parse();
@@ -103,7 +105,7 @@ class PrescriptionController extends BaseController
             $this->db->update('prescriptions', ['visit_date' => $in['visit_date'], 'status' => $status] + $in['row'], 'id = :id', [':id' => $id]);
             $this->clearChildren($id);
             $this->writeChildren($id, $in);
-            InvestigationHelper::save($id, (int) $doctor['id'], (int) $rx['patient_id'], $in['investigations']);
+            InvestigationHelper::save($id, (int) $doctor['id'], (int) $rx['patient_id'], $in['investigations'], (int) $this->actorId);
             $this->touchPatient((int) $rx['patient_id']);
             if ($status === 'final') $this->completeAppointment($id);
             $this->db->commit();
@@ -121,6 +123,7 @@ class PrescriptionController extends BaseController
         $doctor = $this->requireDoctor();
         $id     = (int) $params['id'];
         $rx     = $this->rowOrFail($id, (int) $doctor['id']);
+        $this->assertAuthor($rx);
         $this->assertDraft($rx);
 
         $full = $this->load($id, (int) $doctor['id']);
@@ -169,7 +172,7 @@ class PrescriptionController extends BaseController
         }
 
         if ($fee === null || $fee <= 0) return;
-        BillController::consultationBill($doctorId, $patientId, $rxId, $apId, (float) $fee);
+        BillController::consultationBill($doctorId, $patientId, $rxId, $apId, (float) $fee, 'Consultation', $this->actorId);
     }
 
     // ── POST /prescriptions/{id}/cancel ──────────────────────────────────────
@@ -178,6 +181,7 @@ class PrescriptionController extends BaseController
         $doctor = $this->requireDoctor();
         $id     = (int) $params['id'];
         $rx     = $this->rowOrFail($id, (int) $doctor['id']);
+        $this->assertAuthor($rx);
         if ($rx['status'] !== 'final') {
             Response::error('Only a finalised prescription can be cancelled.', 409);
         }
@@ -192,6 +196,7 @@ class PrescriptionController extends BaseController
         $doctor = $this->requireDoctor();
         $id     = (int) $params['id'];
         $rx     = $this->rowOrFail($id, (int) $doctor['id']);
+        $this->assertAuthor($rx);
         $this->assertDraft($rx, 'Only drafts can be deleted. Cancel a finalised prescription instead.');
         $this->db->update('prescriptions', ['deleted_at' => CommonHelper::now()], 'id = :id', [':id' => $id]);
         InvestigationHelper::cancelFor($id);
@@ -202,8 +207,38 @@ class PrescriptionController extends BaseController
     public function detail(array $params): void
     {
         $doctor = $this->requireDoctor();
-        $this->rowOrFail((int) $params['id'], (int) $doctor['id']);
+        $this->readable((int) $params['id'], (int) $doctor['id']);
         Response::success(['prescription' => $this->load((int) $params['id'], (int) $doctor['id'])], 'Prescription fetched');
+    }
+
+    // ── GET /prescriptions/{id}/signature ────────────────────────────────────
+    /** The signature of the doctor who wrote it, for printing by anyone in the clinic who may read it. */
+    public function signature(array $params): void
+    {
+        $doctor = $this->requireDoctor();
+        $rx     = $this->readable((int) $params['id'], (int) $doctor['id']);
+        $row    = $this->db->getRow('SELECT signature_url FROM doctors WHERE id = :i', [':i' => $rx['consultant_id'] ?? $rx['doctor_id']]);
+        $base   = realpath(ROOT_PATH . '/storage/signatures');
+        $path   = empty($row['signature_url']) ? false : realpath(ROOT_PATH . '/storage/' . $row['signature_url']);
+        if (!$base || !$path || strpos($path, $base . DIRECTORY_SEPARATOR) !== 0 || !is_file($path)) {
+            Response::notFound('No signature uploaded.');
+        }
+        header('Content-Type: ' . ((new finfo(FILEINFO_MIME_TYPE))->file($path) ?: 'application/octet-stream'));
+        header('Content-Length: ' . filesize($path));
+        header('Cache-Control: private, no-store');
+        header('X-Content-Type-Options: nosniff');
+        readfile($path);
+        exit;
+    }
+
+    /** A prescription this doctor may read: anything in the clinic except a colleague's unfinished draft. */
+    private function readable(int $id, int $clinic): array
+    {
+        $rx = $this->rowOrFail($id, $clinic);
+        if ($rx['status'] === 'draft' && (int) ($rx['consultant_id'] ?? $rx['doctor_id']) !== $this->actorId) {
+            Response::notFound('Prescription not found.');
+        }
+        return $rx;
     }
 
     // ── GET /prescriptions ───────────────────────────────────────────────────
@@ -214,6 +249,10 @@ class PrescriptionController extends BaseController
                    FROM prescriptions p JOIN patients pt ON pt.id = p.patient_id
                    WHERE p.doctor_id = :d AND p.deleted_at IS NULL';
         $params = [':d' => $doctor['id']];
+        // My own by default; ?doctor=all shows the clinic's (never a colleague's draft).
+        $sql .= $this->request->get('doctor') === 'all'
+            ? " AND (p.status <> 'draft' OR p.consultant_id = " . (int) $this->actorId . ')'
+            : self::byDoctor('p.consultant_id', $this->actorId);
 
         $since = trim((string) $this->request->get('since', ''));
         if ($since !== '' && ($ts = strtotime($since)) !== false) {
@@ -243,6 +282,7 @@ class PrescriptionController extends BaseController
             'SELECT p.*, pt.name AS patient_name, pt.sex AS patient_sex, pt.age_years, pt.date_of_birth, pt.uhid
              FROM prescriptions p JOIN patients pt ON pt.id = p.patient_id
              WHERE p.doctor_id = :d AND p.patient_id = :p AND p.deleted_at IS NULL
+               AND (p.status <> \'draft\' OR p.consultant_id = ' . (int) $this->actorId . ')
              ORDER BY p.visit_date DESC, p.id DESC',
             [':d' => $doctor['id'], ':p' => $patient['id']],
             $this->getPage(), $this->getLimit(20, 50)
@@ -355,7 +395,7 @@ class PrescriptionController extends BaseController
             $medId = isset($m['medicine_id']) && (int) $m['medicine_id'] > 0 ? (int) $m['medicine_id'] : null;
             $catId = null;
             if ($medId !== null) {
-                $cat = $this->db->getRow('SELECT category_id FROM medicines WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $medId, ':d' => $this->authUser['doctor_id']]);
+                $cat = $this->db->getRow('SELECT category_id FROM medicines WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $medId, ':d' => $this->tenantId]);
                 if (!$cat) { $medId = null; } else { $catId = (int) $cat['category_id']; }
             }
             // An explicit form/category from the type selector (free-text meds, or an override).
@@ -433,7 +473,7 @@ class PrescriptionController extends BaseController
             $id  = isset($s['symptom_id']) && (int) $s['symptom_id'] > 0 ? (int) $s['symptom_id'] : null;
             $custom = self::clean((string) ($s['custom_symptom'] ?? ''));
             if ($id === null && $custom === '') continue;
-            if ($id !== null && !$this->db->getRow('SELECT id FROM symptoms WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $id, ':d' => $this->authUser['doctor_id']])) {
+            if ($id !== null && !$this->db->getRow('SELECT id FROM symptoms WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $id, ':d' => $this->tenantId])) {
                 continue;
             }
             $sev = $s['severity'] ?? null;
@@ -459,7 +499,7 @@ class PrescriptionController extends BaseController
             $custom = self::clean((string) ($a['custom_text'] ?? ''));
             $cat = $a['category'] ?? 'other';
             if ($tid !== null) {
-                $t = $this->db->getRow('SELECT id, category FROM advice_templates WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $tid, ':d' => $this->authUser['doctor_id']]);
+                $t = $this->db->getRow('SELECT id, category FROM advice_templates WHERE id = :i AND (doctor_id IS NULL OR doctor_id = :d)', [':i' => $tid, ':d' => $this->tenantId]);
                 if (!$t) continue;
                 $cat = $t['category'];
                 $custom = '';
@@ -582,8 +622,15 @@ class PrescriptionController extends BaseController
         }
 
         $num = fn ($v) => $v === null ? null : $v + 0;
+        // Printed records carry the name of the doctor who wrote them, not of whoever is looking.
+        $author = $this->db->getRow('SELECT id, name, degree, specialization, registration_no, signature_url FROM doctors WHERE id = :i', [':i' => $rx['consultant_id'] ?? $rx['doctor_id']]);
         return [
             'id'          => (int) $rx['id'],
+            'mine'        => $this->actorId === (int) ($rx['consultant_id'] ?? $rx['doctor_id']),
+            'doctor'      => $author ? [
+                'id' => (int) $author['id'], 'name' => $author['name'], 'degree' => $author['degree'], 'specialization' => $author['specialization'],
+                'registration_no' => $author['registration_no'], 'has_signature' => !empty($author['signature_url']),
+            ] : null,
             'status'      => $rx['status'],
             'visit_date'  => $rx['visit_date'],
             'patient'     => [

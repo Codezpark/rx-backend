@@ -22,6 +22,9 @@ class DoctorController extends BaseController
     public function summary(): void
     {
         $d   = (int) $this->requireClinic()['id'];
+        // A doctor's home shows their own queue and work; money and follow-ups are clinic-wide for the owner.
+        $mine  = $this->actorId;
+        $money = $this->ownScope();
         $row = $this->db->getRow(
             'SELECT COUNT(*) AS total, COALESCE(SUM(created_at >= (UTC_TIMESTAMP() - INTERVAL 7 DAY)), 0) AS this_week
              FROM patients WHERE doctor_id = :d AND deleted_at IS NULL AND is_active = 1',
@@ -31,7 +34,7 @@ class DoctorController extends BaseController
         $since = $since === false ? strtotime('today') : $since;
         $rx = $this->db->getRow(
             "SELECT COUNT(*) AS total, COALESCE(SUM(visit_date >= :s), 0) AS today
-             FROM prescriptions WHERE doctor_id = :d AND deleted_at IS NULL AND status = 'final'",
+             FROM prescriptions WHERE doctor_id = :d AND deleted_at IS NULL AND status = 'final'" . self::byDoctor('consultant_id', $mine),
             [':d' => $d, ':s' => gmdate('Y-m-d H:i:s', $since)]
         );
         $until = gmdate('Y-m-d H:i:s', $since + 86400);
@@ -40,26 +43,27 @@ class DoctorController extends BaseController
                     COALESCE(SUM(status IN ('scheduled','confirmed')), 0) AS upcoming,
                     COALESCE(SUM(status = 'completed'), 0) AS done,
                     COALESCE(SUM(status <> 'cancelled'), 0) AS total
-             FROM appointments WHERE doctor_id = :d AND scheduled_at >= :s AND scheduled_at < :u",
+             FROM appointments WHERE doctor_id = :d AND scheduled_at >= :s AND scheduled_at < :u" . self::byDoctor('consultant_id', $mine),
             [':d' => $d, ':s' => gmdate('Y-m-d H:i:s', $since), ':u' => $until]
         );
         $pending = $this->db->getRow(
             "SELECT
                (SELECT COUNT(*) FROM lab_orders o JOIN prescriptions p ON p.id = o.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
-                 WHERE o.doctor_id = :d1 AND o.deleted_at IS NULL AND o.status IN ('ordered','sample_collected','processing'))
+                 WHERE o.doctor_id = :d1 AND o.deleted_at IS NULL AND o.status IN ('ordered','sample_collected','processing')" . self::byDoctor('o.consultant_id', $mine) . ")
              + (SELECT COUNT(*) FROM radiology_orders o JOIN prescriptions p ON p.id = o.prescription_id AND p.status = 'final' AND p.deleted_at IS NULL
-                 WHERE o.doctor_id = :d2 AND o.deleted_at IS NULL AND o.status = 'ordered') AS n",
+                 WHERE o.doctor_id = :d2 AND o.deleted_at IS NULL AND o.status = 'ordered'" . self::byDoctor('o.consultant_id', $mine) . ") AS n",
             [':d1' => $d, ':d2' => $d]
         );
-        $drafts = $this->db->getRow("SELECT COUNT(*) AS n FROM prescriptions WHERE doctor_id = :d AND deleted_at IS NULL AND status = 'draft'", [':d' => $d]);
+        $drafts = $this->db->getRow("SELECT COUNT(*) AS n FROM prescriptions WHERE doctor_id = :d AND deleted_at IS NULL AND status = 'draft'" . self::byDoctor('consultant_id', $mine), [':d' => $d]);
+        $collected = 'SELECT COALESCE(SUM(bp.amount), 0) AS n FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE bp.doctor_id = :d AND bp.paid_at >= :s AND bp.paid_at < :u' . self::byDoctor('b.consultant_id', $money);
         if ($this->isStaff()) {
-            $coll = $this->db->getRow('SELECT COALESCE(SUM(amount), 0) AS n FROM bill_payments WHERE doctor_id = :d AND paid_at >= :s AND paid_at < :u', [':d' => $d, ':s' => gmdate('Y-m-d H:i:s', $since), ':u' => $until]);
+            $coll = $this->db->getRow($collected, [':d' => $d, ':s' => gmdate('Y-m-d H:i:s', $since), ':u' => $until]);
             Response::success([
                 'collected_today' => (float) $coll['n'], 'patients_total' => (int) $row['total'], 'patients_this_week' => (int) $row['this_week'],
                 'queue_waiting' => (int) $ap['waiting'], 'queue_upcoming' => (int) $ap['upcoming'], 'queue_done' => (int) $ap['done'], 'appointments_today' => (int) $ap['total'],
             ], 'Summary fetched');
         }
-        $coll = $this->db->getRow('SELECT COALESCE(SUM(amount), 0) AS n FROM bill_payments WHERE doctor_id = :d AND paid_at >= :s AND paid_at < :u', [':d' => $d, ':s' => gmdate('Y-m-d H:i:s', $since), ':u' => $until]);
+        $coll = $this->db->getRow($collected, [':d' => $d, ':s' => gmdate('Y-m-d H:i:s', $since), ':u' => $until]);
         Response::success([
             'collected_today'     => (float) $coll['n'],
             'patients_total'      => (int) $row['total'],
@@ -72,7 +76,7 @@ class DoctorController extends BaseController
             'queue_upcoming'      => (int) $ap['upcoming'],
             'queue_done'          => (int) $ap['done'],
             'appointments_today'  => (int) $ap['total'],
-            'attention'           => FollowupHelper::compute($d, (preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $this->request->get('today', '')) ? (string) $this->request->get('today') : gmdate('Y-m-d')))['attention'],
+            'attention'           => FollowupHelper::compute($d, (preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $this->request->get('today', '')) ? (string) $this->request->get('today') : gmdate('Y-m-d')), $money)['attention'],
         ], 'Summary fetched');
     }
 
@@ -115,7 +119,7 @@ class DoctorController extends BaseController
      */
     public function updateLocaleSettings(): void
     {
-        $d = (int) $this->requireDoctor()['id'];
+        $d = (int) $this->requireOwner()['id'];
         $c = $this->primaryClinic($d);
         $cur = $c ? ($c['currency'] ?? 'INR') : 'INR';
         $lang = strtolower(trim((string) ($this->request->get('language') ?? ($c['language'] ?? 'en'))));
@@ -155,7 +159,7 @@ class DoctorController extends BaseController
 
     public function updateClinic(): void
     {
-        $d = (int) $this->requireDoctor()['id'];
+        $d = (int) $this->requireOwner()['id'];
         $this->validate([
             'name'          => 'required|string|min:2|max:200',
             'address_line1' => 'nullable|string|max:255',
@@ -303,12 +307,12 @@ class DoctorController extends BaseController
 
     public function profile(): void
     {
-        Response::success(['user' => self::publicDoctor($this->requireDoctor())], 'Profile fetched');
+        Response::success(['user' => self::publicDoctor($this->requireSelf())], 'Profile fetched');
     }
 
     public function updateProfile(): void
     {
-        $doctor = $this->requireDoctor();
+        $doctor = $this->requireSelf();
 
         $data = $this->validate([
             'name'            => 'required|string|min:2|max:100',
@@ -365,7 +369,7 @@ class DoctorController extends BaseController
 
     public function changePassword(): void
     {
-        $doctor = $this->requireDoctor();
+        $doctor = $this->requireSelf();
 
         $data = $this->validate([
             'current_password' => 'required|string',
@@ -382,7 +386,7 @@ class DoctorController extends BaseController
             Response::validationError(['password' => ['Choose a password different from the current one.']]);
         }
 
-        $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($data['password'])], 'id = :id', [':id' => $doctor['id']]);
+        $this->db->update('doctors', ['password_hash' => CommonHelper::hashPassword($data['password']), 'sessions_valid_from' => date('Y-m-d H:i:s')], 'id = :id', [':id' => $doctor['id']]);
 
         // Sign out everywhere else, but keep this device signed in with a fresh session.
         $this->auth->revokeAllForDoctor((int) $doctor['id']);
@@ -400,7 +404,7 @@ class DoctorController extends BaseController
 
     public function uploadSignature(): void
     {
-        $doctor = $this->requireDoctor();
+        $doctor = $this->requireSelf();
         $did    = (int) $doctor['id'];
         $f      = $this->request->file('file');
         if (!$f || ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
@@ -436,7 +440,7 @@ class DoctorController extends BaseController
 
     public function signatureFile(): never
     {
-        $rel  = $this->requireDoctor()['signature_url'] ?? null;
+        $rel  = $this->requireSelf()['signature_url'] ?? null;
         if (!$rel) Response::notFound('No signature uploaded.');
         $full = realpath(ROOT_PATH . '/storage/' . $rel);
         $base = realpath(ROOT_PATH . '/storage/signatures');
@@ -454,7 +458,7 @@ class DoctorController extends BaseController
 
     public function removeSignature(): void
     {
-        $doctor = $this->requireDoctor();
+        $doctor = $this->requireSelf();
         $this->removeSignatureFile($doctor['signature_url'] ?? null);
         $this->db->update('doctors', ['signature_url' => null], 'id = :id', [':id' => (int) $doctor['id']]);
         Response::success(['user' => self::publicDoctor($this->db->getRow('SELECT * FROM doctors WHERE id = :id', [':id' => (int) $doctor['id']]))], 'Signature removed');
@@ -471,7 +475,7 @@ class DoctorController extends BaseController
     // ── Clinic logo (shown top-left on the Rx letterhead) ────────────────────
     public function uploadClinicLogo(): void
     {
-        $doctor = $this->requireDoctor();
+        $doctor = $this->requireOwner();
         $did    = (int) $doctor['id'];
         $clinic = $this->primaryClinic($did);
         if (!$clinic) Response::validationError(['clinic' => ['Save your clinic details first.']]);
@@ -529,7 +533,7 @@ class DoctorController extends BaseController
 
     public function removeClinicLogo(): void
     {
-        $did    = (int) $this->requireDoctor()['id'];
+        $did    = (int) $this->requireOwner()['id'];
         $clinic = $this->primaryClinic($did);
         if ($clinic) {
             $this->removeLogoFile($clinic['logo_url'] ?? null);
