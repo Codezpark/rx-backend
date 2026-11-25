@@ -72,7 +72,7 @@
  "Enter the amount received.": "ലഭിച്ച തുക നൽകൂ.",
  "Enter the patient weight in kg (0.3–150).": "രോഗിയുടെ ഭാരം kg-ൽ നൽകൂ (0.3–150).",
  "Enter the patient’s age or date of birth.": "രോഗിയുടെ പ്രായമോ ജനനത്തീയതിയോ നൽകൂ.",
- "Experience must be between 0 and 70 years.": "പരിചയം 0 മുതൽ 70 വർഷം വരെ ആയിരിക്കണം.",
+ "Experience must be between 1 and 70 years.": "പരിചയം 1 നും 70 വർഷത്തിനും ഇടയിലായിരിക്കണം.",
  "Flag must be normal, low, high or critical.": "ഫ്ലാഗ് സാധാരണ (normal), കുറവ് (low), കൂടുതൽ (high) അല്ലെങ്കിൽ ഗുരുതരം (critical) ആയിരിക്കണം.",
  "Follow-up due in {n} days": {
   "one": "ഫോളോ-അപ്പ് {n} ദിവസത്തിനുള്ളിൽ",

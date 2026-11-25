@@ -72,7 +72,7 @@
  "Enter the amount received.": "ਪ੍ਰਾਪਤ ਹੋਈ ਰਕਮ ਦਾਖ਼ਲ ਕਰੋ।",
  "Enter the patient weight in kg (0.3–150).": "ਮਰੀਜ਼ ਦਾ ਭਾਰ kg ਵਿੱਚ ਦਾਖ਼ਲ ਕਰੋ (0.3–150)।",
  "Enter the patient’s age or date of birth.": "ਮਰੀਜ਼ ਦੀ ਉਮਰ ਜਾਂ ਜਨਮ ਤਾਰੀਖ਼ ਦਾਖ਼ਲ ਕਰੋ।",
- "Experience must be between 0 and 70 years.": "ਤਜਰਬਾ 0 ਤੋਂ 70 ਸਾਲ ਦੇ ਵਿਚਕਾਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ।",
+ "Experience must be between 1 and 70 years.": "ਤਜਰਬਾ 1 ਤੋਂ 70 ਸਾਲ ਦੇ ਵਿਚਕਾਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ।",
  "Flag must be normal, low, high or critical.": "ਫ਼ਲੈਗ ਆਮ (normal), ਘੱਟ (low), ਵੱਧ (high) ਜਾਂ ਗੰਭੀਰ (critical) ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ।",
  "Follow-up due in {n} days": {
   "one": "ਫਾਲੋ-ਅੱਪ {n} ਦਿਨ ਵਿੱਚ ਬਣਦਾ ਹੈ",

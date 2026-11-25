@@ -72,7 +72,7 @@
  "Enter the amount received.": "Tinye ego e nwetara.",
  "Enter the patient weight in kg (0.3–150).": "Tinye ịdị arọ onye ọrịa n'ime kg (0.3–150).",
  "Enter the patient’s age or date of birth.": "Tinye afọ onye ọrịa ma ọ bụ ụbọchị ọmụmụ.",
- "Experience must be between 0 and 70 years.": "Ahụmahụ ga-abụrịrị n'etiti afọ 0 na 70.",
+ "Experience must be between 1 and 70 years.": "Ahụmahụ ga-adị n’etiti afọ 1 na 70.",
  "Flag must be normal, low, high or critical.": "Akara ga-abụrịrị nkịtị, ala, elu ma ọ bụ dị oke njọ.",
  "Follow-up due in {n} days": "Nlọghachi ga-eru n'ime ụbọchị {n}",
  "Follow-up due today": "Nlọghachi ruru taa",

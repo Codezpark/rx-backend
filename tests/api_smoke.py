@@ -71,6 +71,13 @@ check("profile update 200", s == 200 and r["data"]["user"]["profile_percent"] ==
 check("email lower-cased", r["data"]["user"]["email"] == ("dr.obrien" + phone + "@example.com"), r)
 s, r = call("PUT", "doctor/profile", {"name": "Dr O'Brien", "experience_yrs": 99}, token=acc)
 check("experience out of range 422", s == 422, r)
+for bad in (0, "0", "00", 71, "-1", "1.5", "abc"):
+    s, r = call("PUT", "doctor/profile", {"name": "Dr O'Brien", "experience_yrs": bad}, token=acc)
+    check(f"experience {bad!r} refused", s == 422 and "experience_yrs" in r["errors"], r)
+for good, want in ((1, 1), ("05", 5), (70, 70), ("", None)):
+    s, r = call("PUT", "doctor/profile", {"name": "Dr O'Brien", "experience_yrs": good}, token=acc)
+    check(f"experience {good!r} accepted", s == 200 and r["data"]["user"]["experience_yrs"] == want, r)
+check("the account says when the plan started and ends", r["data"]["user"]["plan_started_at"] and r["data"]["user"]["plan_expires_at"], r)
 s, r = call("PUT", "doctor/profile", {"name": "Dr O'Brien", "email": "not-an-email"}, token=acc)
 check("bad email 422", s == 422, r)
 s, r = call("PUT", "doctor/profile", {"name": "Dr O'Brien", "email": "simet13909@dyleris.com"}, token=acc)

@@ -316,7 +316,6 @@ class DoctorController extends BaseController
             'degree'          => 'nullable|string|max:255',
             'specialization'  => 'nullable|string|max:255',
             'registration_no' => 'nullable|string|max:100',
-            'experience_yrs'  => 'nullable|integer',
         ]);
 
         $text = fn (string $key) => ($v = self::clean((string) ($data[$key] ?? ''))) === '' ? null : $v;
@@ -330,10 +329,11 @@ class DoctorController extends BaseController
         $email = $email === null ? null : strtolower($email);
         $regNo = $text('registration_no');
 
-        $years = $data['experience_yrs'] ?? null;
+        // Whole years, 1 to 70 ("05" is fine), or left empty.
+        $years = $this->request->input('experience_yrs');
         if ($years !== null && $years !== '') {
-            if ((int) $years < 0 || (int) $years > 70) {
-                Response::validationError(['experience_yrs' => ['Experience must be between 0 and 70 years.']]);
+            if (!is_scalar($years) || !preg_match('/^\s*\d{1,3}\s*$/', (string) $years) || (int) $years < 1 || (int) $years > 70) {
+                Response::validationError(['experience_yrs' => ['Experience must be between 1 and 70 years.']]);
             }
             $years = (int) $years;
         } else {

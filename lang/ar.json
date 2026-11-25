@@ -72,7 +72,7 @@
  "Enter the amount received.": "أدخل المبلغ المستلم.",
  "Enter the patient weight in kg (0.3–150).": "أدخل وزن المريض بالكيلوغرام kg (0.3–150).",
  "Enter the patient’s age or date of birth.": "أدخل عمر المريض أو تاريخ ميلاده.",
- "Experience must be between 0 and 70 years.": "يجب أن تكون الخبرة بين 0 و70 سنة.",
+ "Experience must be between 1 and 70 years.": "يجب أن تكون الخبرة بين 1 و70 سنة.",
  "Flag must be normal, low, high or critical.": "يجب أن تكون العلامة طبيعي أو منخفض أو مرتفع أو حرج.",
  "Follow-up due in {n} days": {
   "zero": "المتابعة مستحقة خلال {n} يوم",

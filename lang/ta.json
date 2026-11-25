@@ -72,7 +72,7 @@
  "Enter the amount received.": "பெற்ற தொகையை உள்ளிடவும்.",
  "Enter the patient weight in kg (0.3–150).": "நோயாளியின் எடையை kg இல் உள்ளிடவும் (0.3–150).",
  "Enter the patient’s age or date of birth.": "நோயாளியின் வயது அல்லது பிறந்த தேதியை உள்ளிடவும்.",
- "Experience must be between 0 and 70 years.": "அனுபவம் 0 முதல் 70 ஆண்டுகளுக்குள் இருக்க வேண்டும்.",
+ "Experience must be between 1 and 70 years.": "அனுபவம் 1 முதல் 70 ஆண்டுகளுக்குள் இருக்க வேண்டும்.",
  "Flag must be normal, low, high or critical.": "கொடி இயல்பு, குறைவு, அதிகம் அல்லது தீவிரம் என இருக்க வேண்டும்.",
  "Follow-up due in {n} days": {
   "one": "{n} நாளில் தொடர் சந்திப்பு",

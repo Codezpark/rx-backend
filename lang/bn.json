@@ -72,7 +72,7 @@
  "Enter the amount received.": "প্রাপ্ত পরিমাণ দিন।",
  "Enter the patient weight in kg (0.3–150).": "রোগীর ওজন kg-তে দিন (0.3–150)।",
  "Enter the patient’s age or date of birth.": "রোগীর বয়স বা জন্মতারিখ দিন।",
- "Experience must be between 0 and 70 years.": "অভিজ্ঞতা 0 থেকে 70 বছরের মধ্যে হতে হবে।",
+ "Experience must be between 1 and 70 years.": "অভিজ্ঞতা 1 থেকে 70 বছরের মধ্যে হতে হবে।",
  "Flag must be normal, low, high or critical.": "ফ্ল্যাগ স্বাভাবিক, কম, বেশি বা গুরুতর হতে হবে।",
  "Follow-up due in {n} days": {
   "one": "{n} দিনে ফলো-আপ বাকি",

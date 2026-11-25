@@ -254,7 +254,7 @@
  "Enter the patient’s age or date of birth.": {
   "plural": false
  },
- "Experience must be between 0 and 70 years.": {
+ "Experience must be between 1 and 70 years.": {
   "plural": false
  },
  "Experience yrs": {

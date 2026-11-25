@@ -72,7 +72,7 @@
  "Enter the amount received.": "प्राप्त रकम लेख्नुहोस्।",
  "Enter the patient weight in kg (0.3–150).": "बिरामीको तौल kg मा लेख्नुहोस् (0.3–150)।",
  "Enter the patient’s age or date of birth.": "बिरामीको उमेर वा जन्ममिति लेख्नुहोस्।",
- "Experience must be between 0 and 70 years.": "अनुभव 0 देखि 70 वर्ष बीच हुनुपर्छ।",
+ "Experience must be between 1 and 70 years.": "अनुभव 1 देखि 70 वर्षको बीचमा हुनुपर्छ।",
  "Flag must be normal, low, high or critical.": "फ्ल्याग सामान्य (normal), कम (low), उच्च (high) वा गम्भीर (critical) हुनुपर्छ।",
  "Follow-up due in {n} days": {
   "one": "फलो-अप {n} दिनमा हुनुपर्ने",

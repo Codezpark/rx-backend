@@ -155,6 +155,7 @@ abstract class BaseController
             'has_signature'    => !empty($doctor['signature_url'] ?? null),
             'plan'             => $doctor['plan'],
             'plan_expires_at'  => $expires,
+            'plan_started_at'  => $doctor['plan_started_at'] ?? null,
             'plan_days_left'   => $expires ? (int) max(0, ceil((strtotime($expires) - time()) / 86400)) : null,
             'profile_percent'  => (int) round((1 + $filled) / (1 + count($fields)) * 100), // name is always present
             'created_at'       => $doctor['created_at'],

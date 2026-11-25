@@ -72,7 +72,7 @@
  "Enter the amount received.": "मिळालेली रक्कम टाका.",
  "Enter the patient weight in kg (0.3–150).": "रुग्णाचे वजन kg मध्ये टाका (0.3–150).",
  "Enter the patient’s age or date of birth.": "रुग्णाचे वय किंवा जन्मतारीख टाका.",
- "Experience must be between 0 and 70 years.": "अनुभव 0 ते 70 वर्षांदरम्यान असावा.",
+ "Experience must be between 1 and 70 years.": "अनुभव 1 ते 70 वर्षांदरम्यान असावा.",
  "Flag must be normal, low, high or critical.": "फ्लॅग सामान्य, कमी, जास्त किंवा गंभीर असावा.",
  "Follow-up due in {n} days": {
   "one": "{n} दिवसात फॉलो-अप आहे",

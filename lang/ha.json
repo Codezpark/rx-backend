@@ -72,7 +72,7 @@
  "Enter the amount received.": "Shigar da adadin kuɗin da aka karɓa.",
  "Enter the patient weight in kg (0.3–150).": "Shigar da nauyin majiyyaci a kg (0.3–150).",
  "Enter the patient’s age or date of birth.": "Shigar da shekarun majiyyaci ko ranar haihuwa.",
- "Experience must be between 0 and 70 years.": "Gogewa dole ne ta kasance tsakanin shekara 0 da 70.",
+ "Experience must be between 1 and 70 years.": "Ƙwarewa dole ta kasance tsakanin shekaru 1 da 70.",
  "Flag must be normal, low, high or critical.": "Alama dole ta zama na yau da kullum, ƙasa, sama ko mai tsanani.",
  "Follow-up due in {n} days": {
   "one": "Komawa asibiti nan da kwana {n}",

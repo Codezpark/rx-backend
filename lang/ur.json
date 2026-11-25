@@ -72,7 +72,7 @@
  "Enter the amount received.": "وصول شدہ رقم درج کریں۔",
  "Enter the patient weight in kg (0.3–150).": "مریض کا وزن kg میں درج کریں (0.3–150)۔",
  "Enter the patient’s age or date of birth.": "مریض کی عمر یا تاریخ پیدائش درج کریں۔",
- "Experience must be between 0 and 70 years.": "تجربہ 0 سے 70 سال کے درمیان ہونا چاہیے۔",
+ "Experience must be between 1 and 70 years.": "تجربہ 1 سے 70 سال کے درمیان ہونا چاہیے۔",
  "Flag must be normal, low, high or critical.": "فلیگ نارمل (normal)، کم (low)، زیادہ (high) یا شدید (critical) ہونا چاہیے۔",
  "Follow-up due in {n} days": {
   "one": "فالو اپ {n} دن میں واجب ہے",

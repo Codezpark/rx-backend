@@ -72,7 +72,7 @@
  "Enter the amount received.": "મળેલી રકમ દાખલ કરો.",
  "Enter the patient weight in kg (0.3–150).": "દર્દીનું વજન kg માં દાખલ કરો (0.3–150).",
  "Enter the patient’s age or date of birth.": "દર્દીની ઉંમર અથવા જન્મ તારીખ દાખલ કરો.",
- "Experience must be between 0 and 70 years.": "અનુભવ 0 થી 70 વર્ષ વચ્ચે હોવો જોઈએ.",
+ "Experience must be between 1 and 70 years.": "અનુભવ 1 થી 70 વર્ષ વચ્ચે હોવો જોઈએ.",
  "Flag must be normal, low, high or critical.": "ફ્લૅગ સામાન્ય, ઓછું, વધુ અથવા ગંભીર હોવો જોઈએ.",
  "Follow-up due in {n} days": {
   "one": "{n} દિવસમાં ફોલો-અપ છે",

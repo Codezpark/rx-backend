@@ -72,7 +72,7 @@
  "Enter the amount received.": "అందుకున్న మొత్తాన్ని నమోదు చేయండి.",
  "Enter the patient weight in kg (0.3–150).": "రోగి బరువును kg లో నమోదు చేయండి (0.3–150).",
  "Enter the patient’s age or date of birth.": "రోగి వయస్సు లేదా పుట్టిన తేదీని నమోదు చేయండి.",
- "Experience must be between 0 and 70 years.": "అనుభవం 0 నుండి 70 సంవత్సరాల మధ్య ఉండాలి.",
+ "Experience must be between 1 and 70 years.": "అనుభవం 1 నుండి 70 సంవత్సరాల మధ్య ఉండాలి.",
  "Flag must be normal, low, high or critical.": "ఫ్లాగ్ సాధారణ, తక్కువ, ఎక్కువ లేదా తీవ్రం అయి ఉండాలి.",
  "Follow-up due in {n} days": {
   "one": "{n} రోజులో ఫాలో-అప్ ఉంది",

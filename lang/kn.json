@@ -72,7 +72,7 @@
  "Enter the amount received.": "ಸ್ವೀಕರಿಸಿದ ಮೊತ್ತ ನಮೂದಿಸಿ.",
  "Enter the patient weight in kg (0.3–150).": "ರೋಗಿಯ ತೂಕವನ್ನು kg ನಲ್ಲಿ ನಮೂದಿಸಿ (0.3–150).",
  "Enter the patient’s age or date of birth.": "ರೋಗಿಯ ವಯಸ್ಸು ಅಥವಾ ಜನ್ಮ ದಿನಾಂಕ ನಮೂದಿಸಿ.",
- "Experience must be between 0 and 70 years.": "ಅನುಭವ 0 ರಿಂದ 70 ವರ್ಷಗಳ ನಡುವೆ ಇರಬೇಕು.",
+ "Experience must be between 1 and 70 years.": "ಅನುಭವ 1 ರಿಂದ 70 ವರ್ಷಗಳ ನಡುವೆ ಇರಬೇಕು.",
  "Flag must be normal, low, high or critical.": "ಫ್ಲ್ಯಾಗ್ ಸಾಮಾನ್ಯ (normal), ಕಡಿಮೆ (low), ಹೆಚ್ಚು (high) ಅಥವಾ ಗಂಭೀರ (critical) ಆಗಿರಬೇಕು.",
  "Follow-up due in {n} days": {
   "one": "ಫಾಲೋ-ಅಪ್ {n} ದಿನದಲ್ಲಿ ಬರಲಿದೆ",

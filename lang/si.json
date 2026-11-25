@@ -72,7 +72,7 @@
  "Enter the amount received.": "ලැබුණු මුදල ඇතුළත් කරන්න.",
  "Enter the patient weight in kg (0.3–150).": "රෝගියාගේ බර kg වලින් ඇතුළත් කරන්න (0.3–150).",
  "Enter the patient’s age or date of birth.": "රෝගියාගේ වයස හෝ උපන් දිනය ඇතුළත් කරන්න.",
- "Experience must be between 0 and 70 years.": "පළපුරුද්ද අවුරුදු 0 සහ 70 අතර විය යුතුය.",
+ "Experience must be between 1 and 70 years.": "පළපුරුද්ද වසර 1 ත් 70 ත් අතර විය යුතුය.",
  "Flag must be normal, low, high or critical.": "ධජය සාමාන්‍ය (normal), අඩු (low), ඉහළ (high) හෝ බරපතළ (critical) විය යුතුය.",
  "Follow-up due in {n} days": {
   "one": "පසු විපරම දින {n}කින් නියමිතයි",
