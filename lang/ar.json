@@ -422,5 +422,12 @@
  "Your password is not correct.": "كلمة مرورك غير صحيحة.",
  "Your session was ended. Please sign in again.": "تم إنهاء جلستك. يرجى تسجيل الدخول مرة أخرى.",
  "{name} already has an appointment around that time.": "لدى {name} موعد بالفعل في هذا الوقت تقريبًا.",
- "{name} is already waiting in the queue.": "{name} ينتظر في الطابور بالفعل."
+ "{name} is already waiting in the queue.": "{name} ينتظر في الطابور بالفعل.",
+ "Unknown document.": "مستند غير معروف.",
+ "This document cannot be sent.": "لا يمكن إرسال هذا المستند.",
+ "Only a PDF can be sent as a link.": "يمكن إرسال ملف PDF فقط كرابط.",
+ "This link is no longer available. Please ask your clinic to send it again.": "لم يعد هذا الرابط متاحًا. يرجى أن تطلب من عيادتك إرساله مرة أخرى.",
+ "Enter the last 4 digits of your mobile number.": "أدخل آخر 4 أرقام من رقم جوالك.",
+ "Too many tries. Please wait 15 minutes.": "محاولات كثيرة. يرجى الانتظار 15 دقيقة.",
+ "Those digits do not match the mobile number on this document.": "هذه الأرقام لا تطابق رقم الجوال في هذا المستند."
 }

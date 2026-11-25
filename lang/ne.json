@@ -366,5 +366,12 @@
  "Your password is not correct.": "तपाईंको पासवर्ड सही छैन।",
  "Your session was ended. Please sign in again.": "तपाईंको सेसन अन्त्य गरियो। कृपया फेरि साइन इन गर्नुहोस्।",
  "{name} already has an appointment around that time.": "{name} को त्यही समयतिर पहिल्यै अपोइन्टमेन्ट छ।",
- "{name} is already waiting in the queue.": "{name} पहिल्यै लाइनमा पर्खिरहनुभएको छ।"
+ "{name} is already waiting in the queue.": "{name} पहिल्यै लाइनमा पर्खिरहनुभएको छ।",
+ "Unknown document.": "अज्ञात कागजात।",
+ "This document cannot be sent.": "यो कागजात पठाउन सकिँदैन।",
+ "Only a PDF can be sent as a link.": "लिंकका रूपमा PDF मात्र पठाउन सकिन्छ।",
+ "This link is no longer available. Please ask your clinic to send it again.": "यो लिंक अब उपलब्ध छैन। कृपया क्लिनिकलाई फेरि पठाउन भन्नुहोस्।",
+ "Enter the last 4 digits of your mobile number.": "आफ्नो मोबाइल नम्बरका अन्तिम 4 अंक राख्नुहोस्।",
+ "Too many tries. Please wait 15 minutes.": "धेरै प्रयास भयो। कृपया 15 मिनेट पर्खनुहोस्।",
+ "Those digits do not match the mobile number on this document.": "यी अंक यस कागजातको मोबाइल नम्बरसँग मिलेनन्।"
 }

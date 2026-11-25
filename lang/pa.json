@@ -366,5 +366,12 @@
  "Your password is not correct.": "ਤੁਹਾਡਾ ਪਾਸਵਰਡ ਸਹੀ ਨਹੀਂ ਹੈ।",
  "Your session was ended. Please sign in again.": "ਤੁਹਾਡਾ ਸੈਸ਼ਨ ਖ਼ਤਮ ਕਰ ਦਿੱਤਾ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।",
  "{name} already has an appointment around that time.": "{name} ਦੀ ਉਸ ਸਮੇਂ ਦੇ ਆਸ-ਪਾਸ ਪਹਿਲਾਂ ਹੀ ਅਪਾਇੰਟਮੈਂਟ ਹੈ।",
- "{name} is already waiting in the queue.": "{name} ਪਹਿਲਾਂ ਹੀ ਕਤਾਰ ਵਿੱਚ ਉਡੀਕ ਕਰ ਰਹੇ ਹਨ।"
+ "{name} is already waiting in the queue.": "{name} ਪਹਿਲਾਂ ਹੀ ਕਤਾਰ ਵਿੱਚ ਉਡੀਕ ਕਰ ਰਹੇ ਹਨ।",
+ "Unknown document.": "ਅਣਜਾਣ ਦਸਤਾਵੇਜ਼।",
+ "This document cannot be sent.": "ਇਹ ਦਸਤਾਵੇਜ਼ ਭੇਜਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ।",
+ "Only a PDF can be sent as a link.": "ਲਿੰਕ ਵਜੋਂ ਸਿਰਫ਼ PDF ਭੇਜੀ ਜਾ ਸਕਦੀ ਹੈ।",
+ "This link is no longer available. Please ask your clinic to send it again.": "ਇਹ ਲਿੰਕ ਹੁਣ ਉਪਲਬਧ ਨਹੀਂ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਕਲੀਨਿਕ ਨੂੰ ਦੁਬਾਰਾ ਭੇਜਣ ਲਈ ਕਹੋ।",
+ "Enter the last 4 digits of your mobile number.": "ਆਪਣੇ ਮੋਬਾਈਲ ਨੰਬਰ ਦੇ ਆਖਰੀ 4 ਅੰਕ ਭਰੋ।",
+ "Too many tries. Please wait 15 minutes.": "ਬਹੁਤ ਕੋਸ਼ਿਸ਼ਾਂ ਹੋ ਗਈਆਂ। 15 ਮਿੰਟ ਉਡੀਕ ਕਰੋ।",
+ "Those digits do not match the mobile number on this document.": "ਇਹ ਅੰਕ ਇਸ ਦਸਤਾਵੇਜ਼ ਦੇ ਮੋਬਾਈਲ ਨੰਬਰ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।"
 }

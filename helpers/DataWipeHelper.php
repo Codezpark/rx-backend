@@ -21,7 +21,7 @@ class DataWipeHelper
         'patient_chronic_conditions', 'patients', 'followup_actions', 'wa_notifications', 'scheduled_jobs',
         'lab_partner_contacts', 'lab_partners', 'clinic_contacts', 'clinic_timings', 'clinic_holidays', 'clinics',
         'staff_tokens', 'clinic_staff', 'device_tokens', 'auth_tokens', 'refresh_tokens', 'verification',
-        'plan_reminders', 'audit_logs', 'doctors',
+        'plan_reminders', 'audit_logs', 'shared_documents', 'doctors',
     ];
 
     /** Shared lists: only the rows a doctor added themselves (doctor_id set) are removed. */
@@ -35,7 +35,7 @@ class DataWipeHelper
     ];
 
     /** Folders (relative to the project root) that hold uploaded files. */
-    private const FILE_DIRS = ['storage/signatures', 'storage/logos', 'storage/reports', 'uploads/user'];
+    private const FILE_DIRS = ['storage/signatures', 'storage/logos', 'storage/reports', 'storage/shared', 'uploads/user'];
 
     /** Placeholder files that belong to the project, not to a user. */
     private const KEEP_FILES = ['.htaccess', '.gitkeep', 'index.html', 'index.php'];

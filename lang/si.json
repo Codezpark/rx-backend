@@ -366,5 +366,12 @@
  "Your password is not correct.": "ඔබේ මුරපදය නිවැරදි නැත.",
  "Your session was ended. Please sign in again.": "ඔබේ සැසිය අවසන් කරන ලදී. කරුණාකර නැවත පිවිසෙන්න.",
  "{name} already has an appointment around that time.": "{name} සඳහා දැනටමත් එම වේලාව ආසන්නයේ හමුවීමක් ඇත.",
- "{name} is already waiting in the queue.": "{name} දැනටමත් පෝලිමේ රැඳී සිටී."
+ "{name} is already waiting in the queue.": "{name} දැනටමත් පෝලිමේ රැඳී සිටී.",
+ "Unknown document.": "නොදන්නා ලේඛනයකි.",
+ "This document cannot be sent.": "මෙම ලේඛනය යැවිය නොහැක.",
+ "Only a PDF can be sent as a link.": "සබැඳියක් ලෙස PDF පමණක් යැවිය හැක.",
+ "This link is no longer available. Please ask your clinic to send it again.": "මෙම සබැඳිය තවදුරටත් නොමැත. කරුණාකර නැවත එවන ලෙස ඔබේ සායනයෙන් ඉල්ලන්න.",
+ "Enter the last 4 digits of your mobile number.": "ඔබේ ජංගම දුරකථන අංකයේ අවසන් ඉලක්කම් 4 ඇතුළත් කරන්න.",
+ "Too many tries. Please wait 15 minutes.": "උත්සාහ කිරීම් වැඩියි. විනාඩි 15ක් රැඳී සිටින්න.",
+ "Those digits do not match the mobile number on this document.": "මෙම ඉලක්කම් මෙම ලේඛනයේ දුරකථන අංකයට නොගැළපේ."
 }

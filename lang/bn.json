@@ -366,5 +366,12 @@
  "Your password is not correct.": "আপনার পাসওয়ার্ড সঠিক নয়।",
  "Your session was ended. Please sign in again.": "আপনার সেশন শেষ করা হয়েছে। অনুগ্রহ করে আবার সাইন ইন করুন।",
  "{name} already has an appointment around that time.": "ওই সময়ের কাছাকাছি {name}-এর আগে থেকেই একটি অ্যাপয়েন্টমেন্ট আছে।",
- "{name} is already waiting in the queue.": "{name} আগে থেকেই সারিতে অপেক্ষা করছেন।"
+ "{name} is already waiting in the queue.": "{name} আগে থেকেই সারিতে অপেক্ষা করছেন।",
+ "Unknown document.": "অজানা নথি।",
+ "This document cannot be sent.": "এই নথি পাঠানো যাবে না।",
+ "Only a PDF can be sent as a link.": "লিংক হিসেবে শুধু PDF পাঠানো যায়।",
+ "This link is no longer available. Please ask your clinic to send it again.": "এই লিংকটি আর পাওয়া যাচ্ছে না। অনুগ্রহ করে ক্লিনিককে আবার পাঠাতে বলুন।",
+ "Enter the last 4 digits of your mobile number.": "আপনার মোবাইল নম্বরের শেষ 4টি সংখ্যা লিখুন।",
+ "Too many tries. Please wait 15 minutes.": "অনেকবার চেষ্টা হয়েছে। 15 মিনিট অপেক্ষা করুন।",
+ "Those digits do not match the mobile number on this document.": "এই সংখ্যাগুলো এই নথির মোবাইল নম্বরের সাথে মিলছে না।"
 }

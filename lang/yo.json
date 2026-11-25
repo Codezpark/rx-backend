@@ -327,5 +327,12 @@
  "Your password is not correct.": "Ọ̀rọ̀ aṣínà rẹ kò tọ̀nà.",
  "Your session was ended. Please sign in again.": "A ti fòpin sí ìgbà ìwọlé rẹ. Jọ̀wọ́ wọlé lẹ́ẹ̀kan sí i.",
  "{name} already has an appointment around that time.": "{name} ti ní ìpàdé kan ní nǹkan bí àkókò yẹn tẹ́lẹ̀.",
- "{name} is already waiting in the queue.": "{name} ti ń dúró nínú ìlà tẹ́lẹ̀."
+ "{name} is already waiting in the queue.": "{name} ti ń dúró nínú ìlà tẹ́lẹ̀.",
+ "Unknown document.": "Ìwé tí a kò mọ̀.",
+ "This document cannot be sent.": "A kò lè fi ìwé yìí ránṣẹ́.",
+ "Only a PDF can be sent as a link.": "PDF nìkan ni a lè fi ránṣẹ́ gẹ́gẹ́ bí ìjápọ̀.",
+ "This link is no longer available. Please ask your clinic to send it again.": "Ìjápọ̀ yìí kò sí mọ́. Jọ̀wọ́ ní kí ilé ìwòsàn rẹ tún fi ránṣẹ́.",
+ "Enter the last 4 digits of your mobile number.": "Tẹ nọ́ńbà 4 tó kẹ́yìn lórí fóònù rẹ.",
+ "Too many tries. Please wait 15 minutes.": "Ìgbìyànjú ti pọ̀ jù. Jọ̀wọ́ dúró fún ìṣẹ́jú 15.",
+ "Those digits do not match the mobile number on this document.": "Àwọn nọ́ńbà wọ̀nyí kò bá nọ́ńbà fóònù tó wà lórí ìwé yìí mu."
 }

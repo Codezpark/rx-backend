@@ -366,5 +366,12 @@
  "Your password is not correct.": "നിങ്ങളുടെ പാസ്‌വേഡ് ശരിയല്ല.",
  "Your session was ended. Please sign in again.": "നിങ്ങളുടെ സെഷൻ അവസാനിപ്പിച്ചു. ദയവായി വീണ്ടും സൈൻ ഇൻ ചെയ്യൂ.",
  "{name} already has an appointment around that time.": "{name} എന്നയാൾക്ക് ആ സമയത്തോടടുത്ത് ഇതിനകം ഒരു അപ്പോയിന്റ്മെന്റ് ഉണ്ട്.",
- "{name} is already waiting in the queue.": "{name} ഇതിനകം ക്യൂവിൽ കാത്തിരിക്കുന്നു."
+ "{name} is already waiting in the queue.": "{name} ഇതിനകം ക്യൂവിൽ കാത്തിരിക്കുന്നു.",
+ "Unknown document.": "അജ്ഞാത രേഖ.",
+ "This document cannot be sent.": "ഈ രേഖ അയയ്ക്കാനാവില്ല.",
+ "Only a PDF can be sent as a link.": "ലിങ്കായി PDF മാത്രമേ അയയ്ക്കാനാകൂ.",
+ "This link is no longer available. Please ask your clinic to send it again.": "ഈ ലിങ്ക് ഇനി ലഭ്യമല്ല. വീണ്ടും അയയ്ക്കാൻ ക്ലിനിക്കിനോട് ആവശ്യപ്പെടുക.",
+ "Enter the last 4 digits of your mobile number.": "നിങ്ങളുടെ മൊബൈൽ നമ്പറിന്റെ അവസാന 4 അക്കങ്ങൾ നൽകുക.",
+ "Too many tries. Please wait 15 minutes.": "വളരെയധികം ശ്രമങ്ങൾ. 15 മിനിറ്റ് കാത്തിരിക്കുക.",
+ "Those digits do not match the mobile number on this document.": "ഈ അക്കങ്ങൾ ഈ രേഖയിലെ മൊബൈൽ നമ്പറുമായി പൊരുത്തപ്പെടുന്നില്ല."
 }

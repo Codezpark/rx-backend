@@ -126,6 +126,12 @@ $router->post('radiology-orders/{id}/status',     'Investigation', 'radStatus', 
 $router->post('radiology-orders/{id}/file',       'Investigation', 'uploadRadFile',   ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
 $router->get('radiology-orders/{id}/file',        'Investigation', 'radFile',         ['auth' => true]);
 
+// ── Documents sent to patients as a link ─────────────────────────────────────
+$router->post('documents/share', 'Share', 'create', ['auth' => true, 'rate_limit' => ['max' => 300, 'window' => 3600]]);
+// Public: the patient's page. The code travels in the body, so it never lands in access logs.
+$router->post('shared/meta',     'Share', 'meta',   ['rate_limit' => ['max' => 120, 'window' => 900]]);
+$router->post('shared/file',     'Share', 'file',   ['rate_limit' => ['max' => 60, 'window' => 900]]);
+
 // ── Admin panel (admin JWT required; doctor / reception tokens are refused) ──────────────
 $router->post('admin/login',                'Admin', 'login',     ['rate_limit' => ['max' => 20, 'window' => 900]]);
 $router->get('admin/me',                    'Admin', 'me',        ['auth' => true]);

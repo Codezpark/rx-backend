@@ -366,5 +366,12 @@
  "Your password is not correct.": "Kalmar sirrinka ba daidai ba ce.",
  "Your session was ended. Please sign in again.": "An ƙare zaman shigarka. Da fatan a sake shiga.",
  "{name} already has an appointment around that time.": "{name} yana da alƙawari tuni a kusan wannan lokacin.",
- "{name} is already waiting in the queue.": "{name} yana jira a layi tuni."
+ "{name} is already waiting in the queue.": "{name} yana jira a layi tuni.",
+ "Unknown document.": "Takardar da ba a sani ba.",
+ "This document cannot be sent.": "Ba za a iya aika wannan takarda ba.",
+ "Only a PDF can be sent as a link.": "PDF kawai za a iya aikawa a matsayin hanyar haɗi.",
+ "This link is no longer available. Please ask your clinic to send it again.": "Wannan hanyar haɗi ba ta nan yanzu. Ka nemi asibitinka ya sake aikowa.",
+ "Enter the last 4 digits of your mobile number.": "Shigar da lambobi 4 na ƙarshe na lambar wayarka.",
+ "Too many tries. Please wait 15 minutes.": "An yi ƙoƙari da yawa. Jira mintuna 15.",
+ "Those digits do not match the mobile number on this document.": "Waɗannan lambobin ba su dace da lambar wayar da ke kan wannan takarda ba."
 }

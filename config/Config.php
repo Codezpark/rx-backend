@@ -114,6 +114,10 @@ class Config
                     'debug'    => self::envBool('APP_DEBUG', !$isProduction),
                     'timezone' => self::envVar('APP_TIMEZONE', 'UTC'),
                     'base_url' => rtrim((string) $baseUrl, '/'),
+                    // The patient's page for a document link; the code follows after "#".
+                    'share_url' => self::envVar('SHARE_BASE_URL', $isProduction
+                        ? 'https://prescriptionrx.in/d/'
+                        : 'http://localhost/prescription-rx/prescriptionrx/web/public/d/'),
                     'version'  => self::envVar('APP_VERSION', 'v1'),
                     // SMS/e-mail delivery is not wired up yet. While true, OTP
                     // responses include `dev_otp` so the app can be tested end

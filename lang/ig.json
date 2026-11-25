@@ -327,5 +327,12 @@
  "Your password is not correct.": "Okwuntughe gị ezighi ezi.",
  "Your session was ended. Please sign in again.": "Emechiela oge nbanye gị. Biko banye ọzọ.",
  "{name} already has an appointment around that time.": "{name} nwelarị oge nzukọ n’ihe dị ka oge ahụ.",
- "{name} is already waiting in the queue.": "{name} nọlarị n’ahịrị na-eche."
+ "{name} is already waiting in the queue.": "{name} nọlarị n’ahịrị na-eche.",
+ "Unknown document.": "Akwụkwọ a na-amaghị.",
+ "This document cannot be sent.": "Enweghị ike izipu akwụkwọ a.",
+ "Only a PDF can be sent as a link.": "Naanị PDF ka a pụrụ izipu dị ka njikọ.",
+ "This link is no longer available. Please ask your clinic to send it again.": "Njikọ a adịghịzi. Biko gwa ụlọ ọgwụ gị ka ha zighachi ya.",
+ "Enter the last 4 digits of your mobile number.": "Tinye ọnụọgụ 4 ikpeazụ nke nọmba ekwentị gị.",
+ "Too many tries. Please wait 15 minutes.": "Nnwale dị ukwuu. Biko chere nkeji 15.",
+ "Those digits do not match the mobile number on this document.": "Ọnụọgụ ndị a adabaghị na nọmba ekwentị dị na akwụkwọ a."
 }

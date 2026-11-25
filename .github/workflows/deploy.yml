@@ -53,6 +53,7 @@ jobs:
             --exclude='.env.example' \
             --exclude='logs/*.log' \
             --exclude='storage/reports/' \
+            --exclude='storage/shared/' \
             --exclude='storage/rate_limit/' \
             --exclude='uploads/user/' \
             --exclude='storage/signatures/' \
@@ -68,6 +69,6 @@ jobs:
           ssh -i ~/.ssh/deploy_key -p "${{ secrets.HOSTINGER_SSH_PORT }}" -o StrictHostKeyChecking=no \
             "${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}" \
             "cd '${{ secrets.HOSTINGER_DEPLOY_PATH }}' && \
-             mkdir -p logs uploads storage storage/rate_limit storage/reports && \
+             mkdir -p logs uploads storage storage/rate_limit storage/reports storage/shared && \
              chmod -R a+rwX logs uploads storage && \
              echo 'Deployed. Remember: new files under migrations/sql/*.sql are NOT auto-applied by this workflow — run them by hand the first time a new one appears (see README + docs/DEPLOYMENT_HOSTINGER.md). This avoids ever running untrusted/raw SQL against production automatically.'"

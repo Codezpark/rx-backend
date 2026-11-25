@@ -327,5 +327,12 @@
  "Your password is not correct.": "Wo password no nteɛ.",
  "Your session was ended. Please sign in again.": "Wɔatwa wo bere a wode wɔ mu no. Yɛsrɛ wo, kɔ mu bio.",
  "{name} already has an appointment around that time.": "{name} wɔ nhyiam dada wɔ saa bere no mu.",
- "{name} is already waiting in the queue.": "{name} retwɛn wɔ nsra no mu dada."
+ "{name} is already waiting in the queue.": "{name} retwɛn wɔ nsra no mu dada.",
+ "Unknown document.": "Krataa a wonnim.",
+ "This document cannot be sent.": "Wontumi mfa krataa yi nkɔ.",
+ "Only a PDF can be sent as a link.": "PDF nko ara na wotumi fa kɔ sɛ link.",
+ "This link is no longer available. Please ask your clinic to send it again.": "Link yi nni hɔ bio. Yɛsrɛ wo, ka kyerɛ wo ayaresabea na wɔmfa mmra bio.",
+ "Enter the last 4 digits of your mobile number.": "Kyerɛw wo fon nɔma no akontaahyɛde 4 a etwa to.",
+ "Too many tries. Please wait 15 minutes.": "Woasɔ ahwɛ pii. Yɛsrɛ wo twɛn simma 15.",
+ "Those digits do not match the mobile number on this document.": "Saa akontaahyɛde yi ne fon nɔma a ɛwɔ krataa yi so no nhyia."
 }

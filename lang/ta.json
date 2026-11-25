@@ -366,5 +366,12 @@
  "Your password is not correct.": "உங்கள் கடவுச்சொல் சரியல்ல.",
  "Your session was ended. Please sign in again.": "உங்கள் அமர்வு முடிக்கப்பட்டது. மீண்டும் உள்நுழையவும்.",
  "{name} already has an appointment around that time.": "{name} அவர்களுக்கு அந்த நேரத்தை ஒட்டி ஏற்கனவே ஒரு சந்திப்பு உள்ளது.",
- "{name} is already waiting in the queue.": "{name} ஏற்கனவே வரிசையில் காத்திருக்கிறார்."
+ "{name} is already waiting in the queue.": "{name} ஏற்கனவே வரிசையில் காத்திருக்கிறார்.",
+ "Unknown document.": "அறியப்படாத ஆவணம்.",
+ "This document cannot be sent.": "இந்த ஆவணத்தை அனுப்ப முடியாது.",
+ "Only a PDF can be sent as a link.": "இணைப்பாக PDF மட்டுமே அனுப்பலாம்.",
+ "This link is no longer available. Please ask your clinic to send it again.": "இந்த இணைப்பு இனி கிடைக்காது. மீண்டும் அனுப்பும்படி உங்கள் மருத்துவமனையிடம் கேளுங்கள்.",
+ "Enter the last 4 digits of your mobile number.": "உங்கள் மொபைல் எண்ணின் கடைசி 4 இலக்கங்களை உள்ளிடவும்.",
+ "Too many tries. Please wait 15 minutes.": "பல முறை முயன்றுவிட்டீர்கள். 15 நிமிடங்கள் காத்திருக்கவும்.",
+ "Those digits do not match the mobile number on this document.": "இந்த இலக்கங்கள் இந்த ஆவணத்தின் மொபைல் எண்ணுடன் பொருந்தவில்லை."
 }

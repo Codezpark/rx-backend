@@ -198,7 +198,7 @@ class Router
     }
 
     /** Routes that must keep working after the plan ends (sign-out, password, push token housekeeping). */
-    private const PLAN_EXEMPT = ['auth/logout', 'doctor/change-password', 'staff/password', 'device-tokens/remove'];
+    private const PLAN_EXEMPT = ['auth/logout', 'doctor/change-password', 'staff/password', 'device-tokens/remove', 'documents/share'];
 
     /**
      * After plan_expires_at the account is read-only: every write is refused (HTTP 403, errors.code =

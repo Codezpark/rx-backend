@@ -8,3 +8,4 @@ storage/fcm-service-account.json
 storage/logos/
 storage/backups/
 storage/wipe.disabled
+storage/shared/

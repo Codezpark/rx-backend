@@ -366,5 +366,12 @@
  "Your password is not correct.": "మీ పాస్‌వర్డ్ సరైనది కాదు.",
  "Your session was ended. Please sign in again.": "మీ సెషన్ ముగించబడింది. దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
  "{name} already has an appointment around that time.": "{name}కు ఆ సమయానికి దగ్గరలో ఇప్పటికే అపాయింట్‌మెంట్ ఉంది.",
- "{name} is already waiting in the queue.": "{name} ఇప్పటికే క్యూలో వేచి ఉన్నారు."
+ "{name} is already waiting in the queue.": "{name} ఇప్పటికే క్యూలో వేచి ఉన్నారు.",
+ "Unknown document.": "తెలియని పత్రం.",
+ "This document cannot be sent.": "ఈ పత్రాన్ని పంపలేరు.",
+ "Only a PDF can be sent as a link.": "లింక్‌గా PDF మాత్రమే పంపవచ్చు.",
+ "This link is no longer available. Please ask your clinic to send it again.": "ఈ లింక్ ఇక అందుబాటులో లేదు. దయచేసి మళ్ళీ పంపమని మీ క్లినిక్‌ను అడగండి.",
+ "Enter the last 4 digits of your mobile number.": "మీ మొబైల్ నంబర్ చివరి 4 అంకెలు నమోదు చేయండి.",
+ "Too many tries. Please wait 15 minutes.": "చాలా ప్రయత్నాలు అయ్యాయి. 15 నిమిషాలు వేచి ఉండండి.",
+ "Those digits do not match the mobile number on this document.": "ఈ అంకెలు ఈ పత్రంలోని మొబైల్ నంబర్‌తో సరిపోలడం లేదు."
 }
