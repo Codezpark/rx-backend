@@ -93,4 +93,26 @@ check("cancelled bill takes no payment", call("POST", f"bills/{paid_id}/payment"
 check("cancelling removes its money from collection", call("GET", f"bills/summary?from={f}&to={t}", token=tok)[1]["data"]["collected"] == 400.0)
 check("cancelled bills leave the list", paid_id not in [x["id"] for x in call("GET", "bills", token=tok)[1]["data"]["items"]])
 check("a cancelled bill frees its prescription for re-billing", call("POST", f"bills/{b['id']}/cancel", token=tok)[0] == 200 and call("POST", "bills", {"patient_id": pid, "prescription_id": rx, "items": [{"description": "Redo", "amount": 10}]}, tok)[0] == 201)
+# ── the patient's balance, and the preference ──
+p9 = call("POST", "patients", {"name": "Owes Money", "sex": "male", "age_years": 50}, tok)[1]["data"]["patient"]["id"]
+b1 = call("POST", "bills", {"patient_id": p9, "items": [{"description": "Visit", "amount": 500}], "paid": 200, "method": "upi"}, tok)[1]["data"]["bill"]
+b2 = call("POST", "bills", {"patient_id": p9, "items": [{"description": "Dressing", "amount": 100}]}, tok)[1]["data"]["bill"]
+b3 = call("POST", "bills", {"patient_id": p9, "items": [{"description": "Void", "amount": 999}]}, tok)[1]["data"]["bill"]
+call("POST", f"bills/{b3['id']}/cancel", token=tok)
+s, r = call("GET", f"patients/{p9}/billing", token=tok)
+d = r["data"] if s == 200 else {}
+check("patient balance: billed, paid, due; cancelled bills ignored", s == 200 and (d["billed"], d["paid"], d["due"], d["open_count"]) == (600, 200, 400, 2), r)
+check("open bills oldest first, payments with method", [b["id"] for b in d["open_bills"]] == [b1["id"], b2["id"]] and d["payments"][0]["method"] == "upi" and d["by_method"]["upi"] == 200, d)
+check("paying more than is due is refused", call("POST", f"bills/{b1['id']}/payment", {"amount": 301, "method": "cash"}, tok)[0] == 422)
+call("POST", f"bills/{b1['id']}/payment", {"amount": 300, "method": "cash"}, tok)
+check("balance falls after a payment", call("GET", f"patients/{p9}/billing", token=tok)[1]["data"]["due"] == 100)
+other, _ = new_doctor("Dr Nosy")
+check("another clinic cannot see the balance", call("GET", f"patients/{p9}/billing", token=other)[0] == 404)
+s, r = call("GET", "doctor/clinic-settings", token=tok)
+check("queue preference is off by default", r["data"]["settings"]["queue_new_patients"] is False, r)
+s, r = call("PUT", "doctor/clinic-settings", {"queue_new_patients": True}, tok)
+check("the owner switches it on", s == 200 and r["data"]["settings"]["queue_new_patients"] is True, r)
+s, r = call("PUT", "doctor/clinic-settings", {"language": "en"}, tok)
+check("saving other settings keeps it", r["data"]["settings"]["queue_new_patients"] is True, r)
+
 finish()

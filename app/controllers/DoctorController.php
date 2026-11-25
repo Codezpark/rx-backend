@@ -138,6 +138,10 @@ class DoctorController extends BaseController
             }
         }
         $data = ['language' => $lang, 'currency' => $currency, 'country' => $country];
+        // Only changed when sent, so saving the language never switches it off.
+        if ($this->request->get('queue_new_patients') !== null) {
+            $data['queue_new_patients'] = filter_var($this->request->get('queue_new_patients'), FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+        }
         if ($c) {
             $this->db->update('clinics', $data, 'id = :id', [':id' => $c['id']]);
         } else {
@@ -154,6 +158,7 @@ class DoctorController extends BaseController
         return [
             'language' => $c['language'] ?? 'en', 'currency' => $cur, 'country' => $c['country'] ?? 'IN',
             'currency_decimals' => LocaleHelper::decimals($cur),
+            'queue_new_patients' => (bool) ($c['queue_new_patients'] ?? false),
         ];
     }
 

@@ -120,24 +120,60 @@ class BillController extends BaseController
      *   split:   {payments: [{amount, method}, ...]}   (up to 3 rows — e.g. Cash+Card, Cash+UPI)
      * The sum may be less than the balance (a partial collection); never more.
      */
+    /**
+     * GET patients/{id}/billing — what this patient has been billed, has paid and still owes, the open
+     * bills and the latest payments. A second doctor sees their own bills only.
+     */
+    public function forPatient(array $params): void
+    {
+        $d   = (int) $this->requireClinic()['id'];
+        $pid = (int) $params['id'];
+        if (!$this->db->getRow('SELECT id FROM patients WHERE id = :i AND doctor_id = :d AND deleted_at IS NULL', [':i' => $pid, ':d' => $d])) {
+            Response::notFound('Patient not found.');
+        }
+        $dp    = $this->dp();
+        $mine  = self::byDoctor('b.consultant_id', $this->ownScope());
+        $where = "b.doctor_id = :d AND b.patient_id = :p AND b.status <> 'cancelled'" . $mine;
+        $bind  = [':d' => $d, ':p' => $pid];
+        $sum   = $this->db->getRow("SELECT COALESCE(SUM(b.total),0) AS billed, COALESCE(SUM(b.paid),0) AS paid, COALESCE(SUM(b.total - b.paid),0) AS due,
+                                           COALESCE(SUM(b.status IN ('unpaid','partial')),0) AS open_count FROM bills b WHERE $where", $bind);
+        $open  = $this->db->getRows("SELECT b.*, pt.name AS pt_name, pt.mobile AS pt_mobile, pt.uhid AS pt_uhid FROM bills b JOIN patients pt ON pt.id = b.patient_id
+                                     WHERE $where AND b.status IN ('unpaid','partial') ORDER BY b.bill_date, b.id LIMIT 50", $bind);
+        $by    = array_fill_keys(self::METHODS, 0.0);
+        foreach ($this->db->getRows("SELECT bp.method, SUM(bp.amount) AS amt FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id WHERE $where GROUP BY bp.method", $bind) as $r) {
+            $by[$r['method']] = round((float) $r['amt'], $dp);
+        }
+        $recent = $this->db->getRows("SELECT bp.amount, bp.method, bp.paid_at, b.bill_no FROM bill_payments bp JOIN bills b ON b.id = bp.bill_id
+                                      WHERE $where ORDER BY bp.paid_at DESC, bp.id DESC LIMIT 20", $bind);
+        Response::success([
+            'billed' => round((float) $sum['billed'], $dp), 'paid' => round((float) $sum['paid'], $dp), 'due' => round((float) $sum['due'], $dp),
+            'open_count' => (int) $sum['open_count'], 'by_method' => $by,
+            'open_bills' => array_map(fn ($b) => $this->shape($b, true), $open),
+            'payments' => array_map(fn ($p) => ['amount' => (float) $p['amount'], 'method' => $p['method'], 'paid_at' => $p['paid_at'], 'bill_no' => $p['bill_no']], $recent),
+        ], 'Billing fetched');
+    }
+
     public function pay(array $params): void
     {
         $d = (int) $this->requireClinic()['id'];
         $b = $this->own((int) $params['id'], $d);
-        if ($b['status'] === 'cancelled') Response::error('This bill is cancelled.', 409);
-        $err  = [];
-        $owed = round((float) $b['total'] - (float) $b['paid'], $this->dp());
-        $rows = $this->paymentRows($err, $owed);
-        if ($err) Response::validationError($err);
+        $dp = $this->dp();
 
         $this->db->beginTransaction();
         try {
+            // Locked until the payment is written, so two desks cannot both collect the same balance.
+            $b = $this->db->getRow('SELECT * FROM bills WHERE id = :i FOR UPDATE', [':i' => $b['id']]);
+            if ($b['status'] === 'cancelled') { $this->db->rollback(); Response::error('This bill is cancelled.', 409); }
+            $err  = [];
+            $owed = round((float) $b['total'] - (float) $b['paid'], $dp);
+            $rows = $this->paymentRows($err, $owed);
+            if ($err) { $this->db->rollback(); Response::validationError($err); }
             $add = 0.0;
             foreach ($rows as [$amt, $method]) {
                 $this->db->insert('bill_payments', ['bill_id' => $b['id'], 'doctor_id' => $d, 'amount' => $amt, 'method' => $method, 'paid_at' => gmdate('Y-m-d H:i:s')]);
                 $add += $amt;
             }
-            $paid = round((float) $b['paid'] + $add, $this->dp());
+            $paid = round((float) $b['paid'] + $add, $dp);
             $this->db->update('bills', ['paid' => $paid, 'status' => self::statusFor((float) $b['total'], $paid)], 'id = :i', [':i' => $b['id']]);
             $this->db->commit();
         } catch (Throwable $e) {

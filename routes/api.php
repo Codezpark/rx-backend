@@ -76,6 +76,7 @@ $router->put('prescriptions/{id}',             'Prescription', 'update',   ['aut
 $router->delete('prescriptions/{id}',          'Prescription', 'delete',   ['auth' => true]);
 $router->post('prescriptions/{id}/finalize',   'Prescription', 'finalize', ['auth' => true]);
 $router->post('prescriptions/{id}/cancel',     'Prescription', 'cancel',   ['auth' => true]);
+$router->get('patients/{id}/billing',          'Bill', 'forPatient', ['auth' => true]);
 $router->get('patients/{id}/prescriptions',    'Prescription', 'forPatient', ['auth' => true]);
 
 // ── Clinic (letterhead) ──────────────────────────────────────────────────────
