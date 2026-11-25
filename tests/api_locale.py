@@ -6,11 +6,11 @@ from _client import *
 tok, did = new_doctor("Dr Alpha")
 tok2, _ = new_doctor("Dr Beta")
 s, r = call("GET", "doctor/clinic-settings", token=tok)
-check("a new clinic defaults to English / INR / India", s == 200 and r["data"]["settings"] == {"language": "en", "currency": "INR", "country": "IN", "currency_decimals": 2}, r)
+check("a new clinic defaults to English / INR / India", s == 200 and r["data"]["settings"] == {"language": "en", "currency": "INR", "country": "IN", "currency_decimals": 2, "queue_new_patients": False}, r)
 check("needs sign-in", call("GET", "doctor/clinic-settings")[0] == 401)
 
 s, r = call("PUT", "doctor/clinic-settings", {"language": "ar", "currency": "OMR", "country": "OM"}, tok)
-check("set Arabic / OMR / Oman (creates the clinic row if there is none)", s == 200 and r["data"]["settings"] == {"language": "ar", "currency": "OMR", "country": "OM", "currency_decimals": 3}, r)
+check("set Arabic / OMR / Oman (creates the clinic row if there is none)", s == 200 and r["data"]["settings"] == {"language": "ar", "currency": "OMR", "country": "OM", "currency_decimals": 3, "queue_new_patients": False}, r)
 c = call("GET", "doctor/clinic", token=tok)[1]["data"]["clinic"]
 check("the clinic payload carries them too", c["language"] == "ar" and c["currency"] == "OMR" and c["country"] == "OM", c)
 for lang in ["en", "hi", "gu", "mr", "ta", "te", "bn", "kn", "ml", "pa", "ur", "ne", "si", "ar", "ha", "yo", "ig", "tw"]:
