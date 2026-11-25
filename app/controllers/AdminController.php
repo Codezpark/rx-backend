@@ -59,6 +59,53 @@ class AdminController extends BaseController
         Response::success([], 'Password changed.');
     }
 
+    // ── Erase all user data ──────────────────────────────────────────────────
+    private const WIPE_PHRASE = 'DELETE ALL DATA';
+
+    /** GET admin/data/summary - what an erase would remove and keep. */
+    public function dataSummary(): void
+    {
+        $this->requireAdmin();
+        Response::success((new DataWipeHelper($this->db))->summary() + ['phrase' => self::WIPE_PHRASE, 'disabled' => self::wipeDisabled()]);
+    }
+
+    /** POST admin/data/wipe {password, confirm} - needs the admin's own password again plus the phrase. */
+    public function dataWipe(): void
+    {
+        $a  = $this->requireAdmin();
+        $in = $this->request->all();
+        if (self::wipeDisabled()) Response::error('Erasing data is switched off on this server.', 403);
+        if (!CommonHelper::verifyPassword((string) ($in['password'] ?? ''), $a['password_hash'])) {
+            Response::validationError(['password' => ['Your password is not correct.']]);
+        }
+        if (trim((string) ($in['confirm'] ?? '')) !== self::WIPE_PHRASE) {
+            Response::validationError(['confirm' => ['Type ' . self::WIPE_PHRASE . ' exactly.']]);
+        }
+        $helper = new DataWipeHelper($this->db);
+        if ($unknown = $helper->unknownTables()) {
+            Response::error('Nothing was removed: these database tables are not classified yet: ' . implode(', ', $unknown), 409);
+        }
+        @set_time_limit(300);
+        ignore_user_abort(true);
+        try {
+            $done = $helper->wipe();
+        } catch (Throwable $e) {
+            error_log('[data wipe] ' . $e->getMessage());
+            Response::error('Nothing was removed: the erase could not be completed.', 500);
+        }
+        $this->db->insert('audit_logs', [
+            'actor_type' => 'admin', 'actor_id' => (int) $a['id'], 'action' => 'data.wiped', 'entity_type' => 'system', 'entity_id' => 0,
+            'new_values' => json_encode($done), 'ip_address' => substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45),
+        ]);
+        Response::success($done, 'All user data was erased.');
+    }
+
+    /** Create storage/wipe.disabled on the server to switch the button off for good. */
+    private static function wipeDisabled(): bool
+    {
+        return is_file(ROOT_PATH . '/storage/wipe.disabled');
+    }
+
     private function requireAdmin(): array
     {
         $auth = $this->requireAuth();

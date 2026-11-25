@@ -55,6 +55,11 @@ jobs:
             --exclude='storage/reports/' \
             --exclude='storage/rate_limit/' \
             --exclude='uploads/user/' \
+            --exclude='storage/signatures/' \
+            --exclude='storage/logos/' \
+            --exclude='storage/backups/' \
+            --exclude='storage/fcm-service-account.json' \
+            --exclude='storage/wipe.disabled' \
             ./ \
             "${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SSH_HOST }}:${{ secrets.HOSTINGER_DEPLOY_PATH }}"
 

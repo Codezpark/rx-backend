@@ -5,3 +5,6 @@ storage/signatures/
 storage/clinic-logos/
 storage/fcm-service-account.json
 .env
+storage/logos/
+storage/backups/
+storage/wipe.disabled

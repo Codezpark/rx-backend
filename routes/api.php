@@ -131,6 +131,8 @@ $router->get('admin/clinics',               'Admin', 'clinics',   ['auth' => tru
 $router->post('admin/clinics',              'Admin', 'create',    ['auth' => true, 'rate_limit' => ['max' => 60, 'window' => 3600]]);
 $router->get('admin/clinics/{id}',          'Admin', 'clinic',    ['auth' => true]);
 $router->post('admin/clinics/{id}/action',  'Admin', 'action',    ['auth' => true, 'rate_limit' => ['max' => 120, 'window' => 3600]]);
+$router->get('admin/data/summary',           'Admin', 'dataSummary', ['auth' => true]);
+$router->post('admin/data/wipe',             'Admin', 'dataWipe',    ['auth' => true, 'rate_limit' => ['max' => 5, 'window' => 900]]);
 $router->post('admin/password',             'Admin', 'changePassword', ['auth' => true, 'rate_limit' => ['max' => 10, 'window' => 900]]);
 $router->get('admin/admins',                 'Admin', 'admins',      ['auth' => true]);
 $router->post('admin/admins',                'Admin', 'createAdmin', ['auth' => true, 'rate_limit' => ['max' => 30, 'window' => 3600]]);

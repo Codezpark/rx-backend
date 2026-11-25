@@ -13,3 +13,12 @@
 
 ## Local
 Admin UI against local XAMPP: serve `public/admin` with `python3 -m http.server 8765` (it talks to `http://localhost/prescription-rx/rx-backend`). Test: `python3 tests/api_admin.py`.
+
+## Erase all user data (Admins page, "Danger zone")
+
+Removes every clinic, doctor, staff account, patient, appointment, prescription, bill and upload. Keeps admins, the shipped medicine / lab / imaging / paediatric / advice lists (rows with no `doctor_id`) and the legacy `users` table. Needs the signed-in admin's password again plus the phrase `DELETE ALL DATA` (`POST admin/data/wipe`).
+
+- Before deleting, every removed row is written to `storage/backups/wipe-*.jsonl.gz` and uploaded files are moved to `storage/backups/wipe-*-files/`. These contain patient data: delete them once they are no longer needed.
+- A new database table must be added to one of the lists in `helpers/DataWipeHelper.php`, otherwise the erase refuses to run.
+- **Once real clinics are on the system, switch it off:** create an empty file `storage/wipe.disabled` on the server.
+- Test: `tests/api_admin_wipe.py` (throw-away database only; see its docstring).
