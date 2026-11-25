@@ -313,6 +313,9 @@ class BillController extends BaseController
             'patient' => ['id' => (int) $b['patient_id'], 'name' => $b['pt_name'], 'mobile' => $b['pt_mobile'], 'uhid' => $b['pt_uhid']],
         ];
         if ($detail) {
+            // Whose receipt it is: the consulting doctor is named on it, whoever prints it.
+            $a = $this->db->getRow('SELECT id, name, degree, specialization, registration_no FROM doctors WHERE id = :i', [':i' => $out['consultant_id']]);
+            if ($a) $out['doctor'] = ['id' => (int) $a['id'], 'name' => $a['name'], 'degree' => $a['degree'], 'specialization' => $a['specialization'], 'registration_no' => $a['registration_no']];
             $out['items'] = array_map(fn ($i) => ['description' => $i['description'], 'amount' => (float) $i['amount']],
                 $this->db->getRows('SELECT description, amount FROM bill_items WHERE bill_id = :b ORDER BY id', [':b' => $b['id']]));
             $out['payments'] = array_map(fn ($p) => ['amount' => (float) $p['amount'], 'method' => $p['method'], 'paid_at' => $p['paid_at']],

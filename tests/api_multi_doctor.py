@@ -171,6 +171,10 @@ s, r = call("POST", "prescriptions", {"patient_id": pc["id"], "status": "final",
 seen = {a["id"]: a for a in call("GET", "appointments?consultant_id=all", token=own)[1]["data"]["items"]}
 check("the visit moves to the doctor who prescribed", s == 201 and seen[ap["id"]]["consultant"]["id"] == cid, (r, seen.get(ap["id"])))
 
+bl = call("GET", "bills?consultant_id=all", token=own)[1]["data"]["items"]
+one = call("GET", f"bills/{bl[0]['id']}", token=own)[1]["data"]["bill"]
+check("a bill names its consulting doctor", one["doctor"]["id"] == one["consultant_id"] and one["doctor"]["name"], one)
+
 old = login(mobile_of(cid), owner_pw)[1]["data"]["access_token"]
 time.sleep(1.1)
 s, r = call("PUT", "doctor/change-password", {"current_password": owner_pw, "password": "Changed123"}, own)
