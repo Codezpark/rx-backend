@@ -164,6 +164,13 @@ s, r = call("POST", f"admin/clinics/{cid}/doctors", {"existing_mobile": mobile_o
 check("an account with its own patients cannot", s == 422, r)
 
 # password change ends other sessions immediately
+# a colleague covering a visit takes it over
+pc = call("POST", "patients", {"name": "Cover Case", "sex": "female", "age_years": 30}, own)[1]["data"]["patient"]
+ap = call("POST", "appointments", {"patient_id": pc["id"], "walk_in": True, "consultant_id": empty_id}, own)[1]["data"]["appointment"]
+s, r = call("POST", "prescriptions", {"patient_id": pc["id"], "status": "final", "diagnosis": "Cold", "appointment_id": ap["id"]}, own)
+seen = {a["id"]: a for a in call("GET", "appointments?consultant_id=all", token=own)[1]["data"]["items"]}
+check("the visit moves to the doctor who prescribed", s == 201 and seen[ap["id"]]["consultant"]["id"] == cid, (r, seen.get(ap["id"])))
+
 old = login(mobile_of(cid), owner_pw)[1]["data"]["access_token"]
 time.sleep(1.1)
 s, r = call("PUT", "doctor/change-password", {"current_password": owner_pw, "password": "Changed123"}, own)

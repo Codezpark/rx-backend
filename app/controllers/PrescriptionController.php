@@ -70,7 +70,8 @@ class PrescriptionController extends BaseController
             InvestigationHelper::save($id, (int) $doctor['id'], (int) $patient['id'], $in['investigations'], (int) $this->actorId);
             $this->touchPatient((int) $patient['id']);
             if ($appointment) {
-                $this->db->update('appointments', ['prescription_id' => $id], 'id = :a', [':a' => $appointment['id']]);
+                // Whoever writes the prescription saw the patient: a colleague covering a visit takes it over.
+                $this->db->update('appointments', ['prescription_id' => $id, 'consultant_id' => $this->actorId], 'id = :a', [':a' => $appointment['id']]);
             }
             if ($status === 'final') $this->completeAppointment($id);
             $this->db->commit();
