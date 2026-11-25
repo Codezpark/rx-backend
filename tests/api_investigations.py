@@ -146,6 +146,12 @@ rows = [["Haemoglobin", "13.5", "g/dL", "13.0 - 17.0"], ["Platelets", "250"], []
 s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "Haemoglobin 13.5 g/dL\nPlatelets 250", "rows": rows}, tok)
 o = r["data"]["order"] if s == 200 else {}
 check("scan rows and raw text are stored with the order", s == 200 and o["ocr"]["text"].startswith("Haemoglobin") and o["ocr"]["rows"][0] == rows[0] and len(o["ocr"]["rows"]) == 3 and o["ocr"]["rows"][2] == ["WBC", "7,200"] and o["ocr"]["at"], r)
+res = [{"name": "Total Leukocyte Count", "value": "12000", "unit": "cumm", "range": "4,000 - 11,000", "flag": "high"}, {"name": "Salmonella Typhi 'AH'", "value": "1:160"},
+       {"name": "Troponin I", "value": "<0.5", "unit": "ng/mL", "range": "< 0.5", "flag": "bogus"}, {"name": "", "value": "9"}, {"name": "<i>X</i>", "value": ""}]
+s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "t", "rows": rows, "results": res}, tok)
+got = r["data"]["order"]["ocr"]["results"] if s == 200 else []
+check("columnar results are stored: unit, range, flag, titres and '<' values intact", [x["value"] for x in got] == ["12000", "1:160", "<0.5"] and got[0]["flag"] == "high" and got[0]["range"] == "4,000 - 11,000" and "flag" not in got[2] and got[2]["range"] == "< 0.5", got)
+check("results must be a list", call("PUT", f"lab-orders/{fresh}/ocr", {"text": "t", "rows": [], "results": "no"}, tok)[0] == 422)
 s, r = call("GET", f"lab-orders/{fresh}", token=tok)
 check("the detail returns the stored scan", r["data"]["order"]["ocr"]["rows"][1] == ["Platelets", "250"], r)
 s, r = call("PUT", f"lab-orders/{fresh}/ocr", {"text": "x", "rows": [["a"]] * 601}, tok)

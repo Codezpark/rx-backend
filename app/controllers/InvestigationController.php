@@ -204,7 +204,7 @@ class InvestigationController extends BaseController
         $path = $this->storeFile($d, $o['result_file_url']);
         // A new file makes any earlier scan of the old one meaningless. Having the report in hand
         // moves an order that was still waiting straight to "processing", so the list is right at once.
-        $data = ['result_file_url' => $path, 'ocr_text' => null, 'ocr_rows' => null, 'ocr_at' => null];
+        $data = ['result_file_url' => $path, 'ocr_text' => null, 'ocr_rows' => null, 'ocr_results' => null, 'ocr_at' => null];
         if (in_array($o['status'], ['ordered', 'sample_collected'], true)) $data['status'] = 'processing';
         $this->db->update('lab_orders', $data, 'id = :id', [':id' => $o['id']]);
         Response::success(['order' => $this->labPayload($this->lab((int) $p['id'], $d))], 'Report attached');
@@ -233,10 +233,29 @@ class InvestigationController extends BaseController
             }
             if ($cells) $clean[] = $cells;
         }
+        $results = $this->request->get('results', []);
+        if (!is_array($results)) Response::validationError(['results' => ['The scan data is not valid.']]);
+        if (count($results) > 300) Response::validationError(['results' => ['The scan has too many rows.']]);
+        $found = [];
+        foreach ($results as $r) {
+            if (!is_array($r)) continue;
+            $cell = fn (string $k, int $max) => mb_substr(trim(strip_tags(is_scalar($r[$k] ?? null) ? (string) $r[$k] : '')), 0, $max);
+            // "<0.5" is a real result; strip_tags would eat everything after a bare "<".
+            $value = mb_substr(trim(preg_replace('/[^0-9A-Za-z.<>+:\-\/ ]/', '', is_scalar($r['value'] ?? null) ? (string) $r['value'] : '')), 0, 50);
+            $range = mb_substr(trim(preg_replace('/[\x00-\x1F]/', ' ', is_scalar($r['range'] ?? null) ? (string) $r['range'] : '')), 0, 60);
+            $item = ['name' => $cell('name', 200), 'value' => $value];
+            if ($item['name'] === '' || $value === '') continue;
+            if (($unit = $cell('unit', 30)) !== '') $item['unit'] = $unit;
+            if ($range !== '') $item['range'] = $range;
+            if (in_array($r['flag'] ?? null, ['low', 'high'], true)) $item['flag'] = $r['flag'];
+            $found[] = $item;
+        }
+
         $text = trim(strip_tags($text));
         $this->db->update('lab_orders', [
             'ocr_text' => $text === '' ? null : $text,
             'ocr_rows' => $clean ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null,
+            'ocr_results' => $found ? json_encode($found, JSON_UNESCAPED_UNICODE) : null,
             'ocr_at'   => CommonHelper::now(),
         ], 'id = :id', [':id' => $o['id']]);
         Response::success(['order' => $this->labPayload($this->lab((int) $p['id'], $d))], 'Scan saved');
@@ -340,7 +359,7 @@ class InvestigationController extends BaseController
             if ($r) $prev[(int) $t['id']] = ['value' => $r['result_value'], 'unit' => $r['result_unit'], 'flag' => $r['result_flag'], 'date' => $r['at']];
         }
         $ocr = (isset($o['ocr_text']) || isset($o['ocr_rows']))
-            ? ['text' => $o['ocr_text'] ?? '', 'rows' => json_decode((string) ($o['ocr_rows'] ?? '[]'), true) ?: [], 'at' => $o['ocr_at'] ?? null]
+            ? ['text' => $o['ocr_text'] ?? '', 'rows' => json_decode((string) ($o['ocr_rows'] ?? '[]'), true) ?: [], 'results' => json_decode((string) ($o['ocr_results'] ?? '[]'), true) ?: [], 'at' => $o['ocr_at'] ?? null]
             : null;
         return InvestigationHelper::shapeLab($o, true, $prev) + ['ocr' => $ocr, 'patient' => self::patientOf($this->patientRow((int) $o['patient_id']) + [], true)];
     }
